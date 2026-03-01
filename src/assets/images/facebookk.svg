@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72" id="facebook">
+  <g id="providers-list" fill="none" fill-rule="evenodd" stroke="none" stroke-width="1">
+    <g id="facebook">
+      <rect id="Rectangle-2" width="72" height="72" x="0" y="0" fill="#385084" rx="4"></rect>
+      <path id="facebook-path" fill="#FFF" d="M49.679 72V43.73h9.359l1.401-11.017h-10.76V25.68c0-3.19.873-5.363 5.385-5.363l5.754-.003V10.46c-.995-.134-4.41-.435-8.384-.435-8.297 0-13.977 5.135-13.977 14.564v8.124h-9.382v11.018h9.382V72H49.68z"></path>
+    </g>
+  </g>
+</svg>
