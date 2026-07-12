@@ -1,7 +1,7 @@
 # MUI Migration Plan — Datrix Consulting Frontend
 
 **Repository:** https://github.com/Kranthikumar09/Datrix-frontend  
-**Current phase status:** Phase 4 complete — waiting for `Continue to Phase 5`  
+**Current phase status:** Phase 5 complete — waiting for `Continue to Phase 6`  
 **Date:** 2026-07-12  
 
 Companion docs:
@@ -840,7 +840,53 @@ Migrate in this **exact order** (original brief):
 
 # Phase 5 — Study and work browsing
 
-**Status:** NOT STARTED — wait for `Continue to Phase 5`
+**Status:** COMPLETE  
+**Stopped.** Waiting for: `Continue to Phase 6`
+
+## Phase 5 completion report
+
+### Changed files (summary)
+- Pages: Study, StudyFilter, StudyDetails, WhyChooseStudy, Work, WorkFilter, WorkDetails, WhyChooseWork
+- New browse components: `BrowseCategorySection`, `WhyChooseLayout`
+- New shared UI: `BrowseBreadcrumbs`, `FilterSidebar`
+- New util: `parseEligibilities.js`
+- `MUI_MIGRATION_PLAN.md`
+
+### What was migrated
+- Study and Work landing pages → MUI layout (hero, search, category browse sections, process/FAQ)
+- StudyFilter / WorkFilter → MUI Cards, Pagination, `FilterSidebar` (desktop sidebar + mobile Drawer); Bootstrap offcanvas/accordion removed
+- StudyDetails / WorkDetails → MUI layout, `BrowseBreadcrumbs`, loading/error/empty states; WorkDetails Toastify → `useAppSnackbar`
+- WhyChooseStudy / WhyChooseWork → shared `WhyChooseLayout` with Datrix branding
+- URL query params, debounced POST filter APIs, pagination, and detail routes preserved
+- `react-select` removed from filter pages (MUI `Select` / `Autocomplete` in `FilterSidebar`)
+
+### Remaining legacy UI dependencies
+- Bootstrap/Font Awesome CDN (user panel, some global chrome)
+- `react-toastify` (non-migrated user-panel pages)
+- `react-select` (ApplicationForm and other Phase 7+ pages)
+- `intl-tel-input` (SignupForm on Study/Work landing pages — themed via `AppPhoneField`)
+- `react-slick` (Partner/Testimonial)
+- Custom CSS for Work process zigzag layout (`work-process-section` classes retained on MUI `Box` wrappers)
+
+### Risks / blockers
+- API env required for live filter/browse data (cloud env may fail DNS to backend)
+- Filter pages use debounced POST with legacy payload key `eligiblities` (typo preserved for API contract)
+- Work process section still relies on existing custom CSS for alternating step layout
+
+### Commands run
+- `npm test -- --watchAll=false` → exit 1 (no tests)
+- `npm run build` → success (pre-existing ESLint warnings in user-panel pages only)
+
+### Manual test cases completed
+- [x] Study landing page MUI layout + signup form
+- [x] Work landing page MUI layout + company/country search
+- [x] StudyFilter / WorkFilter card list + pagination shell
+- [x] FilterSidebar desktop + mobile Drawer pattern
+- [x] StudyDetails / WorkDetails breadcrumb routes (`/study`, `/study-filter`, `/work-filter`)
+- [x] WhyChooseStudy / WhyChooseWork Datrix branding
+- [x] Production build compiles
+
+**Stop after Phase 5.**
 
 ## Target pages
 
@@ -1278,4 +1324,4 @@ Use this template at the end of every phase (Phases 1–10):
 | 9 | Legacy dependency and CSS cleanup | Not started |
 | 10 | Final branding, a11y, regression audit | Not started |
 
-**Next instruction expected:** `Continue to Phase 5`
+**Next instruction expected:** `Continue to Phase 6`

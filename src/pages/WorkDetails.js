@@ -1,42 +1,65 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useAuth } from '../context/AuthContext';
-import config from '../config/config';
+import React, { useState, useEffect, useCallback } from "react";
+import { Link as RouterLink, useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
+import { useAuth } from "../context/AuthContext";
+import { useAppSnackbar } from "../components/ui/AppSnackbar";
+import config from "../config/config";
+import BrowseBreadcrumbs from "../components/ui/BrowseBreadcrumbs";
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
+import EmptyState from "../components/ui/EmptyState";
 
-// Utility functions (formatDate, parseSkills, parseCommaSeparated)
 const formatDate = (dateString) => {
-  if (!dateString) return 'Not Specified';
+  if (!dateString) return "Not Specified";
   try {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   } catch {
-    return 'Invalid Date';
+    return "Invalid Date";
   }
 };
 
 const parseSkills = (skills) => {
-  if (!skills) return 'Not Specified';
+  if (!skills) return "Not Specified";
   try {
     let parsed = skills;
-    while (typeof parsed === 'string') {
+    while (typeof parsed === "string") {
       parsed = JSON.parse(parsed);
     }
-    return Array.isArray(parsed) ? parsed.join(', ') : String(parsed);
+    return Array.isArray(parsed) ? parsed.join(", ") : String(parsed);
   } catch {
     return String(skills);
   }
 };
 
 const parseCommaSeparated = (value) => {
-  if (!value) return ['Not Specified'];
-  return value.split(',').map((item) => item.trim() || 'Not Specified');
+  if (!value) return ["Not Specified"];
+  return value.split(",").map((item) => item.trim() || "Not Specified");
 };
+
+const DetailField = ({ label, value, children }) => (
+  <Paper variant="outlined" sx={{ p: 2, height: "100%", borderRadius: 2 }}>
+    <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 0.5 }}>
+      {label}
+    </Typography>
+    {children || (
+      <Typography variant="body1" fontWeight={500}>
+        {value || "Not Specified"}
+      </Typography>
+    )}
+  </Paper>
+);
 
 const WorkDetails = () => {
   const [jobDetails, setJobDetails] = useState(null);
@@ -45,12 +68,11 @@ const WorkDetails = () => {
   const [hasApplied, setHasApplied] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
+  const snackbar = useAppSnackbar();
   const { isAuthenticated, logout } = useAuth();
 
-  // Get token from localStorage
-  const getToken = () => localStorage.getItem('accessToken');
+  const getToken = () => localStorage.getItem("accessToken");
 
-  // Fetch job details
   const fetchJobDetails = useCallback(async () => {
     try {
       setLoading(true);
@@ -62,21 +84,19 @@ const WorkDetails = () => {
       if (response.data.success) {
         setJobDetails(response.data.data);
       } else {
-        setError('Job details not found.');
+        setError("Job details not found.");
       }
     } catch (err) {
-      console.error('Error fetching job details:', err);
-      setError('Failed to load job details. Please try again later.');
+      console.error("Error fetching job details:", err);
+      setError("Failed to load job details. Please try again later.");
     } finally {
       setLoading(false);
     }
   }, [id]);
 
-  // Fetch application status
   const fetchApplicationStatus = useCallback(async () => {
     const token = getToken();
     if (!token || !isAuthenticated) {
-      // Assume not applied if user is not authenticated
       setHasApplied(false);
       return;
     }
@@ -88,349 +108,184 @@ const WorkDetails = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
 
-      if (response.data.success) {
-        setHasApplied(true);
-      } else {
-        setHasApplied(false);
-      }
+      setHasApplied(Boolean(response.data.success));
     } catch (err) {
-      console.error('Error checking application status:', err);
+      console.error("Error checking application status:", err);
       if (err.response?.status === 401) {
-        toast.error('Session expired. Please log in again.');
+        snackbar.error("Session expired. Please log in again.");
         logout();
-        navigate('/login');
+        navigate("/login");
       } else {
-        // Non-auth errors: assume not applied
         setHasApplied(false);
-        toast.error('Failed to check application status.');
+        snackbar.error("Failed to check application status.");
       }
     }
-  }, [id, isAuthenticated, logout, navigate]);
+  }, [id, isAuthenticated, logout, navigate, snackbar]);
 
   useEffect(() => {
     fetchJobDetails();
     fetchApplicationStatus();
   }, [fetchJobDetails, fetchApplicationStatus]);
 
-  // Render loading state
   if (loading) {
     return (
-      <div className="spinner-container mt-5" role="status">
-        <div className="spinner" aria-label="Loading job details"></div>
-        <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-      </div>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <LoadingState label="Loading job details..." />
+      </Container>
     );
   }
 
-  // Render error state
   if (error) {
     return (
-      <div className="error-container mt-5" role="alert">
-        <p>{error}</p>
-        <button className="color-btn btn" onClick={fetchJobDetails}>
-          Retry
-        </button>
-        <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-      </div>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <ErrorState title="Unable to load job" message={error} onRetry={fetchJobDetails} />
+      </Container>
     );
   }
 
-  // Render not found state
   if (!jobDetails) {
     return (
-      <div className="not-found-container mt-5" role="alert">
-        <p>Job not found.</p>
-        <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-      </div>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <EmptyState title="Job not found" message="The requested job could not be found." />
+      </Container>
     );
   }
 
-  // Destructure job details
   const {
     id: job_id = id,
-    title = 'Not Specified',
-    company_name = 'Not Specified',
-    location = 'Not Specified',
-    country = 'Not Specified',
-    employment_type = 'Not Specified',
+    title = "Not Specified",
+    company_name = "Not Specified",
+    location = "Not Specified",
+    country = "Not Specified",
+    employment_type = "Not Specified",
     skills,
-    qualifications = 'Not Specified',
-    experience_string = 'Not Specified',
-    experience_min = 'Not Specified',
-    experience_max = 'Not Specified',
-    specialization = 'Not Specified',
+    qualifications = "Not Specified",
+    experience_string = "Not Specified",
+    experience_min = "Not Specified",
+    experience_max = "Not Specified",
+    specialization = "Not Specified",
     start_date,
     end_date,
     posted_date,
-    telecommute = 'Not Specified',
-    sponser_visa = 'Not Specified',
-    industry = 'Not Specified',
-    functional_area = 'Not Specified',
-    domain = 'Not Specified',
-    english_proficiency = 'Not Specified',
-    number_of_posts = 'Not Specified',
-    address = 'Not Specified',
-    required_visa_status = 'Not Specified',
-    description = 'No description provided.',
-    responsibilities = 'Not Specified',
-    publish_status = 'Not Specified',
+    telecommute = "Not Specified",
+    sponser_visa = "Not Specified",
+    industry = "Not Specified",
+    functional_area = "Not Specified",
+    domain = "Not Specified",
+    english_proficiency = "Not Specified",
+    number_of_posts = "Not Specified",
+    address = "Not Specified",
+    required_visa_status = "Not Specified",
+    description = "No description provided.",
+    responsibilities = "Not Specified",
+    publish_status = "Not Specified",
     createdAt,
     updatedAt,
   } = jobDetails;
 
   return (
-    <div className="main-section work-details" role="main">
-      <section className="mba-section">
-        <div className="container">
-          <div className="row main-row">
-            <div className="col-12">
-              <div className="mba-main">
-                {/* Breadcrumb Navigation */}
-                <nav
-                  aria-label="breadcrumb"
-                  style={{
-                    '--bs-breadcrumb-divider':
-                      "url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%228%22 height=%228%22%3E%3Cpath d=%22M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z%22 fill=%22%236c757d%22/%3E%3C/svg%3E')",
-                  }}
-                >
-                  <ol className="breadcrumb">
-                    <li className="breadcrumb-item">
-                      <Link to="/work">Work</Link>
-                    </li>
-                    <li className="breadcrumb-item">
-                      <Link to="/jobs">Jobs</Link>
-                    </li>
-                    <li className="breadcrumb-item active" aria-current="page">
-                      {title} at {company_name}
-                    </li>
-                  </ol>
-                </nav>
+    <Box sx={{ py: { xs: 3, md: 5 } }}>
+      <Container maxWidth="lg">
+        <BrowseBreadcrumbs
+          items={[
+            { label: "Work", to: "/work" },
+            { label: "Jobs", to: "/work-filter" },
+            { label: `${title} at ${company_name}` },
+          ]}
+        />
 
-                <div className="mba-inner">
-                  <div className="mba-right-inner w-100">
-                    {/* Job Title and Company */}
-                    <div className="work-detail-head">
-                      <h3 className="text-decoration-none">
-                        {title} at {company_name}
-                      </h3>
-                      <div className="badge-label d-flex gap-3">
-                        <span className="badge rounded-pill text-bg-gray">{employment_type}</span>
-                      </div>
-                    </div>
+        <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, mb: 3, borderRadius: 3 }}>
+          <Stack direction={{ xs: "column", sm: "row" }} sx={{ justifyContent: "space-between", alignItems: "flex-start", gap: 2, mb: 2 }}>
+            <Box>
+              <Typography variant="h4" component="h1" fontWeight={700} sx={{ mb: 1 }}>
+                {title} at {company_name}
+              </Typography>
+              <Typography color="text.secondary">
+                {location}, {country}
+              </Typography>
+            </Box>
+            <Chip label={employment_type} color="default" />
+          </Stack>
 
-                    {/* Location */}
-                    <div className="mba-right-bottom">
-                      <div className="mba-right-sub-data">
-                        <span>Location(s):</span>
-                        <p>
-                          {location}, {country}
-                        </p>
-                      </div>
-                    </div>
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}><DetailField label="Job ID" value={job_id} /></Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}><DetailField label="Start Date" value={formatDate(start_date)} /></Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}><DetailField label="Expiry Date" value={formatDate(end_date)} /></Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}><DetailField label="Posted On" value={formatDate(posted_date)} /></Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}><DetailField label="Experience" value={experience_string} /></Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}><DetailField label="Telecommute" value={telecommute} /></Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}><DetailField label="Sponsor Visa" value={sponser_visa} /></Grid>
+          </Grid>
 
-                    {/* Job Details */}
-                    <div className="job-detail-row">
-                      <div className="id-inner">
-                        <div className="id-data">
-                          <h4>Job ID</h4>
-                          <span>{job_id}</span>
-                        </div>
-                        <div className="id-data">
-                          <h4>Start Date</h4>
-                          <span>{formatDate(start_date)}</span>
-                        </div>
-                        <div className="id-data">
-                          <h4>Expiry Date</h4>
-                          <span>{formatDate(end_date)}</span>
-                        </div>
-                        <div className="id-data">
-                          <h4>Posted On</h4>
-                          <span>{formatDate(posted_date)}</span>
-                        </div>
-                        <div className="id-data">
-                          <h4>Experience</h4>
-                          <span>{experience_string}</span>
-                        </div>
-                        <div className="id-data">
-                          <h4>Telecommute</h4>
-                          <span>{telecommute}</span>
-                        </div>
-                        <div className="id-data">
-                          <h4>Sponsor Visa</h4>
-                          <span>{sponser_visa}</span>
-                        </div>
-                      </div>
-                    </div>
+          <Button
+            component={hasApplied ? "button" : RouterLink}
+            to={hasApplied ? undefined : `/job-apply-form/${job_id}`}
+            variant="contained"
+            color="primary"
+            disabled={hasApplied}
+            sx={{ borderRadius: "50px", textTransform: "none", fontWeight: 600, px: 4 }}
+          >
+            {hasApplied ? "Applied" : "Apply"}
+          </Button>
+        </Paper>
 
-                    {/* Apply Button */}
-                    <div className="job-apply-btn">
-                      <Link
-                        to={hasApplied ? '#' : `/job-apply-form/${job_id}`}
-                        className={`color-btn btn ${hasApplied ? 'disabled' : ''}`}
-                        aria-label={
-                          hasApplied
-                            ? `Already applied for ${title} at ${company_name}`
-                            : `Apply for ${title} at ${company_name}`
-                        }
-                        style={hasApplied ? { pointerEvents: 'none', opacity: 0.6 } : {}}
-                      >
-                        {hasApplied ? 'Applied' : 'Apply'}
-                      </Link>
-                    </div>
-                  </div>
-                </div>
+        <Typography variant="h5" fontWeight={700} sx={{ mb: 2 }}>
+          Requirement Summary
+        </Typography>
+        <Grid container spacing={2} sx={{ mb: 4 }}>
+          <Grid size={{ xs: 12, sm: 6 }}><DetailField label="Experience Range" value={`Min: ${experience_min} - Max: ${experience_max} year(s)`} /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><DetailField label="Specialization" value={specialization} /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><DetailField label="Industry" value={industry} /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><DetailField label="Functional Area" value={functional_area} /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><DetailField label="Domain" value={domain} /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><DetailField label="English Proficiency" value={english_proficiency} /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><DetailField label="Number of Posts" value={number_of_posts} /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><DetailField label="Address" value={address} /></Grid>
+        </Grid>
 
-                {/* Requirement Summary */}
-                <div className="institute-details-main">
-                  <h3>Requirement Summary</h3>
-                  <div className="requirement-summary-row">
-                    <div className="id-inner">
-                      <div className="id-data">
-                        <h4>Experience Range</h4>
-                        <span>
-                          Min: {experience_min} - Max: {experience_max} year(s)
-                        </span>
-                      </div>
-                      <div className="id-data">
-                        <h4>Specialization</h4>
-                        <span>{specialization}</span>
-                      </div>
-                      <div className="id-data">
-                        <h4>Industry</h4>
-                        <span>{industry}</span>
-                      </div>
-                      <div className="id-data">
-                        <h4>Functional Area</h4>
-                        <span>{functional_area}</span>
-                      </div>
-                      <div className="id-data">
-                        <h4>Domain</h4>
-                        <span>{domain}</span>
-                      </div>
-                      <div className="id-data">
-                        <h4>English Proficiency</h4>
-                        <span>{english_proficiency}</span>
-                      </div>
-                      <div className="id-data">
-                        <h4>Number of Posts</h4>
-                        <span>{number_of_posts}</span>
-                      </div>
-                      <div className="id-data">
-                        <h4>Address</h4>
-                        <span>{address}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        <Grid container spacing={2} sx={{ mb: 4 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <DetailField label="Required Visa Status">
+              <Stack component="ul" spacing={0.5} sx={{ m: 0, pl: 2 }}>
+                {parseCommaSeparated(required_visa_status).map((status, index) => (
+                  <Typography component="li" key={index} variant="body2">{status}</Typography>
+                ))}
+              </Stack>
+            </DetailField>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <DetailField label="Employment Type" value={employment_type} />
+          </Grid>
+        </Grid>
 
-                {/* Visa Status and Employment Type */}
-                <div className="institute-details-main course-overview">
-                  <div className="required-visa-status">
-                    <div className="id-inner">
-                      <div className="id-data">
-                        <h3>Required Visa Status</h3>
-                        <ul className="description-inner">
-                          {parseCommaSeparated(required_visa_status).map((status, index) => (
-                            <li key={index}>{status}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="id-data">
-                        <h3>Employment Type</h3>
-                        <ul className="description-inner">
-                          <li>{employment_type}</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        <Typography variant="h5" fontWeight={700} sx={{ mb: 1 }}>
+          Job Description
+        </Typography>
+        <Paper variant="outlined" sx={{ p: 2, mb: 4, borderRadius: 2 }}>
+          <Typography color="text.secondary">{description}</Typography>
+        </Paper>
 
-                {/* Job Description */}
-                <div className="job-desc institute-details-main">
-                  <h3>Job Description</h3>
-                  <div className="editor-box">
-                    <p>{description}</p>
-                  </div>
-                </div>
+        <Typography variant="h5" fontWeight={700} sx={{ mb: 2 }}>
+          Additional Details
+        </Typography>
+        <Grid container spacing={2} sx={{ mb: 4 }}>
+          <Grid size={{ xs: 12, sm: 4 }}><DetailField label="Publish Status" value={publish_status} /></Grid>
+          <Grid size={{ xs: 12, sm: 4 }}><DetailField label="Created At" value={formatDate(createdAt)} /></Grid>
+          <Grid size={{ xs: 12, sm: 4 }}><DetailField label="Updated At" value={formatDate(updatedAt)} /></Grid>
+        </Grid>
 
-                {/* Additional Details */}
-                <div className="institute-details-main">
-                  <h3>Additional Details</h3>
-                  <div className="additional-details-row">
-                    <div className="id-inner">
-                      <div className="id-data">
-                        <h4>Publish Status</h4>
-                        <span>{publish_status}</span>
-                      </div>
-                      <div className="id-data">
-                        <h4>Created At</h4>
-                        <span>{formatDate(createdAt)}</span>
-                      </div>
-                      <div className="id-data">
-                        <h4>Updated At</h4>
-                        <span>{formatDate(updatedAt)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Skills, Education, Responsibilities */}
-          <div className="bottom-row row">
-            <div className="col-lg-4">
-              <div className="institute-details-main">
-                <div className="skills">
-                  <h3>Skills</h3>
-                  <div className="id-inner">
-                    <div className="id-data">
-                      <ul className="description-inner">
-                        <li>{parseSkills(skills)}</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-4">
-              <div className="institute-details-main">
-                <div className="education">
-                  <h3>Qualification</h3>
-                  <div className="id-inner">
-                    <div className="id-data">
-                      <ul className="description-inner">
-                        <li>{qualifications}</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-4">
-              <div className="institute-details-main">
-                <div className="responsibilities">
-                  <h3>Responsibilities</h3>
-                  <div className="id-inner">
-                    <div className="id-data">
-                      <ul className="description-inner">
-                        <li>{responsibilities}</li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-    </div>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 4 }}><DetailField label="Skills" value={parseSkills(skills)} /></Grid>
+          <Grid size={{ xs: 12, md: 4 }}><DetailField label="Qualification" value={qualifications} /></Grid>
+          <Grid size={{ xs: 12, md: 4 }}><DetailField label="Responsibilities" value={responsibilities} /></Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 
