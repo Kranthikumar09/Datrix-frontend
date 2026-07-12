@@ -12,9 +12,6 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import FormHelperText from "@mui/material/FormHelperText";
 import CircularProgress from "@mui/material/CircularProgress";
 import RightArrow from "../assets/images/right-arrow.svg";
 import travelBannerImage from "../assets/images/sdgf.jpg";
@@ -22,27 +19,7 @@ import config from "../config/config";
 import { useAppSnackbar } from "../components/ui/AppSnackbar";
 import PageBanner from "../components/ui/PageBanner";
 import AppTextField from "../components/ui/AppTextField";
-
-const phoneFieldSx = (hasError) => ({
-  "& .iti": { width: "100%" },
-  "& .iti__flag-container": { zIndex: 2 },
-  "& input": {
-    width: "100%",
-    minHeight: 56,
-    borderRadius: 1,
-    border: "1px solid",
-    borderColor: hasError ? "error.main" : "divider",
-    px: 1.5,
-    fontFamily: "inherit",
-    fontSize: "1rem",
-    bgcolor: "background.paper",
-    outline: "none",
-    boxSizing: "border-box",
-    "&:focus": {
-      borderColor: hasError ? "error.main" : "primary.main",
-    },
-  },
-});
+import AppPhoneField from "../components/ui/AppPhoneField";
 
 const TravelForm = () => {
   const snackbar = useAppSnackbar();
@@ -95,6 +72,7 @@ const TravelForm = () => {
       const iti = intlTelInput(input, {
         initialCountry: selectedCountryCode,
         separateDialCode: true,
+        autoPlaceholder: "off",
         utilsScript:
           "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
       });
@@ -428,39 +406,27 @@ const TravelForm = () => {
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <FormControl
-                          fullWidth
+                        <AppPhoneField
+                          id="phoneNumber"
+                          label="Phone Number *"
+                          ref={phoneInputRef}
                           error={Boolean(errors.phoneNumber)}
-                          className="phone-group"
-                        >
-                          <FormLabel
-                            htmlFor="phoneNumber"
-                            sx={{ mb: 1, fontWeight: 600 }}
-                          >
-                            Phone Number *
-                          </FormLabel>
-                          <Box sx={phoneFieldSx(Boolean(errors.phoneNumber))}>
-                            <input
-                              id="phoneNumber"
-                              type="tel"
-                              ref={phoneInputRef}
-                              name="phoneNumber"
-                              value={formData.phoneNumber}
-                              onChange={(e) => {
-                                const rawNumber = e.target.value.replace(/\D/g, "");
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  phoneNumber: rawNumber,
-                                }));
-                                validateField("phoneNumber", rawNumber);
-                              }}
-                              placeholder="e.g., 1234567890"
-                            />
-                          </Box>
-                          <FormHelperText>
-                            {errors.phoneNumber || " "}
-                          </FormHelperText>
-                        </FormControl>
+                          helperText={errors.phoneNumber || " "}
+                          inputProps={{
+                            name: "phoneNumber",
+                            value: formData.phoneNumber,
+                            onChange: (e) => {
+                              const rawNumber = e.target.value.replace(/\D/g, "");
+                              setFormData((prev) => ({
+                                ...prev,
+                                phoneNumber: rawNumber,
+                              }));
+                              validateField("phoneNumber", rawNumber);
+                            },
+                            inputMode: "numeric",
+                            autoComplete: "tel-national",
+                          }}
+                        />
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>

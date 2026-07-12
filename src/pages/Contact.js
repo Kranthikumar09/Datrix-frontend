@@ -9,8 +9,6 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
 import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
@@ -26,33 +24,13 @@ import { useAppSnackbar } from "../components/ui/AppSnackbar";
 import PageBanner from "../components/ui/PageBanner";
 import AppTextField from "../components/ui/AppTextField";
 import AppSelect from "../components/ui/AppSelect";
+import AppPhoneField from "../components/ui/AppPhoneField";
 
 const SUBJECT_OPTIONS = [
   "General Inquiry",
   "Study Application",
   "Work Visa",
 ];
-
-const phoneFieldSx = {
-  "& .iti": { width: "100%" },
-  "& .iti__flag-container": { zIndex: 2 },
-  "& input": {
-    width: "100%",
-    minHeight: 56,
-    borderRadius: 1,
-    border: "1px solid",
-    borderColor: "divider",
-    px: 1.5,
-    fontFamily: "inherit",
-    fontSize: "1rem",
-    bgcolor: "background.paper",
-    outline: "none",
-    boxSizing: "border-box",
-    "&:focus": {
-      borderColor: "primary.main",
-    },
-  },
-};
 
 const Contact = () => {
   const snackbar = useAppSnackbar();
@@ -99,6 +77,7 @@ const Contact = () => {
       const iti = intlTelInput(input, {
         initialCountry: selectedCountry,
         separateDialCode: true,
+        autoPlaceholder: "off",
       });
       itiRef.current = iti;
       input.addEventListener("countrychange", () => {
@@ -346,26 +325,22 @@ const Contact = () => {
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 6 }}>
-                      <FormControl fullWidth className="phone-group">
-                        <FormLabel htmlFor="phone_number" sx={{ mb: 1, fontWeight: 600 }}>
-                          Mobile number *
-                        </FormLabel>
-                        <Box sx={phoneFieldSx}>
-                          <input
-                            ref={phoneInputRef}
-                            type="tel"
-                            id="phone_number"
-                            name="phone_number"
-                            value={formData.phone_number}
-                            onChange={handleChange}
-                            required
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            maxLength={15}
-                            minLength={8}
-                          />
-                        </Box>
-                      </FormControl>
+                      <AppPhoneField
+                        id="phone_number"
+                        label="Mobile number *"
+                        ref={phoneInputRef}
+                        inputProps={{
+                          name: "phone_number",
+                          value: formData.phone_number,
+                          onChange: handleChange,
+                          required: true,
+                          inputMode: "numeric",
+                          pattern: "[0-9]*",
+                          maxLength: 15,
+                          minLength: 8,
+                          autoComplete: "tel-national",
+                        }}
+                      />
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 6 }}>
