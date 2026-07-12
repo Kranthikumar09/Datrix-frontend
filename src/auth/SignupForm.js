@@ -14,9 +14,8 @@ import Link from "@mui/material/Link";
 import Divider from "@mui/material/Divider";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+import FormHelperText from "@mui/material/FormHelperText";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -27,6 +26,7 @@ import FacebookIcon from "@mui/icons-material/Facebook";
 import { useAuth } from "../context/AuthContext";
 import { useAppSnackbar } from "../components/ui/AppSnackbar";
 import AppTextField from "../components/ui/AppTextField";
+import AppPhoneField from "../components/ui/AppPhoneField";
 import config from "../config/config";
 import GoogleLogo from "../assets/images/g-logo.svg";
 import WhatsappImg from "../assets/images/whstsapp-img.svg";
@@ -106,6 +106,7 @@ const SignupForm = ({ redirect }) => {
   const { login } = useAuth();
   const snackbar = useAppSnackbar();
   const nameInputRef = useRef(null);
+  const phoneInputRef = useRef(null);
   const debounceTimer = useRef(null);
 
   const [formData, setFormData] = useState({
@@ -132,12 +133,13 @@ const SignupForm = ({ redirect }) => {
   }, []);
 
   useEffect(() => {
-    const input = document.querySelector("#signup_phone_number");
+    const input = phoneInputRef.current;
     if (!input) return undefined;
 
     const iti = intlTelInput(input, {
       initialCountry: "in",
       separateDialCode: true,
+      autoPlaceholder: "off",
     });
 
     const onCountryChange = () => {
@@ -379,50 +381,26 @@ const SignupForm = ({ redirect }) => {
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }}>
-          <FormControl
-            fullWidth
+          <AppPhoneField
+            id="signup_phone_number"
+            label="Phone Number *"
+            ref={phoneInputRef}
             error={Boolean(touched.phone_number && errors.phone_number)}
+            helperText={touched.phone_number && errors.phone_number ? errors.phone_number : " "}
+            helperTextId="phone-error"
             disabled={isLoading}
-            className="phone-group signup"
-          >
-            <FormLabel htmlFor="signup_phone_number" sx={{ mb: 1, fontWeight: 500 }}>
-              Phone Number *
-            </FormLabel>
-            <Box
-              sx={{
-                "& .iti": { width: "100%" },
-                "& .iti__flag-container": { zIndex: 2 },
-                "& input.form-control": {
-                  width: "100%",
-                  minHeight: 48,
-                  borderRadius: 1,
-                  border: "1px solid",
-                  borderColor:
-                    touched.phone_number && errors.phone_number ? "error.main" : "divider",
-                  px: 1.5,
-                  fontFamily: "inherit",
-                },
-              }}
-            >
-              <input
-                id="signup_phone_number"
-                type="tel"
-                className="form-control"
-                name="phone_number"
-                value={formData.phone_number}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                required
-                disabled={isLoading}
-                aria-describedby="phone-error"
-                aria-invalid={touched.phone_number && errors.phone_number ? "true" : "false"}
-                autoComplete="tel-national"
-              />
-            </Box>
-            <FormHelperText id="phone-error">
-              {touched.phone_number && errors.phone_number ? errors.phone_number : " "}
-            </FormHelperText>
-          </FormControl>
+            className="signup"
+            inputProps={{
+              name: "phone_number",
+              value: formData.phone_number,
+              onChange: handleChange,
+              onBlur: handleBlur,
+              required: true,
+              "aria-invalid": touched.phone_number && errors.phone_number ? "true" : "false",
+              autoComplete: "tel-national",
+              className: "form-control",
+            }}
+          />
         </Grid>
 
         <Grid size={{ xs: 12, md: 6 }}>
@@ -494,7 +472,7 @@ const SignupForm = ({ redirect }) => {
                 />
               }
               label={
-                <Stack direction="row" spacing={1} alignItems="center">
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                   <Box component="img" src={WhatsappImg} alt="WhatsApp" sx={{ height: 22 }} />
                   <Typography variant="body2">Receive WhatsApp updates</Typography>
                 </Stack>

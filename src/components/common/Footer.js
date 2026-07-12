@@ -189,13 +189,13 @@ const Footer = forwardRef((props, ref) => {
                 Contact
               </Typography>
               <Stack spacing={2}>
-                <Stack direction="row" spacing={1.25} alignItems="flex-start">
+                <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start" }}>
                   <EmailOutlinedIcon sx={{ color: "primary.main", fontSize: 20, mt: 0.25 }} />
                   <Typography variant="body2" sx={{ color: "text.muted", fontWeight: 500 }}>
                     {contactEmail}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.25} alignItems="flex-start">
+                <Stack direction="row" spacing={1.25} sx={{ alignItems: "flex-start" }}>
                   <PhoneIphoneOutlinedIcon sx={{ color: "primary.main", fontSize: 20, mt: 0.25 }} />
                   <Typography variant="body2" sx={{ color: "text.muted", fontWeight: 500 }}>
                     {contactPhone}

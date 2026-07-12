@@ -598,7 +598,7 @@ const ApplicationForm = () => {
     <div className="main-section">
       <ToastContainer theme="colored" position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
 
-      <main>
+      <main className="wizard-layout">
         <div className="left-side-divider" style={{ width: '377px' }}>
           <Link to="/" className="d-flex navbar-brand align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
             <img src={logoImg} alt="logo-img" />

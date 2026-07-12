@@ -1758,8 +1758,9 @@ section {
 }
 
 
-/*--------------------choose contry-------------------------*/
-main {
+/*--------------------choose contry / application wizard-------------------------*/
+/* Scoped to wizard pages only. Global `main` broke marketing pages that use <main>. */
+main.wizard-layout {
   display: flex;
   flex-wrap: nowrap;
   height: 100vh;

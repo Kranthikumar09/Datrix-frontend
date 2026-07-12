@@ -368,8 +368,54 @@
     right: 0;
 }
 
-.iti__search-input {
-    outline: none !important;
+.phone-group.phone-group--mui .iti,
+.phone-group.phone-group--mui .intl-tel-input {
+    width: 100% !important;
+    display: flex !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    height: 100%;
+}
+
+.phone-group.phone-group--mui input[type="tel"],
+.phone-group.phone-group--mui input.form-control {
+    padding: 0 14px 0 12px !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    height: 100% !important;
+    min-height: 100% !important;
+}
+
+.phone-group.phone-group--mui .iti__country-container,
+.phone-group.phone-group--mui .intl-tel-input .flag-container,
+.phone-group.phone-group--mui .iti__flag-container {
+    position: relative !important;
+    max-width: none;
+    height: 100%;
+}
+
+.phone-group.phone-group--mui .iti__country-container button,
+.phone-group.phone-group--mui .intl-tel-input .flag-container .selected-flag,
+.phone-group.phone-group--mui .iti__selected-flag {
+    height: 100% !important;
+    min-height: 100% !important;
+    min-width: auto;
+    border: none !important;
+    border-radius: 0 !important;
+    background-image: none !important;
+    background-color: transparent !important;
+    padding: 0 10px 0 12px !important;
+}
+
+.phone-group.phone-group--mui .iti__selected-country-primary {
+    display: flex !important;
+    align-items: center;
+    background: transparent !important;
+}
+
+.phone-group.phone-group--mui .iti__dropdown-content {
+    top: 58px;
 }
 
 .terms-content {
@@ -1264,7 +1310,7 @@
     z-index: 999;
     position: relative;
 }
-    main {
+    main.wizard-layout {
         display: flex;
         flex-wrap: wrap;
         max-height: 100%;

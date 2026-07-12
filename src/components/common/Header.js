@@ -106,7 +106,7 @@ const Header = () => {
     : FALLBACK_LOGO;
 
   const authActions = (
-    <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="stretch">
+    <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ alignItems: "stretch" }}>
       {isAuthenticated ? (
         <>
           <Button
@@ -186,7 +186,7 @@ const Header = () => {
       sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column" }}
       role="presentation"
     >
-      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2 }}>
+      <Stack direction="row" sx={{ p: 2, alignItems: "center", justifyContent: "space-between" }}>
         <Box
           component={RouterLink}
           to="/"
@@ -230,7 +230,7 @@ const Header = () => {
             >
               <ListItemText
                 primary={item.label}
-                primaryTypographyProps={{ fontWeight: active ? 600 : 500 }}
+                slotProps={{ primary: { sx: { fontWeight: active ? 600 : 500 } } }}
               />
             </ListItemButton>
           );
@@ -283,11 +283,11 @@ const Header = () => {
           <Stack
             direction="row"
             spacing={0.5}
-            alignItems="center"
             sx={{
               display: { xs: "none", lg: "flex" },
               flexGrow: 1,
               ml: 2,
+              alignItems: "center",
             }}
             component="nav"
             aria-label="Primary"

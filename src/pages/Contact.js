@@ -1,349 +1,429 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import intlTelInput from "intl-tel-input";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "intl-tel-input/build/css/intlTelInput.css";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
+import CircularProgress from "@mui/material/CircularProgress";
+import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
 import RightArrow from "../assets/images/right-arrow.svg";
-import mapIcon from "../assets/images/map1.svg";
 import smstrackingIcon from "../assets/images/smstracking.svg";
 import mobileIcon from "../assets/images/mobile.svg";
 import linkedinIcon from "../assets/images/linkedin.svg";
 import fbIcon from "../assets/images/fb.svg";
 import instaIcon from "../assets/images/insta.svg";
 import youtubeIcon from "../assets/images/youtube.svg";
-import config from '../config/config';
+import config from "../config/config";
+import { useAppSnackbar } from "../components/ui/AppSnackbar";
+import PageBanner from "../components/ui/PageBanner";
+import AppTextField from "../components/ui/AppTextField";
+import AppSelect from "../components/ui/AppSelect";
+import AppPhoneField from "../components/ui/AppPhoneField";
+
+const SUBJECT_OPTIONS = [
+  "General Inquiry",
+  "Study Application",
+  "Work Visa",
+];
 
 const Contact = () => {
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        phone_number: "",
-        subject: "General Inquiry",
-        message: "",
-        honeypot: "", // Added honeypot field
+  const snackbar = useAppSnackbar();
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone_number: "",
+    subject: "General Inquiry",
+    message: "",
+    honeypot: "",
+  });
+  const [siteContent, setSiteContent] = useState({
+    contact_address: "",
+    contact_email: "",
+    contact_phone_number: "",
+    contact_social_linkedin: "",
+    contact_social_instagram: "",
+    contact_social_facebook: "",
+    contact_social_youtube: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState("in");
+  const phoneInputRef = useRef(null);
+  const itiRef = useRef(null);
+
+  useEffect(() => {
+    const fetchSiteContent = async () => {
+      try {
+        const response = await axios.get(
+          `${config.baseURL}/site-content/general-content/get`
+        );
+        if (response.data.success) {
+          setSiteContent(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching site content:", error);
+      }
+    };
+
+    fetchSiteContent();
+
+    const input = phoneInputRef.current;
+    if (input) {
+      const iti = intlTelInput(input, {
+        initialCountry: selectedCountry,
+        separateDialCode: true,
+        autoPlaceholder: "off",
+      });
+      itiRef.current = iti;
+      input.addEventListener("countrychange", () => {
+        setSelectedCountry(iti.getSelectedCountryData().iso2);
+      });
+      return () => {
+        iti.destroy();
+      };
+    }
+    // selectedCountry is only used for initialCountry on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      email: "",
+      phone_number: "",
+      subject: "General Inquiry",
+      message: "",
+      honeypot: "",
     });
-    const [siteContent, setSiteContent] = useState({
-        contact_address: "",
-        contact_email: "",
-        contact_phone_number: "",
-        contact_social_linkedin: "",
-        contact_social_instagram: "",
-        contact_social_facebook: "",
-        contact_social_youtube: ""
-    });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [selectedCountry, setSelectedCountry] = useState("in"); // Default to India
-    const phoneInputRef = useRef(null); // Ref to store phone input element
-    const itiRef = useRef(null); // Ref to store intlTelInput instance
+    setSelectedCountry("in");
+    if (phoneInputRef.current && itiRef.current) {
+      itiRef.current.setCountry("in");
+    }
+  };
 
-    useEffect(() => {
-        const fetchSiteContent = async () => {
-            try {
-                const response = await axios.get(`${config.baseURL}/site-content/general-content/get`);
-                if (response.data.success) {
-                    setSiteContent(response.data.data);
-                }
-            } catch (error) {
-                console.error("Error fetching site content:", error);
-            }
-        };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        fetchSiteContent();
+    if (formData.honeypot) {
+      snackbar.error("Bot submission detected.");
+      console.log("Honeypot triggered:", formData.honeypot);
+      return;
+    }
 
-        const input = document.querySelector("#phone_number");
-        phoneInputRef.current = input;
-        if (input) {
-            const iti = intlTelInput(input, {
-                initialCountry: selectedCountry,
-                separateDialCode: true
-            });
-            itiRef.current = iti; // Store the instance
-            // Update selected country when user changes it
-            input.addEventListener("countrychange", () => {
-                setSelectedCountry(iti.getSelectedCountryData().iso2);
-            });
-            return () => {
-                iti.destroy(); // Cleanup on unmount
-            };
-        }
-    }, []);
+    const trimmedName = formData.name.trim();
+    if (!trimmedName || trimmedName.length === 0) {
+      snackbar.error("Name cannot be empty or contain only spaces.");
+      return;
+    }
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      snackbar.error("Please enter a valid email address.");
+      return;
+    }
+
+    const trimmedPhone = formData.phone_number.trim();
+    if (!trimmedPhone || !/^\d{8,15}$/.test(trimmedPhone)) {
+      snackbar.error("Please enter a valid phone number (8-15 digits).");
+      return;
+    }
+
+    if (!formData.message.trim()) {
+      snackbar.error("Message cannot be empty.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const iti = itiRef.current;
+    const phoneCode = iti.getSelectedCountryData().dialCode;
+
+    const updatedFormData = {
+      ...formData,
+      name: trimmedName,
+      phone_code: `+${phoneCode}`,
+      phone_number: trimmedPhone,
     };
 
-    const resetForm = () => {
-        setFormData({
-            name: "",
-            email: "",
-            phone_number: "",
-            subject: "General Inquiry",
-            message: "",
-            honeypot: "", // Reset honeypot field
-        });
-        setSelectedCountry("in"); // Reset country to India
-        if (phoneInputRef.current && itiRef.current) {
-            itiRef.current.setCountry("in"); // Reset intl-tel-input to India
-        }
-    };
+    try {
+      const response = await axios.post(
+        `${config.baseURL}/contact-requests/submit`,
+        updatedFormData
+      );
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+      if (response.data.success) {
+        snackbar.success("Your message has been sent successfully! 🎉");
+        resetForm();
+      } else {
+        snackbar.error("Failed to submit. Please check your details.");
+      }
+    } catch (error) {
+      snackbar.error("Failed to submit. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-        // Check if honeypot field is filled
-        if (formData.honeypot) {
-            toast.error("Bot submission detected.", { position: "top-right" });
-            console.log("Honeypot triggered:", formData.honeypot);
-            return;
-        }
+  const socialLinks = [
+    { link: siteContent.contact_social_linkedin, icon: linkedinIcon, alt: "LinkedIn" },
+    { link: siteContent.contact_social_facebook, icon: fbIcon, alt: "Facebook" },
+    { link: siteContent.contact_social_instagram, icon: instaIcon, alt: "Instagram" },
+    { link: siteContent.contact_social_youtube, icon: youtubeIcon, alt: "YouTube" },
+  ].filter((social) => social.link && social.link.trim() !== "");
 
-        // Validate name field
-        const trimmedName = formData.name.trim();
-        if (!trimmedName || trimmedName.length === 0) {
-            toast.error("Name cannot be empty or contain only spaces.", { position: "top-right" });
-            return;
-        }
+  return (
+    <Box component="main">
+      <PageBanner
+        title="Let's Connect"
+        subtitle="We'd love to hear from you! Whether you have a question, suggestion, or just want to chat, don't hesitate to reach out."
+      />
 
-        // Validate email field
-        if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            toast.error("Please enter a valid email address.", { position: "top-right" });
-            return;
-        }
+      <Box component="section" sx={{ pb: { xs: 6, md: 12.5 }, pt: 2 }}>
+        <Container maxWidth="lg">
+          <Box
+            sx={{
+              bgcolor: "rgba(226, 64, 60, 0.05)",
+              p: 1.25,
+              borderRadius: 2.5,
+              minHeight: 250,
+            }}
+          >
+            <Grid container spacing={0}>
+              <Grid size={{ xs: 12, lg: 5 }}>
+                <Box
+                  sx={{
+                    bgcolor: "primary.main",
+                    borderRadius: 2.5,
+                    p: { xs: 3, md: 5 },
+                    height: "100%",
+                    position: "relative",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    minHeight: { xs: 280, lg: "100%" },
+                  }}
+                >
+                  <Box>
+                    <Typography
+                      variant="h5"
+                      component="h2"
+                      sx={{ color: "common.white", fontWeight: 600, mb: 1.5 }}
+                    >
+                      Contact Information
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{ color: "common.white", mb: 3, opacity: 0.95 }}
+                    >
+                      We're here to assist you! Feel free to get in touch through any of
+                      the following channels.
+                    </Typography>
+                    <Stack spacing={2} component="ul" sx={{ listStyle: "none", m: 0, p: 0 }}>
+                      <Box
+                        component="li"
+                        sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                      >
+                        <Box
+                          component="img"
+                          src={smstrackingIcon}
+                          alt="Email"
+                          sx={{ width: 24, height: 24 }}
+                        />
+                        <Typography sx={{ color: "common.white" }}>
+                          {siteContent.contact_email}
+                        </Typography>
+                      </Box>
+                      <Box
+                        component="li"
+                        sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                      >
+                        <Box
+                          component="img"
+                          src={mobileIcon}
+                          alt="Phone"
+                          sx={{ width: 24, height: 24 }}
+                        />
+                        <Typography sx={{ color: "common.white" }}>
+                          {siteContent.contact_phone_number}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  </Box>
 
-        // Validate phone number field
-        const trimmedPhone = formData.phone_number.trim();
-        if (!trimmedPhone || !/^\d{8,15}$/.test(trimmedPhone)) {
-            toast.error("Please enter a valid phone number (8-15 digits).", { position: "top-right" });
-            return;
-        }
+                  {socialLinks.length > 0 ? (
+                    <Stack direction="row" spacing={1.5} sx={{ mt: 4 }}>
+                      {socialLinks.map((social) => (
+                        <IconButton
+                          key={social.alt}
+                          component={Link}
+                          href={social.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={social.alt}
+                          sx={{
+                            bgcolor: "rgba(255,255,255,0.15)",
+                            "&:hover": { bgcolor: "rgba(255,255,255,0.3)" },
+                          }}
+                        >
+                          <Box
+                            component="img"
+                            src={social.icon}
+                            alt={social.alt}
+                            sx={{ width: 20, height: 20 }}
+                          />
+                        </IconButton>
+                      ))}
+                    </Stack>
+                  ) : null}
+                </Box>
+              </Grid>
 
-        // Validate message field
-        if (!formData.message.trim()) {
-            toast.error("Message cannot be empty.", { position: "top-right" });
-            return;
-        }
+              <Grid size={{ xs: 12, lg: 7 }}>
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit}
+                  noValidate
+                  sx={{ p: { xs: 2, md: 4 } }}
+                >
+                  <Grid container spacing={2.5}>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <AppTextField
+                        label="Name *"
+                        name="name"
+                        placeholder="Name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        fullWidth
+                        inputProps={{ maxLength: 60 }}
+                      />
+                    </Grid>
 
-        setIsSubmitting(true);
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <AppSelect
+                        id="subject"
+                        label="Select Subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleChange}
+                      >
+                        {SUBJECT_OPTIONS.map((option) => (
+                          <MenuItem key={option} value={option}>
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </AppSelect>
+                    </Grid>
 
-        const phoneInput = phoneInputRef.current;
-        const iti = itiRef.current;
-        const phoneCode = iti.getSelectedCountryData().dialCode;
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <AppPhoneField
+                        id="phone_number"
+                        label="Mobile number *"
+                        ref={phoneInputRef}
+                        inputProps={{
+                          name: "phone_number",
+                          value: formData.phone_number,
+                          onChange: handleChange,
+                          required: true,
+                          inputMode: "numeric",
+                          pattern: "[0-9]*",
+                          maxLength: 15,
+                          minLength: 8,
+                          autoComplete: "tel-national",
+                        }}
+                      />
+                    </Grid>
 
-        const updatedFormData = {
-            ...formData,
-            name: trimmedName, // Send trimmed name to backend
-            phone_code: `+${phoneCode}`,
-            phone_number: trimmedPhone, // Send trimmed phone number
-        };
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <AppTextField
+                        label="Email *"
+                        name="email"
+                        type="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        fullWidth
+                      />
+                    </Grid>
 
-        try {
-            const response = await axios.post(`${config.baseURL}/contact-requests/submit`, updatedFormData);
+                    <Grid size={12}>
+                      <AppTextField
+                        label="Message *"
+                        name="message"
+                        placeholder="Write your message.."
+                        value={formData.message}
+                        onChange={handleChange}
+                        required
+                        fullWidth
+                        multiline
+                        rows={5}
+                      />
+                    </Grid>
 
-            if (response.data.success) {
-                toast.success("Your message has been sent successfully! 🎉", { position: "top-right" });
-                resetForm(); // Reset form and country code after successful submission
-            } else {
-                toast.error("Failed to submit. Please check your details.", { position: "top-right" });
-            }
-        } catch (error) {
-            toast.error("Failed to submit. Please try again later.", { position: "top-right" });
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+                    {/* Honeypot Field */}
+                    <Box sx={{ display: "none" }} aria-hidden="true">
+                      <label htmlFor="honeypot">Website</label>
+                      <input
+                        id="honeypot"
+                        type="text"
+                        name="honeypot"
+                        value={formData.honeypot}
+                        onChange={handleChange}
+                        tabIndex={-1}
+                        autoComplete="off"
+                      />
+                    </Box>
 
-    const socialLinks = [
-        { link: siteContent.contact_social_linkedin, icon: linkedinIcon, alt: "LinkedIn" },
-        { link: siteContent.contact_social_facebook, icon: fbIcon, alt: "Facebook" },
-        { link: siteContent.contact_social_instagram, icon: instaIcon, alt: "Instagram" },
-        { link: siteContent.contact_social_youtube, icon: youtubeIcon, alt: "YouTube" }
-    ].filter(social => social.link && social.link.trim() !== "");
-
-    return (
-        <>
-            <ToastContainer theme="colored" />
-
-            <div className="main-section">
-                <section className="page-banner">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="pagebanner-text">
-                                    <h1>Let's Connect</h1>
-                                    <p>
-                                        We’d love to hear from you! Whether you have a question, suggestion, or just want to chat, don’t hesitate to reach out.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section className="contact-info">
-                    <div className="container">
-                        <div className="row main-row">
-                            <div className="bg-color">
-                                <div className="row form-row">
-                                    <div className="col-lg-5 ps-0">
-                                        <div className="contact-details">
-                                            <div className="circle-mini"></div>
-                                            <div className="circle-big"></div>
-                                            <div className="info-details">
-                                                <h2>Contact Information</h2>
-                                                <p>We’re here to assist you! Feel free to get in touch through any of the following channels.</p>
-                                                <ul>
-                                                    {/* <li>
-                                                        <span className="icon"><img src={mapIcon} alt="Map Icon" /></span>
-                                                        <span className="text">{siteContent.contact_address}</span>
-                                                    </li> */}
-                                                    <li>
-                                                        <span className="icon"><img src={smstrackingIcon} alt="Email" /></span>
-                                                        <span className="text">{siteContent.contact_email}</span>
-                                                    </li>
-                                                    <li>
-                                                        <span className="icon"><img src={mobileIcon} alt="Phone" /></span>
-                                                        <span className="text">{siteContent.contact_phone_number}</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div className="bottom-socials">
-                                                <ul>
-                                                    {socialLinks.map((social, index) => (
-                                                        <li key={index}>
-                                                            <a href={social.link} target="_blank" rel="noopener noreferrer">
-                                                                <img src={social.icon} alt={social.alt} />
-                                                            </a>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-7 pe-0">
-                                        <div className="contact-form">
-                                            <form onSubmit={handleSubmit}>
-                                                <div className="row">
-                                                    <div className="col-md-6">
-                                                        <div className="form-group">
-                                                            <label>Name *</label>
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                placeholder="Name"
-                                                                name="name"
-                                                                value={formData.name}
-                                                                onChange={handleChange}
-                                                                required
-                                                                maxLength={60}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                        <div className="form-group">
-                                                            <label>Select Subject</label>
-                                                            <select className="form-select" name="subject" value={formData.subject} onChange={handleChange}>
-                                                                <option value="General Inquiry">General Inquiry</option>
-                                                                <option value="Study Application">Study Application</option>
-                                                                <option value="Work Visa">Work Visa</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                        <div className="form-group phone-group">
-                                                            <label>Mobile number *</label>
-                                                            <input
-                                                                type="tel"
-                                                                id="phone_number"
-                                                                className="form-control"
-                                                                name="phone_number"
-                                                                value={formData.phone_number}
-                                                                onChange={handleChange}
-                                                                required
-                                                                inputMode="numeric"
-                                                                pattern="[0-9]*"
-                                                                maxLength="15"
-                                                                minLength="8"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-6">
-                                                        <div className="form-group">
-                                                            <label>Email *</label>
-                                                            <input
-                                                                type="email"
-                                                                className="form-control"
-                                                                placeholder="Email"
-                                                                name="email"
-                                                                value={formData.email}
-                                                                onChange={handleChange}
-                                                                required
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-12">
-                                                        <div className="form-group">
-                                                            <label>Message *</label>
-                                                            <textarea
-                                                                className="form-control"
-                                                                rows="5"
-                                                                placeholder="Write your message.."
-                                                                name="message"
-                                                                value={formData.message}
-                                                                onChange={handleChange}
-                                                                required
-                                                            ></textarea>
-                                                        </div>
-                                                    </div>
-                                                    {/* Honeypot Field */}
-                                                    <div className="col-md-12" style={{ display: 'none' }}>
-                                                        <div className="form-group">
-                                                            <label htmlFor="honeypot">Website</label>
-                                                            <input
-                                                                id="honeypot"
-                                                                type="text"
-                                                                className="form-control"
-                                                                name="honeypot"
-                                                                value={formData.honeypot}
-                                                                onChange={handleChange}
-                                                                placeholder=""
-                                                                tabIndex="-1"
-                                                                autoComplete="off"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-12">
-                                                        <div className="form-action">
-                                                            <button
-                                                                type="submit"
-                                                                className="color-btn btn"
-                                                                disabled={isSubmitting}
-                                                            >
-                                                                {isSubmitting ? (
-                                                                    <span>
-                                                                        Sending... <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                                    </span>
-                                                                ) : (
-                                                                    <>
-                                                                        Send Message
-                                                                        <img src={RightArrow} alt="Right Arrow" />
-                                                                    </>
-                                                                )}
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </>
-    );
+                    <Grid size={12}>
+                      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 1 }}>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          color="primary"
+                          disabled={isSubmitting}
+                          endIcon={
+                            isSubmitting ? (
+                              <CircularProgress size={18} color="inherit" />
+                            ) : (
+                              <Box
+                                component="img"
+                                src={RightArrow}
+                                alt=""
+                                sx={{ width: 16, height: 16 }}
+                              />
+                            )
+                          }
+                          sx={{
+                            borderRadius: 50,
+                            px: 4.5,
+                            py: 1.5,
+                            fontWeight: 600,
+                            textTransform: "none",
+                          }}
+                        >
+                          {isSubmitting ? "Sending..." : "Send Message"}
+                        </Button>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        </Container>
+      </Box>
+    </Box>
+  );
 };
 
 export default Contact;

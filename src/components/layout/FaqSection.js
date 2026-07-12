@@ -1,75 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import config from "../../config/config"; 
+import React, { useState, useEffect } from "react";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import LoadingState from "../ui/LoadingState";
+import ErrorState from "../ui/ErrorState";
+import EmptyState from "../ui/EmptyState";
+import config from "../../config/config";
 
+const FaqSection = ({ relatedTo = "All" }) => {
+  const [faqs, setFaqs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [expanded, setExpanded] = useState(false);
 
-const FaqSection = ({ relatedTo = 'All' }) => {
-    const [faqs, setFaqs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const fetchFaqs = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      if (!config.baseURL) {
+        setError("API is not configured.");
+        return;
+      }
+      const response = await fetch(
+        `${config.baseURL}/site-content/faqs/get?related_to=${encodeURIComponent(relatedTo)}`
+      );
+      const data = await response.json();
+      if (data.success) {
+        const items = data.data || [];
+        setFaqs(items);
+        setExpanded(items.length ? `panel-0` : false);
+      } else {
+        setError(data.message || "Failed to fetch FAQs");
+      }
+    } catch (err) {
+      console.error("Error fetching FAQs:", err);
+      setError("An error occurred while fetching FAQs");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Fetch FAQ data from the API based on relatedTo prop
-    useEffect(() => {
-        const fetchFaqs = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch(`${config.baseURL}/site-content/faqs/get?related_to=${encodeURIComponent(relatedTo)}`);
-                const data = await response.json();
-                if (data.success) {
-                    setFaqs(data.data || []);
-                } else {
-                    setError(data.message || 'Failed to fetch FAQs');
-                }
-            } catch (error) {
-                console.error('Error fetching FAQs:', error);
-                setError('An error occurred while fetching FAQs');
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    fetchFaqs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [relatedTo]);
 
-        fetchFaqs();
-    }, [relatedTo]);
+  if (loading) return <LoadingState label="Loading FAQs..." height={80} />;
+  if (error) return <ErrorState title="Unable to load FAQs" message={error} onRetry={fetchFaqs} />;
+  if (!faqs.length) {
+    return <EmptyState title="No FAQs available" message="No FAQs available for this category." />;
+  }
 
-    return (
-        <div className="faq-inner">
-                                {loading ? (
-                                    <p>Loading FAQs...</p>
-                                ) : error ? (
-                                    <p className="text-danger">{error}</p>
-                                ) : faqs.length === 0 ? (
-                                    <p>No FAQs available for this category.</p>
-                                ) : (
-                                    <div className="accordion" id="faqAccordion">
-                                        {faqs.map((faq, index) => (
-                                            <div className="accordion-item" key={index}>
-                                                <h2 className="accordion-header" id={`heading${index}`}>
-                                                    <button
-                                                        className={`accordion-button ${index === 0 ? '' : 'collapsed'}`}
-                                                        type="button"
-                                                        data-bs-toggle="collapse"
-                                                        data-bs-target={`#collapse${index}`}
-                                                        aria-expanded={index === 0 ? 'true' : 'false'}
-                                                        aria-controls={`collapse${index}`}
-                                                    >
-                                                        {faq.question}
-                                                    </button>
-                                                </h2>
-                                                <div
-                                                    id={`collapse${index}`}
-                                                    className={`accordion-collapse collapse ${index === 0 ? 'show' : ''}`}
-                                                    aria-labelledby={`heading${index}`}
-                                                    data-bs-parent="#faqAccordion"
-                                                >
-                                                    <div className="accordion-body">
-                                                        {faq.answer}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-    );
+  return (
+    <Box className="faq-inner">
+      {faqs.map((faq, index) => {
+        const panelId = `panel-${index}`;
+        return (
+          <Accordion
+            key={panelId}
+            expanded={expanded === panelId}
+            onChange={(_, isExpanded) => setExpanded(isExpanded ? panelId : false)}
+            disableGutters
+            elevation={0}
+            sx={{
+              mb: 1.5,
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: "12px !important",
+              "&:before": { display: "none" },
+            }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls={`${panelId}-content`} id={`${panelId}-header`}>
+              <Typography fontWeight={600} color="secondary.main">
+                {faq.question}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography color="text.secondary">{faq.answer}</Typography>
+            </AccordionDetails>
+          </Accordion>
+        );
+      })}
+    </Box>
+  );
 };
 
 export default FaqSection;
