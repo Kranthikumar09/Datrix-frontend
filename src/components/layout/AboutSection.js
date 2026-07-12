@@ -1,5 +1,12 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom'; // Import the Link component
+import React from "react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import { BRAND } from "../../config/brand";
 import HomeAboutus1 from "../../assets/images/home-aboutus1.jpg";
 import HomeAboutus2 from "../../assets/images/home-aboutus2.jpg";
 import HomeAboutus3 from "../../assets/images/home-aboutus3.jpg";
@@ -8,76 +15,101 @@ import CheckImg from "../../assets/images/check-img.svg";
 import RightArrow from "../../assets/images/right-arrow.svg";
 
 const AboutSection = () => {
-    const location = useLocation();
-    return (
-        <>
-            <section className="aboutus-section p-75">
-                <div className="container">
-                    <div className="row align-items-center">
-                        <div className="col-md-6">
-                            <div className="aboutus-left">
-                                <div className="about-left-top">
-                                    <div className="aboutus-left-img">
-                                        <figure>
-                                            <img src={HomeAboutus1} alt="About Us 1" />
-                                        </figure>
-                                    </div>
-                                    <div className="aboutus-left-img">
-                                        <figure>
-                                            <img src={HomeAboutus2} alt="About Us 2" />
-                                        </figure>
-                                    </div>
-                                </div>
+  const location = useLocation();
 
-                                <div className="about-left-bottom">
-                                    <div className="about-exp">
-                                        <span>10+</span>
-                                        <p>years of <br /> experiences</p>
-                                    </div>
-                                    <div className="aboutus-left-img about-shape-one">
-                                        <figure>
-                                            <img src={HomeAboutus3} alt="About Us 3" />
-                                        </figure>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+  return (
+    <Box component="section" className="aboutus-section" sx={{ py: { xs: 6, md: 9 } }}>
+      <Container maxWidth="lg">
+        <Grid container spacing={4} alignItems="center">
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Box className="aboutus-left">
+              <Box className="about-left-top">
+                <Box className="aboutus-left-img">
+                  <Box component="figure" sx={{ m: 0 }}>
+                    <Box component="img" src={HomeAboutus1} alt="About us" />
+                  </Box>
+                </Box>
+                <Box className="aboutus-left-img">
+                  <Box component="figure" sx={{ m: 0 }}>
+                    <Box component="img" src={HomeAboutus2} alt="About us" />
+                  </Box>
+                </Box>
+              </Box>
+              <Box className="about-left-bottom">
+                <Box className="about-exp">
+                  <Typography component="span">10+</Typography>
+                  <Typography component="p">
+                    years of <br /> experiences
+                  </Typography>
+                </Box>
+                <Box className="aboutus-left-img about-shape-one">
+                  <Box component="figure" sx={{ m: 0 }}>
+                    <Box component="img" src={HomeAboutus3} alt="About us" />
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Grid>
 
-                        <div className="col-md-6">
-                            <div className="right-about-data">
-                                <div className="cmn-heading">
-                                    <span className="top-name">ABOUT US <img src={ObjectImg} alt="Object " /></span>
-                                    <h2>Study Traveler | Your Gateway to <span>Global Opportunities</span></h2>
-                                    <p>Step into a world of limitless possibilities with expert guidance for education, immigration, and global travel.
-</p>
-                                </div>
-                                <div className="right-about-bottom-main">
-                                    <div className="right-about-bottom-inner">
-                                        <h3> <img src={CheckImg} alt="Check" /> Study</h3>
-                                        <p>Shape your academic future with world-class universities and personalized admission support.
-</p>
-                                    </div>
-                                    <div className="right-about-bottom-inner">
-                                        <h3> <img src={CheckImg} alt="Check" /> Work</h3>
-                                        <p>Unlock global career pathways with expert job search, visa assistance, and skill-mapping guidance.
-</p>
-                                    </div>
-                                </div>
-                                <div className="header-btn-main">
-      {/* Check if the current page is not the About page */}
-      {location.pathname !== '/about' && (
-        <Link to="/about" className="color-btn btn">
-          Read More <img src={RightArrow} alt="Right Arrow" />
-        </Link>
-      )}
-    </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </>
-    );
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Stack spacing={3} className="right-about-data">
+              <Box className="cmn-heading">
+                <Typography
+                  component="span"
+                  className="top-name"
+                  sx={{ display: "inline-flex", alignItems: "center", gap: 1, color: "primary.main", fontWeight: 600 }}
+                >
+                  ABOUT US <Box component="img" src={ObjectImg} alt="" />
+                </Typography>
+                <Typography variant="h4" component="h2" sx={{ fontWeight: 700, mt: 1 }}>
+                  {BRAND.name} | Your Gateway to{" "}
+                  <Box component="span" sx={{ color: "primary.main" }}>
+                    Global Opportunities
+                  </Box>
+                </Typography>
+                <Typography color="text.secondary" sx={{ mt: 1.5 }}>
+                  Step into a world of limitless possibilities with expert guidance for education,
+                  immigration, and global travel.
+                </Typography>
+              </Box>
+
+              <Stack spacing={2} className="right-about-bottom-main">
+                <Box className="right-about-bottom-inner">
+                  <Typography variant="h6" component="h3" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box component="img" src={CheckImg} alt="" /> Study
+                  </Typography>
+                  <Typography color="text.secondary">
+                    Shape your academic future with world-class universities and personalized admission support.
+                  </Typography>
+                </Box>
+                <Box className="right-about-bottom-inner">
+                  <Typography variant="h6" component="h3" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <Box component="img" src={CheckImg} alt="" /> Work
+                  </Typography>
+                  <Typography color="text.secondary">
+                    Unlock global career pathways with expert job search, visa assistance, and skill-mapping guidance.
+                  </Typography>
+                </Box>
+              </Stack>
+
+              {location.pathname !== "/about" ? (
+                <Button
+                  component={RouterLink}
+                  to="/about"
+                  variant="contained"
+                  color="primary"
+                  endIcon={<Box component="img" src={RightArrow} alt="" sx={{ width: 16 }} />}
+                  sx={{ borderRadius: "50px", alignSelf: "flex-start", textTransform: "none", fontWeight: 600, px: 3.5, py: 1.25 }}
+                >
+                  Read More
+                </Button>
+              ) : null}
+            </Stack>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
+  );
 };
 
 export default AboutSection;

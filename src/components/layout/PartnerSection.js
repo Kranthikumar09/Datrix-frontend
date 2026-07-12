@@ -1,20 +1,33 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Slider from "react-slick";
-import config from "../../config/config"; // Ensure this contains the correct baseURL
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import config from "../../config/config";
+import LoadingState from "../ui/LoadingState";
+import EmptyState from "../ui/EmptyState";
+import ErrorState from "../ui/ErrorState";
 
 const PartnerSection = () => {
   const [partners, setPartners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetching partners from the API
-  useEffect(() => {
+  const fetchPartners = () => {
+    if (!config.baseURL) {
+      setError("API is not configured.");
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     axios
       .get(`${config.baseURL}/site-content/our-partners/get`)
       .then((response) => {
         if (response.data.success && Array.isArray(response.data.data)) {
           setPartners(response.data.data);
+          setError(null);
         } else {
           setError("No partners found.");
         }
@@ -26,80 +39,81 @@ const PartnerSection = () => {
           setError("An error occurred while fetching partners.");
         }
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchPartners();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Slider settings
   const partnerslider = {
-    infinite: partners.length > 1, // Enable infinite loop only if there are multiple partners
-    slidesToShow: Math.min(5, partners.length), // Show max 5 partners based on available partners
+    infinite: partners.length > 1,
+    slidesToShow: Math.min(5, partners.length || 1),
     slidesToScroll: 1,
     arrows: false,
     dots: false,
     autoplay: true,
     autoplaySpeed: 2000,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: Math.min(3, partners.length), slidesToScroll: 1 } },
-      { breakpoint: 700, settings: { slidesToShow: Math.min(2, partners.length), slidesToScroll: 1 } },
-      { breakpoint: 480, settings: { slidesToShow: Math.min(2, partners.length), slidesToScroll: 1 } }
-    ]
+      { breakpoint: 1024, settings: { slidesToShow: Math.min(3, partners.length || 1) } },
+      { breakpoint: 700, settings: { slidesToShow: Math.min(2, partners.length || 1) } },
+      { breakpoint: 480, settings: { slidesToShow: Math.min(2, partners.length || 1) } },
+    ],
   };
 
   return (
-    <section className="partner-section p-50">
-      <div className="container">
-        <div className="row">
-          <div className="col-12 col-lg-8 offset-lg-2">
-            <div className="cmn-heading text-center">
-              <h2>Our Global Network of Trusted Partners</h2>
-    
-<p className="">We proudly collaborate with top universities, industry-leading institutions, travel networks, and global education bodies to bring you exclusive opportunities worldwide.
-Through these partnerships, we ensure access to premium admissions, verified programs, faster processing, and authentic global pathways.</p>
-            </div>
-          </div>
-        </div>
+    <Box component="section" className="partner-section" sx={{ py: { xs: 4, md: 6 } }}>
+      <Container maxWidth="lg">
+        <Stack spacing={1.5} alignItems="center" textAlign="center" sx={{ mb: 4, maxWidth: 800, mx: "auto" }}>
+          <Typography variant="h4" component="h2" fontWeight={700}>
+            Our Global Network of Trusted Partners
+          </Typography>
+          <Typography color="text.secondary">
+            We proudly collaborate with top universities, industry-leading institutions, travel
+            networks, and global education bodies to bring you exclusive opportunities worldwide.
+            Through these partnerships, we ensure access to premium admissions, verified programs,
+            faster processing, and authentic global pathways.
+          </Typography>
+        </Stack>
 
-        <div className="row">
-          <div className="col-12">
-            {loading ? (
-              <p className="text-center">Loading partners...</p>
-            ) : error ? (
-              <p className="text-center">{error}</p>
-            ) : partners.length > 0 ? (
-              <div className="partner-logos">
-                {partners.length > 1 ? (
-                  // Render Slider if there are multiple partners
-                  <Slider {...partnerslider}>
-                    {partners.map((partner, index) => (
-                      <figure key={index}>
-                        <img
-                          src={config.assetUrl(`uploads/our-partners/${partner.image}`)}
-                          alt={partner.title}
-                          className="partner-img"
-                        />
-                      </figure>
-                    ))}
-                  </Slider>
-                ) : (
-                  // Render a single image if there is only one partner
-                  <figure>
-                    <img
-                      src={config.assetUrl(`uploads/our-partners/${partners[0].image}`)}
-                      alt={partners[0].title}
+        {loading ? (
+          <LoadingState label="Loading partners..." />
+        ) : error ? (
+          <ErrorState title="Unable to load partners" message={error} onRetry={fetchPartners} />
+        ) : partners.length > 0 ? (
+          <Box className="partner-logos">
+            {partners.length > 1 ? (
+              <Slider {...partnerslider}>
+                {partners.map((partner, index) => (
+                  <Box key={`${partner.title}-${index}`} component="figure" sx={{ m: 0, px: 2, textAlign: "center" }}>
+                    <Box
+                      component="img"
+                      src={config.assetUrl(`uploads/our-partners/${partner.image}`)}
+                      alt={partner.title}
                       className="partner-img"
+                      sx={{ maxHeight: 72, width: "auto", mx: "auto" }}
                     />
-                  </figure>
-                )}
-              </div>
+                  </Box>
+                ))}
+              </Slider>
             ) : (
-              <p className="text-center">No partners available.</p>
+              <Box component="figure" sx={{ m: 0, textAlign: "center" }}>
+                <Box
+                  component="img"
+                  src={config.assetUrl(`uploads/our-partners/${partners[0].image}`)}
+                  alt={partners[0].title}
+                  className="partner-img"
+                  sx={{ maxHeight: 72, width: "auto" }}
+                />
+              </Box>
             )}
-          </div>
-        </div>
-      </div>
-    </section>
+          </Box>
+        ) : (
+          <EmptyState title="No partners available" message="Partner logos will appear here when available." />
+        )}
+      </Container>
+    </Box>
   );
 };
 
