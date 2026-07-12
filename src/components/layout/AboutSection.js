@@ -20,7 +20,7 @@ const AboutSection = () => {
   return (
     <Box component="section" className="aboutus-section" sx={{ py: { xs: 6, md: 9 } }}>
       <Container maxWidth="lg">
-        <Grid container spacing={4} alignItems="center">
+        <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 6 }}>
             <Box className="aboutus-left">
               <Box className="about-left-top">

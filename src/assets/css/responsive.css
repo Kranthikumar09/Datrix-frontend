@@ -1264,7 +1264,7 @@
     z-index: 999;
     position: relative;
 }
-    main {
+    main.wizard-layout {
         display: flex;
         flex-wrap: wrap;
         max-height: 100%;

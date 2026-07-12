@@ -114,7 +114,7 @@ const About = () => (
 
     <Box component="section" className="about-values" sx={{ py: { xs: 4, md: 6 }, bgcolor: "background.subtle" }}>
       <Container maxWidth="lg">
-        <Stack spacing={1} alignItems="center" textAlign="center" sx={{ mb: 4 }}>
+        <Stack spacing={1} sx={{ mb: 4, textAlign: "center", alignItems: "center" }}>
           <Typography
             component="span"
             className="top-name"
@@ -132,9 +132,9 @@ const About = () => (
             <Grid key={value.label} size={{ xs: 12, sm: 6, md: 3 }}>
               <Stack
                 spacing={1.5}
-                alignItems="center"
                 className="values-box"
                 sx={{
+                  alignItems: "center",
                   textAlign: "center",
                   p: 3,
                   height: "100%",

@@ -765,6 +765,11 @@ Bootstrap/Font Awesome CDN (study/work/user panel), react-toastify (non-migrated
 
 **Stop after Phase 4.**
 
+### Follow-up fix (Home/About layout smash)
+- **Cause:** Phase 4 wrapped marketing pages in `<Box component="main">`. Global CSS from the application wizard (`main { display: flex; flex-wrap: nowrap; }`) forced every Home/About section into one horizontal row.
+- **Fix:** Scoped wizard styles to `main.wizard-layout` and applied that class on ApplicationForm / JobApplyForm only.
+- **MUI 9 note:** Direct system props (`alignItems`, `justifyContent`, `order`, etc.) on Box/Stack/Grid no longer apply styles and leak to the DOM — use `sx` instead. Marketing Home/About/layout/header/footer updated accordingly.
+
 ---
 
 Migrate in this **exact order** (original brief):

@@ -92,7 +92,7 @@ const Testimonial = () => {
           </Typography>
         </Box>
 
-        <Grid container spacing={4} alignItems="center">
+        <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 5 }}>
             <Box className="testimonial-video" sx={{ position: "relative" }}>
               <Box

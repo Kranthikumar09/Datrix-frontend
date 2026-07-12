@@ -60,7 +60,7 @@ const Home = () => (
   <Box component="main">
     <Box component="section" className="hero-section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
-        <Grid container spacing={4} alignItems="center">
+        <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 7 }}>
             <Stack spacing={2.5} className="banner-left">
               <Typography variant="h3" component="h1" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
@@ -74,7 +74,7 @@ const Home = () => (
                 Step into a world of limitless possibilities with expert guidance for education,
                 immigration, and global travel.
               </Typography>
-              <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+              <Stack direction="row" spacing={2} useFlexGap sx={{ flexWrap: "wrap" }}>
                 <Button
                   component={RouterLink}
                   to="/study"
@@ -128,7 +128,7 @@ const Home = () => (
 
     <Box component="section" className="home-study-section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
-        <Grid container spacing={4} alignItems="center">
+        <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 7 }}>
             <Stack spacing={2.5}>
               <Box>
@@ -157,7 +157,7 @@ const Home = () => (
                     <ListItemIcon sx={{ minWidth: 40 }}>
                       <Box component="img" src={item.icon} alt="" />
                     </ListItemIcon>
-                    <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600 }} />
+                    <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontWeight: 600 } } }} />
                     <ChevronRightIcon color="action" />
                   </ListItemButton>
                 ))}
@@ -188,8 +188,8 @@ const Home = () => (
 
     <Box component="section" className="home-Work-section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
-        <Grid container spacing={4} alignItems="center">
-          <Grid size={{ xs: 12, md: 5 }} order={{ xs: 2, md: 1 }}>
+        <Grid container spacing={4} sx={{ alignItems: "center" }}>
+          <Grid size={{ xs: 12, md: 5 }} sx={{ order: { xs: 2, md: 1 } }}>
             <Box
               component="img"
               src={StudyRightImg}
@@ -197,7 +197,7 @@ const Home = () => (
               sx={{ width: "100%", borderRadius: 3, display: "block" }}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 7 }} order={{ xs: 1, md: 2 }}>
+          <Grid size={{ xs: 12, md: 7 }} sx={{ order: { xs: 1, md: 2 } }}>
             <Stack spacing={2.5}>
               <Box>
                 <Typography
@@ -225,7 +225,7 @@ const Home = () => (
                     <ListItemIcon sx={{ minWidth: 40 }}>
                       <Box component="img" src={item.icon} alt="" />
                     </ListItemIcon>
-                    <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600 }} />
+                    <ListItemText primary={item.label} slotProps={{ primary: { sx: { fontWeight: 600 } } }} />
                     <ChevronRightIcon color="action" />
                   </ListItemButton>
                 ))}
@@ -251,7 +251,7 @@ const Home = () => (
 
     <Box component="section" className="faq-section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
-        <Grid container spacing={4} alignItems="center">
+        <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 7 }}>
             <Box sx={{ mb: 2 }}>
               <Typography

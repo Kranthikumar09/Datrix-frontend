@@ -17,7 +17,7 @@ const PageBanner = ({ title, subtitle, children }) => (
     }}
   >
     <Container maxWidth="lg">
-      <Stack spacing={1} alignItems="center" textAlign="center">
+      <Stack spacing={1} sx={{ alignItems: "center", textAlign: "center" }}>
         <Typography variant="h3" component="h1" sx={{ fontWeight: 700, color: "secondary.main" }}>
           {title}
         </Typography>

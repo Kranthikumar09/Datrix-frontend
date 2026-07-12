@@ -11,7 +11,7 @@ const JourneySection = () => (
   <Box component="section" className="journy-section" sx={{ py: { xs: 4, md: 6 } }}>
     <Container maxWidth="lg">
       <Box className="journy-inner" sx={{ textAlign: "center", p: { xs: 3, md: 5 }, borderRadius: 4 }}>
-        <Stack spacing={2} alignItems="center" className="cmn-heading">
+        <Stack spacing={2} className="cmn-heading" sx={{ alignItems: "center" }}>
           <Typography variant="h4" component="h2" sx={{ fontWeight: 700, color: "common.white" }}>
             Join the Leaders in Study and Work Abroad Guidance
           </Typography>
