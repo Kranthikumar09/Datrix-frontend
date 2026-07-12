@@ -1,12 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import config from '../config/config';
-
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import PageBanner from "../components/ui/PageBanner";
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
+import EmptyState from "../components/ui/EmptyState";
+import HtmlContent from "../components/ui/HtmlContent";
+import { useAppSnackbar } from "../components/ui/AppSnackbar";
+import config from "../config/config";
 
 const BlogDetails = () => {
+  const snackbar = useAppSnackbar();
   const [blogDetails, setBlogDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,12 +31,13 @@ const BlogDetails = () => {
       if (response.data.success) {
         setBlogDetails(response.data.data);
       } else {
-        setError('Blog not found.');
+        setError("Blog not found.");
+        setBlogDetails(null);
       }
     } catch (err) {
-      console.error('Error fetching blog details:', err);
-      setError('Failed to load blog details. Please try again later.');
-      toast.error('Failed to load blog details.');
+      console.error("Error fetching blog details:", err);
+      setError("Failed to load blog details. Please try again later.");
+      snackbar.error("Failed to load blog details.");
     } finally {
       setLoading(false);
     }
@@ -36,19 +45,21 @@ const BlogDetails = () => {
 
   useEffect(() => {
     fetchBlogDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
-  // Update document title and meta tags dynamically
   useEffect(() => {
     if (blogDetails) {
       document.title = blogDetails.meta_title;
-      const metaDescription = document.querySelector('meta[name="description"]') || document.createElement('meta');
-      metaDescription.name = 'description';
+      const metaDescription =
+        document.querySelector('meta[name="description"]') || document.createElement("meta");
+      metaDescription.name = "description";
       metaDescription.content = blogDetails.meta_description;
       if (!metaDescription.parentNode) document.head.appendChild(metaDescription);
 
-      const metaKeywords = document.querySelector('meta[name="keywords"]') || document.createElement('meta');
-      metaKeywords.name = 'keywords';
+      const metaKeywords =
+        document.querySelector('meta[name="keywords"]') || document.createElement("meta");
+      metaKeywords.name = "keywords";
       metaKeywords.content = blogDetails.meta_keywords;
       if (!metaKeywords.parentNode) document.head.appendChild(metaKeywords);
     }
@@ -56,75 +67,63 @@ const BlogDetails = () => {
 
   if (loading) {
     return (
-      <div className="main-section">
-        <div className="container mt-5" role="status">
-          <div className="spinner" aria-label="Loading blog details"></div>
-        </div>
-      </div>
+      <Box component="main">
+        <Container maxWidth="lg" sx={{ py: 6 }}>
+          <LoadingState label="Loading blog details..." height={200} />
+        </Container>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <div className="main-section">
-        <div className="container mt-5" role="alert">
-          <p>{error}</p>
-          <button className="color-btn btn" onClick={fetchBlogDetails}>
-            Retry
-          </button>
-        </div>
-      </div>
+      <Box component="main">
+        <Container maxWidth="lg" sx={{ py: 6 }}>
+          <ErrorState title="Unable to load blog" message={error} onRetry={fetchBlogDetails} />
+        </Container>
+      </Box>
     );
   }
 
   if (!blogDetails) {
     return (
-      <div className="main-section">
-        <div className="container mt-5" role="alert">
-          <p>Blog not found.</p>
-        </div>
-      </div>
+      <Box component="main">
+        <Container maxWidth="lg" sx={{ py: 6 }}>
+          <EmptyState title="Blog not found" message="The requested blog post could not be found." />
+        </Container>
+      </Box>
     );
   }
 
   return (
-    <div className="main-section">
-      {/*-------------banner-section-----------------*/}
-      <section className="page-banner">
-        <div className="container">
-          <div className="row">
-            <div className="col-12">
-              <div className="pagebanner-text">
-                <h2>{blogDetails.title}</h2>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="blog-details-section">
-        <div className="container">
-          <div className="row main-row">
-            <div className="col-12">
-              <div className="single-details">
-                <img
-                  src={`${config.assetUrl('uploads/blogs')}/${blogDetails.image}`}
-                  alt={blogDetails.title}
-                  loading="lazy"
-                />
-                <p>{blogDetails.short_description}</p>
-              </div>
-            </div>
-          </div>
-          <div className="row inner-row">
-            <div className="col-12">
-              <div className="blog-content">
-                <div dangerouslySetInnerHTML={{ __html: blogDetails.content }} />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+    <Box component="main">
+      <PageBanner title={blogDetails.title} />
+
+      <Box component="section" className="blog-details-section" sx={{ py: { xs: 4, md: 6 } }}>
+        <Container maxWidth="lg">
+          <Stack spacing={3}>
+            <Box className="single-details">
+              <Box
+                component="img"
+                src={`${config.assetUrl("uploads/blogs")}/${blogDetails.image}`}
+                alt={blogDetails.title}
+                loading="lazy"
+                sx={{
+                  width: "100%",
+                  maxHeight: 480,
+                  objectFit: "cover",
+                  borderRadius: 3,
+                  mb: 2,
+                }}
+              />
+              <Typography color="text.secondary">{blogDetails.short_description}</Typography>
+            </Box>
+
+            <HtmlContent html={blogDetails.content} className="blog-content" />
+          </Stack>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

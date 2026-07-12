@@ -1,147 +1,164 @@
-import React from 'react'
-import AboutSection from '../components/layout/AboutSection'
-import JourneySection from '../components/layout/JourneySection'
-import PartnerSection from '../components/layout/PartnerSection'
-import Testimonial from '../components/layout/Testimonial'
-import abtMissOne from '../assets/images/abt-miss-one.png';
-import abtMissTwo from '../assets/images/abt-miss-two.png';
-import objectImg from '../assets/images/object.svg';
-import valueIcon1 from '../assets/images/value-icon-1.svg';
-import valueIcon2 from '../assets/images/value-icon-2.svg';
-import valueIcon3 from '../assets/images/value-icon-3.svg';
-import valueIcon4 from '../assets/images/value-icon-4.svg';
+import React from "react";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import AboutSection from "../components/layout/AboutSection";
+import JourneySection from "../components/layout/JourneySection";
+import PartnerSection from "../components/layout/PartnerSection";
+import Testimonial from "../components/layout/Testimonial";
+import PageBanner from "../components/ui/PageBanner";
+import { BRAND } from "../config/brand";
+import abtMissOne from "../assets/images/abt-miss-one.png";
+import abtMissTwo from "../assets/images/abt-miss-two.png";
+import objectImg from "../assets/images/object.svg";
+import valueIcon1 from "../assets/images/value-icon-1.svg";
+import valueIcon2 from "../assets/images/value-icon-2.svg";
+import valueIcon3 from "../assets/images/value-icon-3.svg";
+import valueIcon4 from "../assets/images/value-icon-4.svg";
 
-const About = () => {
-    return (
-        <>
-            
-            <div className="main-section">
-                {/* Page banner start */}
-                <section className="page-banner">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-12">
-                                <div className="pagebanner-text">
-                                    <h1>About Study Traveler</h1>
-                                    <p>
-                                        Whether you aspire to study, work, settle, or explore new horizons, we simplify the process,
-                                        ensuring a smooth journey toward your global dreams.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                {/* Page banner end */}
+const VALUES = [
+  { icon: valueIcon1, label: "Learning" },
+  { icon: valueIcon2, label: "Integrity" },
+  { icon: valueIcon3, label: "Fast" },
+  { icon: valueIcon4, label: "Empathy" },
+];
 
-                {/* About start */}
+const About = () => (
+  <Box component="main">
+    <PageBanner
+      title={`About ${BRAND.name}`}
+      subtitle="Whether you aspire to study, work, settle, or explore new horizons, we simplify the process, ensuring a smooth journey toward your global dreams."
+    />
 
-                <AboutSection />
+    <AboutSection />
 
-                {/* About end */}
-                {/* Mission Section Start */}
-                <section className="mission-section">
-                    <div className="container">
-                        <div className="row">
-                            {/* First mission box */}
-                            <div className="col-lg-6">
-                                <div className="about-mission-box">
-                                    <img src={abtMissOne} alt="Our Vision" />
-                                    <div className="text-box">
-                                        <h6>Our Vision</h6>
-                                        <p>
-                                           To empower every student and professional with the opportunity to explore the world, unlock global education, and build meaningful international careers — regardless of background or borders.
-                                        </p>
-                                        <p>We envision a future where studying, working, and traveling abroad is seamless, transparent, and accessible to all.</p>
-                                    </div>
-                                </div>
-                            </div>
+    <Box component="section" className="mission-section" sx={{ py: { xs: 4, md: 6 } }}>
+      <Container maxWidth="lg">
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Stack
+              spacing={2}
+              className="about-mission-box"
+              sx={{
+                height: "100%",
+                p: { xs: 2, md: 3 },
+                borderRadius: 3,
+                bgcolor: "background.paper",
+                border: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              <Box
+                component="img"
+                src={abtMissOne}
+                alt="Our Vision"
+                sx={{ width: "100%", maxHeight: 220, objectFit: "cover", borderRadius: 2 }}
+              />
+              <Box className="text-box">
+                <Typography variant="h6" component="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                  Our Vision
+                </Typography>
+                <Typography color="text.secondary" sx={{ mb: 1.5 }}>
+                  To empower every student and professional with the opportunity to explore the world,
+                  unlock global education, and build meaningful international careers — regardless of
+                  background or borders.
+                </Typography>
+                <Typography color="text.secondary">
+                  We envision a future where studying, working, and traveling abroad is seamless,
+                  transparent, and accessible to all.
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
 
-                            {/* Second mission box */}
-                            <div className="col-lg-6">
-                                <div className="about-mission-box">
-                                    <img src={abtMissTwo} alt="Our Mission" />
-                                    <div className="text-box">
-                                        <h6>Our Mission</h6>
-                                        <p>
-                                           To guide individuals through every step of their global journey with trusted expertise, personalized counselling, and innovative technology.</p><p>
-We are committed to simplifying admissions, visa processes, and travel planning while delivering authentic, reliable, and end-to-end support — from the first enquiry to successful settlement abroad.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Stack
+              spacing={2}
+              className="about-mission-box"
+              sx={{
+                height: "100%",
+                p: { xs: 2, md: 3 },
+                borderRadius: 3,
+                bgcolor: "background.paper",
+                border: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              <Box
+                component="img"
+                src={abtMissTwo}
+                alt="Our Mission"
+                sx={{ width: "100%", maxHeight: 220, objectFit: "cover", borderRadius: 2 }}
+              />
+              <Box className="text-box">
+                <Typography variant="h6" component="h3" sx={{ fontWeight: 700, mb: 1 }}>
+                  Our Mission
+                </Typography>
+                <Typography color="text.secondary" sx={{ mb: 1.5 }}>
+                  To guide individuals through every step of their global journey with trusted
+                  expertise, personalized counselling, and innovative technology.
+                </Typography>
+                <Typography color="text.secondary">
+                  We are committed to simplifying admissions, visa processes, and travel planning
+                  while delivering authentic, reliable, and end-to-end support — from the first
+                  enquiry to successful settlement abroad.
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
 
-                {/* Mission Section End */}
+    <Box component="section" className="about-values" sx={{ py: { xs: 4, md: 6 }, bgcolor: "background.subtle" }}>
+      <Container maxWidth="lg">
+        <Stack spacing={1} alignItems="center" textAlign="center" sx={{ mb: 4 }}>
+          <Typography
+            component="span"
+            className="top-name"
+            sx={{ display: "inline-flex", alignItems: "center", gap: 1, color: "primary.main", fontWeight: 600 }}
+          >
+            Value <Box component="img" src={objectImg} alt="" />
+          </Typography>
+          <Typography variant="h4" component="h2" sx={{ fontWeight: 700 }}>
+            Our Values
+          </Typography>
+        </Stack>
 
-                {/* About Values Start */}
+        <Grid container spacing={3}>
+          {VALUES.map((value) => (
+            <Grid key={value.label} size={{ xs: 12, sm: 6, md: 3 }}>
+              <Stack
+                spacing={1.5}
+                alignItems="center"
+                className="values-box"
+                sx={{
+                  textAlign: "center",
+                  p: 3,
+                  height: "100%",
+                  borderRadius: 3,
+                  bgcolor: "background.paper",
+                  border: "1px solid",
+                  borderColor: "divider",
+                }}
+              >
+                <Box component="img" src={value.icon} alt={value.label} sx={{ width: 56, height: 56 }} />
+                <Typography variant="h6" component="h3" sx={{ fontWeight: 600 }}>
+                  {value.label}
+                </Typography>
+              </Stack>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
 
-                <section className="about-values">
-                    <div className="container">
-                        <div className="row head-row">
-                            <div className="col-12">
-                                <div className="cmn-heading text-center">
-                                    <span className="top-name">
-                                        Value <img src={objectImg} alt="object-img" />
-                                    </span>
-                                    <h2>Our Values</h2>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-lg-3 col-md-6">
-                                <div className="values-box">
-                                    <img src={valueIcon1} alt="Learning" />
-                                    <h5>Learning</h5>
-                                </div>
-                            </div>
-                            <div className="col-lg-3 col-md-6">
-                                <div className="values-box">
-                                    <img src={valueIcon2} alt="Integrity" />
-                                    <h5>Integrity</h5>
-                                </div>
-                            </div>
-                            <div className="col-lg-3 col-md-6">
-                                <div className="values-box">
-                                    <img src={valueIcon3} alt="Fast" />
-                                    <h5>Fast</h5>
-                                </div>
-                            </div>
-                            <div className="col-lg-3 col-md-6">
-                                <div className="values-box">
-                                    <img src={valueIcon4} alt="Empathy" />
-                                    <h5>Empathy</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                {/* About Values End */}
-
-                {/* Testimonial Section Start*/}
-                <Testimonial />
-                {/* End of Testimonial Section */}
-
-                {/* Partner Section Start */}
-
-                <PartnerSection />
-
-                {/* Partner Section End */}
-
-                {/* Journey Section Start */}
-
-                <JourneySection />
-
-                {/* Journey Section End */}
-            </div>
-
-            
-
-        </>
-    )
-}
+    <Testimonial />
+    <PartnerSection />
+    <JourneySection />
+  </Box>
+);
 
 export default About;
