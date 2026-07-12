@@ -1,7 +1,7 @@
 # MUI Migration Plan — Datrix Consulting Frontend
 
 **Repository:** https://github.com/Kranthikumar09/Datrix-frontend  
-**Current phase status:** Phase 2 complete — waiting for `Continue to Phase 3`  
+**Current phase status:** Phase 3 complete — waiting for `Continue to Phase 4`  
 **Date:** 2026-07-12  
 
 Companion docs:
@@ -621,9 +621,57 @@ Use:
 
 # Phase 3 — Authentication pages
 
-**Status:** NOT STARTED — wait for `Continue to Phase 3`
+**Status:** COMPLETE  
+**Stopped.** Waiting for: `Continue to Phase 4`
 
-## Target files
+## Phase 3 completion report
+
+### Changed files
+- `src/auth/AuthLayout.js` — added shared MUI auth shell
+- `src/auth/Login.js` — MUI form + Snackbar; OAuth presentation preserved
+- `src/auth/Signup.js` — uses AuthLayout
+- `src/auth/SignupForm.js` — MUI fields/checks/OAuth; intl-tel-input kept
+- `src/auth/ForgotPassword.js` — MUI form + Snackbar
+- `src/auth/ResetPassword.js` — MUI form + visibility toggles + Snackbar
+- `src/auth/VerifyEmail.js` — MUI loading/error/success states + Snackbar
+- `MUI_MIGRATION_PLAN.md` — status update
+
+Note: `Google.js` / `Facebook.js` remain unused backend-style stubs (not React UI); OAuth UI lives in Login/SignupForm.
+
+### What was migrated
+- Auth page Bootstrap navbars → MUI `AuthLayout`
+- Native inputs → `TextField` / `AppTextField` with associated errors + autocomplete
+- Password visibility → MUI `InputAdornment` + icons
+- Toastify on auth pages → `useAppSnackbar`
+- Verify spinner/alerts → `CircularProgress` / `Alert` / icons
+
+### Remaining legacy UI dependencies
+Bootstrap/Font Awesome CDN (other pages), react-toastify (non-auth pages), react-select, react-datepicker, react-slick, intl-tel-input (signup phone), custom CSS. Marketing old brand copy (Phase 4).
+
+### Risks / blockers
+- Live OAuth / real login require valid API env + Google/Facebook app config
+- `intl-tel-input` still used on signup (specialized; themed shell)
+- Unused `src/auth/Google.js` / `Facebook.js` stubs still in repo
+
+### Commands run
+- `npm test -- --watchAll=false` → exit 1 (no tests; pre-existing)
+- `npm run build` → success (pre-existing ESLint warnings; no new auth lint)
+
+### Manual test cases completed
+- [x] Empty login fields show associated errors
+- [x] Password visibility toggle
+- [x] Forgot password page + back to login
+- [x] Signup form renders (fields, terms, OAuth buttons)
+- [x] Verify invalid link state
+- [x] No Bootstrap toggler on auth shell
+- [ ] Successful login with real credentials (API-dependent; not run)
+- [ ] OAuth end-to-end (not run; buttons render)
+
+**Stop after Phase 3.**
+
+---
+
+## Target files (original brief)
 
 Migrate:
 
@@ -1173,7 +1221,7 @@ Use this template at the end of every phase (Phases 1–10):
 | 0 | Audit and baseline | **COMPLETE** |
 | 1 | MUI foundation and branding | **COMPLETE** |
 | 2 | Header, Footer, shell | **COMPLETE** |
-| 3 | Authentication pages | Not started |
+| 3 | Authentication pages | **COMPLETE** |
 | 4 | Public marketing pages | Not started |
 | 5 | Study and work browsing | Not started |
 | 6 | Protected user-panel shell | Not started |
@@ -1182,4 +1230,4 @@ Use this template at the end of every phase (Phases 1–10):
 | 9 | Legacy dependency and CSS cleanup | Not started |
 | 10 | Final branding, a11y, regression audit | Not started |
 
-**Next instruction expected:** `Continue to Phase 3`
+**Next instruction expected:** `Continue to Phase 4`
