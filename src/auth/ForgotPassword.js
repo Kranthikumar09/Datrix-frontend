@@ -1,134 +1,108 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import config from "../config/config";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Logo from "../assets/images/logo.png";
-import LoginBg from "../assets/images/login-bg.png";
-import ArrowLeft from "../assets/images/arrow-left.svg";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import config from "../config/config";
+import { useAppSnackbar } from "../components/ui/AppSnackbar";
+import AppTextField from "../components/ui/AppTextField";
+import AuthLayout from "./AuthLayout";
 
 const RESET_TOKEN_URL = `${config.baseURL}/verify/email-token/send`;
 
 const ForgotPassword = () => {
-    const navigate = useNavigate();
-    const [email, setEmail] = useState("");
-    const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const snackbar = useAppSnackbar();
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        setEmail(e.target.value);
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setEmailError("Email is required");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
+    setEmailError("");
+    setLoading(true);
 
-        try {
-            const response = await axios.post(RESET_TOKEN_URL, {
-                user_email: email,
-                type: "password",
-            });
-            if (response.data.success) {
-                toast.success("A password reset link has been sent to your email!");
-                setEmail("");
-                setTimeout(() => {
-                    navigate("/login"); // Redirect to login after 3 seconds
-                }, 3000);
-            } else {
-                toast.error(response.data.message || "Failed to send reset link.");
-            }
-        } catch (error) {
-            console.error("Reset Request Error:", error.response?.data || error.message);
-            toast.error(
-                error.response?.data?.message || "Failed to send reset link. Please try again."
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
+    try {
+      const response = await axios.post(RESET_TOKEN_URL, {
+        user_email: trimmed,
+        type: "password",
+      });
+      if (response.data.success) {
+        snackbar.success("A password reset link has been sent to your email!");
+        setEmail("");
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      } else {
+        snackbar.error(response.data.message || "Failed to send reset link.");
+      }
+    } catch (error) {
+      console.error("Reset Request Error:", error.response?.data || error.message);
+      snackbar.error(
+        error.response?.data?.message || "Failed to send reset link. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const pageStyle = {
-        backgroundImage: `url(${LoginBg})`,
-    };
-
-    return (
-        <div className="main-section login-page" style={pageStyle}>
-            <header className="header-main">
-                <nav className="navbar navbar-expand-lg">
-                    <div className="container">
-                        <div className="header-inner">
-                            <Link className="navbar-brand" to="/">
-                                <img src={Logo} alt="logo-img" />
-                            </Link>
-                            <button
-                                className="navbar-toggler"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#navbarTogglerDemo02"
-                                aria-controls="navbarTogglerDemo02"
-                                aria-expanded="false"
-                                aria-label="Toggle navigation"
-                            >
-                                <span className="navbar-toggler-icon"></span>
-                            </button>
-                            <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-                                <div className="header-btn-main ms-auto">
-                                    <Link to="/login" className="back-home-btn">
-                                        <img src={ArrowLeft} alt="" />
-                                        <span> Back to Login </span>
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-            <section className="login-section">
-                <div className="container">
-                    <div className="row main-row justify-content-center">
-                        <div className="col-lg-5">
-                            <div className="login-form">
-                                <div className="form-headings">
-                                    <h2>Forgot Password</h2>
-                                    <p>Enter your email to receive a reset link.</p>
-                                </div>
-                                <form onSubmit={handleSubmit}>
-                                    <div className="row contact-form p-0">
-                                        <div className="col-12">
-                                            <div className="form-group">
-                                                <label>Email</label>
-                                                <input
-                                                    type="email"
-                                                    className="form-control"
-                                                    placeholder="Enter your email"
-                                                    name="email"
-                                                    value={email}
-                                                    onChange={handleChange}
-                                                    required
-                                                    disabled={loading}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-12">
-                                            <div className="form-action">
-                                                <button
-                                                    type="submit"
-                                                    className="color-btn btn w-100"
-                                                    disabled={loading}
-                                                >
-                                                    {loading ? "Sending..." : "Send Reset Link"}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
-    );
+  return (
+    <AuthLayout
+      title="Forgot Password"
+      subtitle="Enter your email to receive a reset link."
+      backTo="/login"
+      backLabel="Back to Login"
+      showSideImages={false}
+      formColumns={{ xs: 12, sm: 10, md: 7, lg: 5 }}
+    >
+      <Stack component="form" onSubmit={handleSubmit} spacing={2.5} noValidate>
+        <AppTextField
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (emailError) setEmailError("");
+          }}
+          error={emailError}
+          helperText={emailError}
+          disabled={loading}
+          required
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          disabled={loading}
+          sx={{ borderRadius: "50px", py: 1.5, fontWeight: 600, textTransform: "none", minHeight: 48 }}
+        >
+          {loading ? (
+            <Stack direction="row" spacing={1} alignItems="center">
+              <CircularProgress size={18} color="inherit" />
+              <span>Sending...</span>
+            </Stack>
+          ) : (
+            "Send Reset Link"
+          )}
+        </Button>
+      </Stack>
+    </AuthLayout>
+  );
 };
 
 export default ForgotPassword;
