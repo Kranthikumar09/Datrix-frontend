@@ -127,7 +127,7 @@ const StudyDetails = () => {
                 <div className="mba-inner">
                   <div className="mba-left-inner">
                     <img
-                      src={university.image ? `https://express.studytraveler.com/uploads/universities/${university.image}` : LeftImage}
+                      src={university.image ? config.assetUrl(`uploads/universities/${university.image}`) : LeftImage}
                       alt="Course"
                     />
                   </div>

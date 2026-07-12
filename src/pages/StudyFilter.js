@@ -452,7 +452,7 @@ const StudyFilter = () => {
       <div className="mba-inner p-0 m-0 mb-3 shadow-none border-0">
         <div className="mba-left-inner">
           <img
-            src={course.university?.image ? `https://express.studytraveler.com/uploads/universities/${course.university.image}` : LeftImage}
+            src={course.university?.image ? config.assetUrl(`uploads/universities/${course.university.image}`) : LeftImage}
             alt={course.university?.name || 'Course'}
             onError={(e) => { e.target.src = LeftImage; }}
           />

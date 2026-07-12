@@ -5,7 +5,6 @@ import config from "../../config/config";
 import { useAuth } from "../../context/AuthContext";
 import logo from "../../assets/images/logo.png";
 
-const IMAGE_BASE_URL = "https://express.studytraveler.com/uploads/general-content";
 const FALLBACK_LOGO = logo;
 
 const Header = () => {
@@ -63,7 +62,7 @@ const Header = () => {
             {/* Logo */}
             <NavLink className="navbar-brand" to="/">
               <img
-                src={logo ? `${IMAGE_BASE_URL}/${logo}` : FALLBACK_LOGO}
+                src={logo ? config.assetUrl(`uploads/general-content/${logo}`) : FALLBACK_LOGO}
                 alt="Site Logo"
                 onError={(e) => (e.target.src = FALLBACK_LOGO)}
               />

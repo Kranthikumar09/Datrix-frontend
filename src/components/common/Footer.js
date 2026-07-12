@@ -1,7 +1,8 @@
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import config from '../../config/config'; 
+import config from '../../config/config';
+import { BRAND } from '../../config/brand';
 
 
 import LinkedInSvg from "../../assets/images/Linkedin-icon.svg";
@@ -13,7 +14,6 @@ import MailSvg from "../../assets/images/mail.svg";
 import PhoneSvg from "../../assets/images/phone.svg";
 import logo from "../../assets/images/logo.png";
 
-const IMAGE_BASE_URL = "https://express.studytraveler.com/uploads/general-content";
 const FALLBACK_LOGO = logo;
 
 
@@ -57,8 +57,8 @@ const Footer = forwardRef((props, ref) => {
                             <div className="footer-inner-data">
                                 <Link className="footer-logo" to="/">
                                     <img
-                                        src={siteData.site_logo ? `${IMAGE_BASE_URL}/${siteData.site_logo}` : FALLBACK_LOGO}
-                                        alt={siteData.site_title || "Study Traveler"}
+                                        src={siteData.site_logo ? config.assetUrl(`uploads/general-content/${siteData.site_logo}`) : FALLBACK_LOGO}
+                                        alt={siteData.site_title || BRAND.name}
                                         onError={(e) => (e.target.src = FALLBACK_LOGO)} 
                                     />
                                 </Link>
@@ -120,7 +120,7 @@ const Footer = forwardRef((props, ref) => {
                                     </li> */}
                                     <li>
                                         <img src={MailSvg} alt="Email" /> 
-                                        <span>{siteData.contact_email || "info@studytraveler.com"}</span>
+                                        <span>{siteData.contact_email || BRAND.contactEmailFallback || "Email not available"}</span>
                                     </li>
                                     <li>
                                         <img src={PhoneSvg} alt="Phone" /> 
@@ -147,7 +147,7 @@ const Footer = forwardRef((props, ref) => {
                     <div className="row">
                         <div className="col-12">
                             <div className="footer-bottom">
-                                <span>{siteData.footer_copyright_text || "Copyright ©2025 Study Traveler. All Rights Reserved."}</span>
+                                <span>{siteData.footer_copyright_text || BRAND.copyright}</span>
                             </div>
                         </div>
                     </div>

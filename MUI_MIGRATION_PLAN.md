@@ -1,7 +1,7 @@
 # MUI Migration Plan — Datrix Consulting Frontend
 
 **Repository:** https://github.com/Kranthikumar09/Datrix-frontend  
-**Current phase status:** Phase 0 complete (audit only — no UI implementation changes)  
+**Current phase status:** Phase 1 complete — waiting for `Continue to Phase 2`  
 **Date:** 2026-07-12  
 
 Companion docs:
@@ -356,7 +356,78 @@ Phase 1 foundation → Phase 2 shell → Phase 3 auth → Phase 4 marketing → 
 
 # Phase 1 — Material UI foundation and branding
 
-**Status:** NOT STARTED — wait for `Continue to Phase 1`
+**Status:** COMPLETE  
+**Stopped.** Waiting for: `Continue to Phase 2`
+
+## Tasks completed
+
+1. Installed `@mui/material`, `@emotion/react`, `@emotion/styled`, `@mui/icons-material` (MUI **9.2.0**).
+2. Created centralized theme (`src/theme/theme.js`, `componentOverrides.js`) preserving `#E2403C` / `#000418`.
+3. Added `ThemeProvider` + `CssBaseline` + `AppSnackbarProvider` at the application root.
+4. Created reusable UI components under `src/components/ui/`.
+5. Updated package metadata, `public/index.html`, `public/manifest.json`, `SEO.js`, Footer fallbacks, branding config.
+6. Package name set to `datrix-consulting-frontend`; homepage set to `.` (relative; no invented Datrix domain).
+7. Centralized API/asset/site URLs via `REACT_APP_*` env vars in `src/config/config.js`.
+8. Added `.env.example` + `ENV_CONFIGURATION.md`.
+9. Removed `build-old/` and `src.zip` from version control; ignored in `.gitignore`.
+10. Copied `og-image.jpg` into `public/` for env-based OG image path.
+
+## Phase 1 commands
+
+```bash
+npm test -- --watchAll=false
+# Exit 1 — no tests found (pre-existing; same as Phase 0)
+
+npm run build
+# Exit 0 — Compiled with warnings (pre-existing ESLint warnings; no new lint on foundation files)
+```
+
+## Phase 1 changed files (summary)
+
+**Added:** `src/theme/*`, `src/components/ui/*`, `src/config/brand.js`, `.env.example`, `ENV_CONFIGURATION.md`, `public/og-image.jpg`  
+**Updated:** `package.json`, `package-lock.json`, `public/index.html`, `public/manifest.json`, `src/App.js`, `src/config/config.js`, `src/components/SEO.js`, Header/Footer, pages/components that hard-coded API/asset hosts, `.gitignore`, `MUI_MIGRATION_PLAN.md`  
+**Removed:** `build-old/**`, `src.zip`
+
+## What was migrated
+
+- MUI foundation (theme, providers, shared UI wrappers)
+- Datrix branding in package/manifest/HTML/SEO/Footer fallbacks
+- Hard-coded service URLs → centralized env-driven config
+
+## Remaining legacy UI dependencies
+
+Bootstrap CDN, Font Awesome CDN, react-toastify, react-select, react-datepicker, react-slick, slick-carousel, intl-tel-input, large custom CSS. Marketing page copy still contains old visible brand names (Phase 4+).
+
+## Risks / blockers
+
+- Deployments must set `REACT_APP_API_BASE_URL`, `REACT_APP_ASSET_BASE_URL`, `REACT_APP_PUBLIC_SITE_URL` at build time or API/media/OG URLs will be empty (intentional — no guessed domain).
+- Backend/CMS may still return Study Traveler site title, copyright, and SEO content.
+- Logo/favicon artwork may still visually reflect the previous brand until new assets are supplied.
+- No unit tests yet.
+
+## Manual test cases completed
+
+- [x] Production build succeeds with Datrix title/manifest/description
+- [x] ThemeProvider / CssBaseline wired (build includes MUI; +~40 kB JS gzip)
+- [x] Config warns when env vars missing (verified by code path; local `.env.local` used for build)
+- [ ] Full browser visual pass of every page (deferred — no UI page redesign in Phase 1)
+- [ ] Live API smoke with production env (requires deployer-provided hosts)
+
+## Acceptance criteria checklist
+
+- [x] Application builds
+- [x] ThemeProvider is active
+- [x] Existing pages still render (structure unchanged; providers only at root)
+- [x] Datrix Consulting appears in browser and metadata
+- [x] No visible old branding remains in the migrated foundation (package/HTML/manifest/SEO/Footer fallbacks)
+- [x] API configuration is centralized
+- [x] No guessed production endpoint is introduced
+
+**Stop after Phase 1.**
+
+---
+
+# Phase 1 (original task brief — retained for reference)
 
 ## Tasks
 
@@ -1056,7 +1127,7 @@ Use this template at the end of every phase (Phases 1–10):
 | Phase | Title | Status |
 |---|---|---|
 | 0 | Audit and baseline | **COMPLETE** |
-| 1 | MUI foundation and branding | Not started |
+| 1 | MUI foundation and branding | **COMPLETE** |
 | 2 | Header, Footer, shell | Not started |
 | 3 | Authentication pages | Not started |
 | 4 | Public marketing pages | Not started |
@@ -1067,4 +1138,4 @@ Use this template at the end of every phase (Phases 1–10):
 | 9 | Legacy dependency and CSS cleanup | Not started |
 | 10 | Final branding, a11y, regression audit | Not started |
 
-**Next instruction expected:** `Continue to Phase 1`
+**Next instruction expected:** `Continue to Phase 2`

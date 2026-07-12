@@ -12,7 +12,6 @@ import Sidebar from './Sidebar';
 import EyeBtn from "../assets/images/pass-view.svg";
 import EyeBtnOff from "../assets/images/pass-view.svg";
 
-const IMAGE_BASE_URL = 'https://express.studytraveler.com/uploads/users/';
 
 const MyAccount = () => {
   const navigate = useNavigate();
@@ -97,7 +96,7 @@ const MyAccount = () => {
       setIsSocialLogin(userDataFromApi.auth_provider && ['google', 'facebook'].includes(userDataFromApi.auth_provider.toLowerCase()));
 
       if (userDataFromApi.image) {
-        setProfileImage(`${IMAGE_BASE_URL}${userDataFromApi.image}`);
+        setProfileImage(config.assetUrl(`uploads/users/${userDataFromApi.image}`));
       } else {
         setProfileImage(profileimg);
       }
@@ -155,7 +154,7 @@ const MyAccount = () => {
         const updatedUserResponse = await instance.post('/user/details/get', { user_id: userId });
 
         if (updatedUserResponse.data.success && updatedUserResponse.data.data.image) {
-          const newImageUrl = `${IMAGE_BASE_URL}${updatedUserResponse.data.data.image}`;
+          const newImageUrl = config.assetUrl(`uploads/users/${updatedUserResponse.data.data.image}`);
           setProfileImage(newImageUrl);
           URL.revokeObjectURL(localImageUrl);
           toast.success('Profile image uploaded successfully', {

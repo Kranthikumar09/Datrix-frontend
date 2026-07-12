@@ -1,25 +1,37 @@
-// src/components/SEO.jsx
-import React, { useEffect, useState } from "react";
+// src/components/SEO.js
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { BRAND } from "../config/brand";
+import config from "../config/config";
 
 const SEO = () => {
   const location = useLocation();
   const pageKey = location.pathname === "/" ? "home" : location.pathname.slice(1);
 
   const [seoData, setSeoData] = useState({
-    title: "Study Traveler",
-    description: "Study Traveler – Your gateway to study and work abroad.",
-    keywords: "study abroad, work abroad, international education",
-    image: "https://studytraveler.com/og-image.jpg",
-    url: "https://studytraveler.com" + location.pathname
+    title: BRAND.defaultTitle,
+    description: BRAND.defaultDescription,
+    keywords: BRAND.keywords,
+    image: config.siteUrl("/og-image.jpg"),
+    url: config.siteUrl(location.pathname),
   });
 
-  const baseUrl = process.env.REACT_APP_API_BASE_URL || "https://express.studytraveler.com/backend/api";
+  useEffect(() => {
+    setSeoData((prev) => ({
+      ...prev,
+      image: config.siteUrl("/og-image.jpg"),
+      url: config.siteUrl(location.pathname),
+    }));
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchSEOData = async () => {
+      if (!config.baseURL) {
+        return;
+      }
+
       try {
-        const response = await fetch(`${baseUrl}/site-content/page-seo-content/get`, {
+        const response = await fetch(`${config.baseURL}/site-content/page-seo-content/get`, {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: new URLSearchParams({ page_key: pageKey }),
@@ -30,7 +42,7 @@ const SEO = () => {
         if (data.success && data.data) {
           setSeoData((prev) => ({
             ...prev,
-            title: `${data.data.title} | Study Traveler`,
+            title: `${data.data.title} | ${BRAND.name}`,
             description: data.data.description,
             keywords: data.data.keywords,
           }));
@@ -41,10 +53,9 @@ const SEO = () => {
     };
 
     fetchSEOData();
-  }, [pageKey, baseUrl]);
+  }, [pageKey]);
 
   useEffect(() => {
-    // Update Title
     document.title = seoData.title;
 
     const setMeta = (name, content) => {
@@ -69,23 +80,20 @@ const SEO = () => {
       tag.setAttribute("content", content);
     };
 
-    // Standard Meta
     setMeta("description", seoData.description);
     setMeta("keywords", seoData.keywords);
 
-    // OPEN GRAPH META
     setOG("og:title", seoData.title);
     setOG("og:description", seoData.description);
     setOG("og:image", seoData.image);
     setOG("og:url", seoData.url);
     setOG("og:type", "website");
+    setOG("og:site_name", BRAND.name);
 
-    // TWITTER META
     setMeta("twitter:card", "summary_large_image");
     setMeta("twitter:title", seoData.title);
     setMeta("twitter:description", seoData.description);
     setMeta("twitter:image", seoData.image);
-
   }, [seoData]);
 
   return null;

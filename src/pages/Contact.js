@@ -12,9 +12,7 @@ import linkedinIcon from "../assets/images/linkedin.svg";
 import fbIcon from "../assets/images/fb.svg";
 import instaIcon from "../assets/images/insta.svg";
 import youtubeIcon from "../assets/images/youtube.svg";
-
-// API Base URL
-const BASE_URL = "https://express.studytraveler.com/backend/api";
+import config from '../config/config';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -42,7 +40,7 @@ const Contact = () => {
     useEffect(() => {
         const fetchSiteContent = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/site-content/general-content/get`);
+                const response = await axios.get(`${config.baseURL}/site-content/general-content/get`);
                 if (response.data.success) {
                     setSiteContent(response.data.data);
                 }
@@ -140,7 +138,7 @@ const Contact = () => {
         };
 
         try {
-            const response = await axios.post(`${BASE_URL}/contact-requests/submit`, updatedFormData);
+            const response = await axios.post(`${config.baseURL}/contact-requests/submit`, updatedFormData);
 
             if (response.data.success) {
                 toast.success("Your message has been sent successfully! 🎉", { position: "top-right" });

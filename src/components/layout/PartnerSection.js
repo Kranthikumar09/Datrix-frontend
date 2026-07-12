@@ -75,7 +75,7 @@ Through these partnerships, we ensure access to premium admissions, verified pro
                     {partners.map((partner, index) => (
                       <figure key={index}>
                         <img
-                          src={`https://express.studytraveler.com/uploads/our-partners/${partner.image}`}
+                          src={config.assetUrl(`uploads/our-partners/${partner.image}`)}
                           alt={partner.title}
                           className="partner-img"
                         />
@@ -86,7 +86,7 @@ Through these partnerships, we ensure access to premium admissions, verified pro
                   // Render a single image if there is only one partner
                   <figure>
                     <img
-                      src={`https://express.studytraveler.com/uploads/our-partners/${partners[0].image}`}
+                      src={config.assetUrl(`uploads/our-partners/${partners[0].image}`)}
                       alt={partners[0].title}
                       className="partner-img"
                     />
