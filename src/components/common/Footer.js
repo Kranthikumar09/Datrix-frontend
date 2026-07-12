@@ -1,177 +1,282 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import config from '../../config/config';
-import { BRAND } from '../../config/brand';
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import axios from "axios";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import IconButton from "@mui/material/IconButton";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import PhoneIphoneOutlinedIcon from "@mui/icons-material/PhoneIphoneOutlined";
+import CloseIcon from "@mui/icons-material/Close";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import YouTubeIcon from "@mui/icons-material/YouTube";
+import config from "../../config/config";
+import { BRAND } from "../../config/brand";
+import fallbackLogoAsset from "../../assets/images/logo.png";
 
+const FALLBACK_LOGO = fallbackLogoAsset;
 
-import LinkedInSvg from "../../assets/images/Linkedin-icon.svg";
-import FbSvg from "../../assets/images/facebook.svg";
-import InstaSvg from "../../assets/images/instagram.svg";
-import YtSvg from "../../assets/images/ytube.svg";
-import AddressSvg from "../../assets/images/address.svg";
-import MailSvg from "../../assets/images/mail.svg";
-import PhoneSvg from "../../assets/images/phone.svg";
-import logo from "../../assets/images/logo.png";
+const COMPANY_LINKS = [
+  { label: "Home", to: "/" },
+  { label: "About us", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
 
-const FALLBACK_LOGO = logo;
-
+const RESOURCE_LINKS = [
+  { label: "FAQs", to: "/faq" },
+  { label: "Blogs", to: "/blog" },
+  { label: "Privacy Policy", to: "/privacy-policy" },
+  { label: "Terms & Conditions", to: "/terms-conditions" },
+];
 
 const Footer = forwardRef((props, ref) => {
-    const [siteData, setSiteData] = useState({});
-    const [error, setError] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [videoSrc, setVideoSrc] = useState('');
+  const [siteData, setSiteData] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [videoSrc, setVideoSrc] = useState("");
 
-    useEffect(() => {
-        axios.get(`${config.baseURL}/site-content/general-content/get`)
-            .then((response) => {
-                setSiteData(response.data?.data || {});
-            })
-            .catch((err) => {
-                console.error("API Error:", err);
-                setError(err.message);
-            });
-    }, []);
+  useEffect(() => {
+    if (!config.baseURL) return undefined;
 
-    const handleModalOpen = (src) => {
-        setVideoSrc(src);
-        setShowModal(true);
-    };
+    axios
+      .get(`${config.baseURL}/site-content/general-content/get`)
+      .then((response) => {
+        setSiteData(response.data?.data || {});
+      })
+      .catch((err) => {
+        console.error("API Error:", err);
+      });
 
-    const handleModalClose = () => {
-        setShowModal(false);
-        setVideoSrc('');
-    };
+    return undefined;
+  }, []);
 
-    useImperativeHandle(ref, () => ({
-        handleModalOpen
-    }));
+  const handleModalOpen = (src) => {
+    setVideoSrc(src);
+    setShowModal(true);
+  };
 
-    return (
-        <>
-            <footer className="footer-section">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-md-4">
-                            <div className="footer-inner-data">
-                                <Link className="footer-logo" to="/">
-                                    <img
-                                        src={siteData.site_logo ? config.assetUrl(`uploads/general-content/${siteData.site_logo}`) : FALLBACK_LOGO}
-                                        alt={siteData.site_title || BRAND.name}
-                                        onError={(e) => (e.target.src = FALLBACK_LOGO)} 
-                                    />
-                                </Link>
+  const handleModalClose = () => {
+    setShowModal(false);
+    setVideoSrc("");
+  };
 
-                             
-                                <ul className="list-unstyled footer-social">
-                                    {siteData.contact_social_linkedin && (
-                                        <li>
-                                            <Link to={siteData.contact_social_linkedin} target="_blank">
-                                                <img src={LinkedInSvg} alt="LinkedIn" />
-                                            </Link>
-                                        </li>
-                                    )}
-                                    {siteData.contact_social_facebook && (
-                                        <li>
-                                            <Link to={siteData.contact_social_facebook} target="_blank">
-                                                <img src={FbSvg} alt="Facebook" />
-                                            </Link>
-                                        </li>
-                                    )}
-                                    {siteData.contact_social_instagram && (
-                                        <li>
-                                            <Link to={siteData.contact_social_instagram} target="_blank">
-                                                <img src={InstaSvg} alt="Instagram" />
-                                            </Link>
-                                        </li>
-                                    )}
-                                    {siteData.contact_social_youtube && (
-                                        <li>
-                                            <Link to={siteData.contact_social_youtube} target="_blank">
-                                                <img src={YtSvg} alt="YouTube" />
-                                            </Link>
-                                        </li>
-                                    )}
-                                </ul>
-                            </div>
-                        </div>
+  useImperativeHandle(ref, () => ({
+    handleModalOpen,
+  }));
 
-                        <div className="col-md-3">
-                            <div className="our-inner-links">
-                                <h3>Company</h3>
-                                <ul>
-                                    <li><Link to="/">Home</Link></li>
-                                    <li><Link to="/about">About us</Link></li>
-                                    {/* <li><Link to="/">Careers</Link></li> */}
-                                    <li><Link to="/contact">Contact</Link></li>
-                                    {/* <li><Link to="/blog">Blogs</Link></li> */}
-                                </ul>
-                            </div>
-                        </div>
+  const socialLinks = [
+    {
+      href: siteData.contact_social_linkedin,
+      label: "LinkedIn",
+      icon: <LinkedInIcon fontSize="small" />,
+    },
+    {
+      href: siteData.contact_social_facebook,
+      label: "Facebook",
+      icon: <FacebookIcon fontSize="small" />,
+    },
+    {
+      href: siteData.contact_social_instagram,
+      label: "Instagram",
+      icon: <InstagramIcon fontSize="small" />,
+    },
+    {
+      href: siteData.contact_social_youtube,
+      label: "YouTube",
+      icon: <YouTubeIcon fontSize="small" />,
+    },
+  ].filter((item) => Boolean(item.href));
 
-                        <div className="col-md-3">
-                            <div className="company-info">
-                                <h3>Contact</h3>
-                                <ul>
-                                    {/* <li>
-                                        <img src={AddressSvg} alt="Address" /> 
-                                        <span>{siteData.contact_address || "Address not available"}</span>
-                                    </li> */}
-                                    <li>
-                                        <img src={MailSvg} alt="Email" /> 
-                                        <span>{siteData.contact_email || BRAND.contactEmailFallback || "Email not available"}</span>
-                                    </li>
-                                    <li>
-                                        <img src={PhoneSvg} alt="Phone" /> 
-                                        <span>{siteData.contact_phone_number || "+61 45 743 84 88"}</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+  const contactEmail =
+    siteData.contact_email || BRAND.contactEmailFallback || "Email not available";
+  const contactPhone = siteData.contact_phone_number || "+61 45 743 84 88";
+  const logoSrc = siteData.site_logo
+    ? config.assetUrl(`uploads/general-content/${siteData.site_logo}`)
+    : FALLBACK_LOGO;
 
-                        <div className="col-md-2">
-                            <div className="our-inner-links resource">
-                                <h3>Resource</h3>
-                                <ul>
-                                    {/* <li><Link to="/contact">Contact us</Link></li> */}
-                                    <li><Link to="/faq">FAQs</Link></li>
-                                    <li><Link to="/blog">Blogs</Link></li>
-                                    <li><Link to="/privacy-policy">Privacy Policy</Link></li>
-                                    <li><Link to="/terms-conditions">Terms & Conditions</Link></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+  return (
+    <>
+      <Box
+        component="footer"
+        sx={{
+          borderTop: "1px solid #edeff1",
+          pt: 6,
+          bgcolor: "background.subtle",
+          borderBottom: "6px solid",
+          borderBottomColor: "primary.main",
+        }}
+      >
+        <Container maxWidth="lg">
+          <Grid container spacing={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Stack spacing={3}>
+                <Link
+                  component={RouterLink}
+                  to="/"
+                  underline="none"
+                  aria-label={BRAND.name}
+                  sx={{ display: "inline-flex", width: "fit-content" }}
+                >
+                  <Box
+                    component="img"
+                    src={logoSrc}
+                    alt={siteData.site_title || BRAND.name}
+                    onError={(e) => {
+                      e.currentTarget.src = FALLBACK_LOGO;
+                    }}
+                    sx={{ maxHeight: 48, width: "auto" }}
+                  />
+                </Link>
 
-                    <div className="row">
-                        <div className="col-12">
-                            <div className="footer-bottom">
-                                <span>{siteData.footer_copyright_text || BRAND.copyright}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+                {socialLinks.length > 0 && (
+                  <Stack direction="row" spacing={1.5}>
+                    {socialLinks.map((item) => (
+                      <IconButton
+                        key={item.label}
+                        component="a"
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={item.label}
+                        sx={{
+                          width: 45,
+                          height: 45,
+                          border: "2.25px solid #ECEFF3",
+                          color: "secondary.main",
+                          "&:hover": {
+                            bgcolor: "primary.main",
+                            borderColor: "primary.main",
+                            color: "primary.contrastText",
+                          },
+                        }}
+                      >
+                        {item.icon}
+                      </IconButton>
+                    ))}
+                  </Stack>
+                )}
+              </Stack>
+            </Grid>
 
-            {/* Video Modal */}
-            {showModal && (
-                <div className="modal fade show" style={{ display: 'block' }} id="videomodal" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-xl">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h3 className="modal-title" id="staticBackdropLabel">Video</h3>
-                                <button type="button" className="btn-close" onClick={handleModalClose} aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <iframe width="100%" height="600" className="embed-responsive-item" src={videoSrc} allowFullScreen></iframe>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </>
-    );
+            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+              <Typography variant="subtitle2" sx={{ color: "secondary.main", fontWeight: 600, mb: 1.5 }}>
+                Company
+              </Typography>
+              <Stack spacing={1.5} component="nav" aria-label="Company">
+                {COMPANY_LINKS.map((item) => (
+                  <Link
+                    key={item.to}
+                    component={RouterLink}
+                    to={item.to}
+                    underline="hover"
+                    sx={{ color: "text.muted", fontWeight: 500, fontSize: 14 }}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </Stack>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+              <Typography variant="subtitle2" sx={{ color: "secondary.main", fontWeight: 600, mb: 1.5 }}>
+                Contact
+              </Typography>
+              <Stack spacing={2}>
+                <Stack direction="row" spacing={1.25} alignItems="flex-start">
+                  <EmailOutlinedIcon sx={{ color: "primary.main", fontSize: 20, mt: 0.25 }} />
+                  <Typography variant="body2" sx={{ color: "text.muted", fontWeight: 500 }}>
+                    {contactEmail}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" spacing={1.25} alignItems="flex-start">
+                  <PhoneIphoneOutlinedIcon sx={{ color: "primary.main", fontSize: 20, mt: 0.25 }} />
+                  <Typography variant="body2" sx={{ color: "text.muted", fontWeight: 500 }}>
+                    {contactPhone}
+                  </Typography>
+                </Stack>
+              </Stack>
+            </Grid>
+
+            <Grid size={{ xs: 12, sm: 4, md: 2 }}>
+              <Typography variant="subtitle2" sx={{ color: "secondary.main", fontWeight: 600, mb: 1.5 }}>
+                Resource
+              </Typography>
+              <Stack spacing={1.5} component="nav" aria-label="Resources">
+                {RESOURCE_LINKS.map((item) => (
+                  <Link
+                    key={item.to}
+                    component={RouterLink}
+                    to={item.to}
+                    underline="hover"
+                    sx={{ color: "text.muted", fontWeight: 500, fontSize: 14 }}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </Stack>
+            </Grid>
+          </Grid>
+
+          <Box
+            sx={{
+              borderTop: "1px solid #ECEFF3",
+              textAlign: "center",
+              py: 3,
+              mt: 2,
+            }}
+          >
+            <Typography variant="body2" sx={{ color: "text.muted", fontWeight: 500 }}>
+              {siteData.footer_copyright_text || BRAND.copyright}
+            </Typography>
+          </Box>
+        </Container>
+      </Box>
+
+      <Dialog
+        open={showModal}
+        onClose={handleModalClose}
+        fullWidth
+        maxWidth="lg"
+        aria-labelledby="footer-video-dialog-title"
+      >
+        <DialogTitle id="footer-video-dialog-title" sx={{ pr: 6 }}>
+          Video
+          <IconButton
+            aria-label="Close video dialog"
+            onClick={handleModalClose}
+            sx={{ position: "absolute", right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          {videoSrc ? (
+            <Box
+              component="iframe"
+              title="Footer video"
+              src={videoSrc}
+              allowFullScreen
+              sx={{
+                width: "100%",
+                height: { xs: 260, sm: 420, md: 600 },
+                border: 0,
+                display: "block",
+              }}
+            />
+          ) : null}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 });
+
+Footer.displayName = "Footer";
 
 export default Footer;
