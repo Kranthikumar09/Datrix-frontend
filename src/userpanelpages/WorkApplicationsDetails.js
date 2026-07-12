@@ -5,7 +5,8 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Sidebar from './Sidebar'; // Adjust path as needed
+import ProtectedPageLayout from '../components/layout/ProtectedPageLayout';
+import LoadingState from '../components/ui/LoadingState';
 import config from "../config/config";
 
 const WorkApplicationsDetails = () => {
@@ -119,33 +120,35 @@ const WorkApplicationsDetails = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
-        <div className="spinner-border text-danger" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <ProtectedPageLayout fullName={fullName} userId={userId}>
+        <LoadingState label="Loading application details..." height={240} />
         <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-      </div>
+      </ProtectedPageLayout>
     );
   }
 
   if (error) {
     return (
-      <div className="alert alert-danger m-4" role="alert">
-        <h4>Error loading application details</h4>
-        <p>{error}</p>
-        <Link to="/work-applications" className="btn btn-primary">Back to Applications</Link>
+      <ProtectedPageLayout fullName={fullName} userId={userId}>
+        <div className="alert alert-danger" role="alert">
+          <h4>Error loading application details</h4>
+          <p>{error}</p>
+          <Link to="/work-applications" className="btn btn-primary">Back to Applications</Link>
+        </div>
         <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-      </div>
+      </ProtectedPageLayout>
     );
   }
 
   if (!application) {
     return (
-      <div className="alert alert-warning m-4" role="alert">
-        <h4>Application not found</h4>
-        <Link to="/work-applications" className="btn btn-primary">Back to Applications</Link>
+      <ProtectedPageLayout fullName={fullName} userId={userId}>
+        <div className="alert alert-warning" role="alert">
+          <h4>Application not found</h4>
+          <Link to="/work-applications" className="btn btn-primary">Back to Applications</Link>
+        </div>
         <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-      </div>
+      </ProtectedPageLayout>
     );
   }
 
@@ -154,16 +157,7 @@ const WorkApplicationsDetails = () => {
   const coverLetterUrl = application.cover_letter ? `${config.baseURL}/uploads/${application.cover_letter}` : null;
 
   return (
-    <div className="main-section">
-      <section className="profile-section">
-        <div className="container">
-          <div className="row justify-content-center">
-            <Sidebar fullName={fullName} userId={userId} />
-            <div className="col-xl-9 col-lg-8">
-              <div className="tab-content">
-                <div className="setting-tab">
-                  <div className="row">
-                    <div className="col-lg-12">
+    <ProtectedPageLayout fullName={fullName} userId={userId}>
                       <div className="single-area">
                         <h5 className="mb-0">Work Application Details</h5>
                       </div>
@@ -262,16 +256,8 @@ const WorkApplicationsDetails = () => {
                           )}
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
       <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-    </div>
+    </ProtectedPageLayout>
   );
 };
 

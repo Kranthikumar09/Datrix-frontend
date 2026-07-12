@@ -1,7 +1,7 @@
 # MUI Migration Plan — Datrix Consulting Frontend
 
 **Repository:** https://github.com/Kranthikumar09/Datrix-frontend  
-**Current phase status:** Phase 5 complete — waiting for `Continue to Phase 6`  
+**Current phase status:** Phase 6 complete — waiting for `Continue to Phase 7`  
 **Date:** 2026-07-12  
 
 Companion docs:
@@ -921,7 +921,53 @@ Use: `Card`, `CardContent`, `CardActions`, `Autocomplete`, `Select`, `Chip`, `Ac
 
 # Phase 6 — Protected user-panel shell
 
-**Status:** NOT STARTED — wait for `Continue to Phase 6`
+**Status:** COMPLETE  
+**Stopped.** Waiting for: `Continue to Phase 7`
+
+## Phase 6 completion report
+
+### Changed files (summary)
+- `src/userpanelpages/Sidebar.js` — MUI navigation with `@mui/icons-material`; active-route logic preserved
+- `src/components/layout/ProtectedPageLayout.js` — reusable shell (permanent desktop Drawer + temporary mobile Drawer)
+- User-panel pages wired to layout: MyAccount, StudyApplications, StudyApplicationsDetails, EditStudyApplication, WorkApplications, WorkApplicationsDetails, EditWorkApplication, AppliedJobs, UploadDocuments
+- `MUI_MIGRATION_PLAN.md`
+
+### What was migrated
+- Bootstrap sidebar (`dashboard-sidebar`, Font Awesome icons) → MUI `Drawer`, `List`, `ListItemButton`, `ListItemIcon`, `ListItemText`, `Divider`, MUI icons
+- Duplicated `main-section` / `profile-section` / `container` / `row` wrappers removed from 9 pages via `ProtectedPageLayout`
+- User profile heading (name + ID) in sidebar `Paper` header
+- Active-route logic preserved for profile, study/work application trees (including detail + edit routes), applied jobs, and documents
+- Mobile: hamburger `IconButton` opens temporary Drawer; nav click closes Drawer
+- Accessibility: `aria-label`, `aria-current="page"`, `aria-expanded` on mobile menu button
+- Loading states on shell pages use shared `LoadingState` inside layout where applicable
+
+### Not migrated in Phase 6 (by design)
+- `ApplicationForm.js`, `JobApplyForm.js` — wizard flows without sidebar (Phase 7)
+- Page content (forms, tables, uploads) — still Bootstrap/custom CSS (Phases 7–8)
+
+### Remaining legacy UI dependencies
+- Bootstrap/Font Awesome CDN (page content, ApplicationForm, JobApplyForm)
+- `react-toastify` on all user-panel pages
+- `react-select` (ApplicationForm, edit forms)
+- `intl-tel-input` (MyAccount)
+- Custom `profile-section` CSS for inner page content
+
+### Risks / blockers
+- Inner page content still uses Bootstrap tables/forms — visual inconsistency until Phases 7–8
+- Each page still fetches `fullName` independently for the sidebar header
+
+### Commands run
+- `npm test -- --watchAll=false` → exit 1 (no tests)
+- `npm run build` → success (pre-existing ESLint warnings)
+
+### Manual test cases completed
+- [x] Sidebar nav items render with MUI icons
+- [x] Active route highlighting for profile, study/work apps (incl. detail/edit), applied jobs, documents
+- [x] ProtectedPageLayout wraps all 9 sidebar-backed pages
+- [x] Mobile menu button + Drawer pattern implemented
+- [x] Production build compiles
+
+**Stop after Phase 6.**
 
 ## Target files
 
@@ -1324,4 +1370,4 @@ Use this template at the end of every phase (Phases 1–10):
 | 9 | Legacy dependency and CSS cleanup | Not started |
 | 10 | Final branding, a11y, regression audit | Not started |
 
-**Next instruction expected:** `Continue to Phase 6`
+**Next instruction expected:** `Continue to Phase 7`

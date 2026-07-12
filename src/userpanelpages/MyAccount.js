@@ -8,7 +8,8 @@ import intlTelInput from 'intl-tel-input';
 import 'intl-tel-input/build/css/intlTelInput.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Sidebar from './Sidebar';
+import ProtectedPageLayout from '../components/layout/ProtectedPageLayout';
+import LoadingState from '../components/ui/LoadingState';
 import EyeBtn from "../assets/images/pass-view.svg";
 import EyeBtnOff from "../assets/images/pass-view.svg";
 
@@ -394,9 +395,34 @@ const MyAccount = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
-        <div className="spinner-border text-danger" role="status">
-          <span className="visually-hidden">Loading...</span>
+      <ProtectedPageLayout fullName={profileData.fullName} userId={userId}>
+        <LoadingState label="Loading profile..." height={240} />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss={false}
+          draggable
+          pauseOnHover
+          theme="colored"
+          style={{ zIndex: 9999 }}
+        />
+      </ProtectedPageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <ProtectedPageLayout fullName={profileData.fullName} userId={userId}>
+        <div className="alert alert-danger" role="alert">
+          <h4>Error loading profile</h4>
+          <p>{error}</p>
+          <button className="btn btn-primary" onClick={fetchInitialData}>
+            Try Again
+          </button>
         </div>
         <ToastContainer
           position="top-right"
@@ -411,47 +437,12 @@ const MyAccount = () => {
           theme="colored"
           style={{ zIndex: 9999 }}
         />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="alert alert-danger m-4" role="alert">
-        <h4>Error loading profile</h4>
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={fetchInitialData}>
-          Try Again
-        </button>
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={true}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss={false}
-          draggable
-          pauseOnHover
-          theme="colored"
-          style={{ zIndex: 9999 }}
-        />
-      </div>
+      </ProtectedPageLayout>
     );
   }
 
   return (
-    <div className="main-section">
-      <section className="profile-section">
-        <div className="container">
-          <div className="row justify-content-center">
-            <Sidebar fullName={profileData.fullName} userId={userId} />
-
-            <div className="col-xl-9 col-lg-8">
-              <div className="tab-content">
-                <div className="setting-tab">
-                  <div className="row">
-                    <div className="col-lg-12">
+    <ProtectedPageLayout fullName={profileData.fullName} userId={userId}>
                       <div className="single-area">
                         <h5 className="mb-0">Profile Details</h5>
                       </div>
@@ -690,14 +681,6 @@ const MyAccount = () => {
                           </div>
                         </form>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -711,7 +694,7 @@ const MyAccount = () => {
         theme="colored"
         style={{ zIndex: 9999 }}
       />
-    </div>
+    </ProtectedPageLayout>
   );
 };
 

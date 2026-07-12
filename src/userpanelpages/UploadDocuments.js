@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from '../context/AuthContext';
-import Sidebar from './Sidebar';
+import ProtectedPageLayout from '../components/layout/ProtectedPageLayout';
 import config from "../config/config";
 import photoUploadImg from '../assets/images/photo-upload.svg';
 
@@ -242,7 +242,7 @@ const UploadDocuments = () => {
   };
 
   return (
-    <div className="main-section">
+    <ProtectedPageLayout fullName={fullName} userId={userId}>
       <ToastContainer
         theme="colored"
         position="top-right"
@@ -255,11 +255,6 @@ const UploadDocuments = () => {
         draggable
         pauseOnHover
       />
-      <section className="profile-section sdsd">
-        <div className="container">
-          <div className="row justify-content-center">
-            <Sidebar fullName={fullName} userId={userId} />
-            <div className="col-xl-9 col-lg-8">
               <div className="row setting-tab">
                 <div className="col-md-5">
                   <div className="single-area">
@@ -385,11 +380,7 @@ const UploadDocuments = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+    </ProtectedPageLayout>
   );
 };
 
