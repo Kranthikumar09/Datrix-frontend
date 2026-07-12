@@ -22,7 +22,7 @@ const UploadDocuments = () => {
   const { isAuthenticated, logout } = useAuth();
 
   const getToken = () => localStorage.getItem('accessToken');
-  const documentBaseUrl = `https://express.studytraveler.com/uploads/user-documents/`;
+  const documentBaseUrl = `${config.assetUrl('uploads/user-documents')}/`;
 
   const allowedFileTypes = [
     'application/pdf',

@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import config from '../config/config';
 
-const IMAGE_BASE_URL = 'https://express.studytraveler.com/uploads/blogs';
 
 const Blog = () => {
   const [blogs, setBlogs] = useState([]);
@@ -146,7 +145,7 @@ const Blog = () => {
                   <div className="blod-image">
                     <figure>
                       <img
-                        src={`${IMAGE_BASE_URL}/${blog.image}`}
+                        src={`${config.assetUrl('uploads/blogs')}/${blog.image}`}
                         alt={blog.title}
                         loading="lazy"
                       />

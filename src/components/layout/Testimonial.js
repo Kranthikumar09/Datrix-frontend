@@ -81,7 +81,7 @@ const Testimonial = () => {
 
   const handleOpenInNewTab = () => {
     window.open(
-      `https://express.studytraveler.com/uploads/testimonials/${videoUrl}`,
+      config.assetUrl(`uploads/testimonials/${videoUrl}`),
       "_blank"
     );
   };
@@ -181,7 +181,7 @@ const Testimonial = () => {
                           <div className="testimonial-bottom">
                             <figure>
                               <img
-                                src={`https://express.studytraveler.com/uploads/testimonials/${testimonial.image}`}
+                                src={config.assetUrl(`uploads/testimonials/${testimonial.image}`)}
                                 className="profile-img"
                                 alt={testimonial.name}
                               />
@@ -228,7 +228,7 @@ const Testimonial = () => {
             </span>
             <video width="100%" controls>
               <source
-                src={`https://express.studytraveler.com/uploads/testimonials/${videoUrl}`}
+                src={config.assetUrl(`uploads/testimonials/${videoUrl}`)}
                 type="video/webm"
               />
               Your browser does not support the video tag.

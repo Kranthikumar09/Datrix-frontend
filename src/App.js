@@ -6,9 +6,15 @@ import {
   Navigate,
   useLocation,
 } from "react-router-dom";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 
 // Import Auth components
 import { AuthProvider, useAuth } from "./context/AuthContext";
+
+// Import theme and shared UI
+import theme from "./theme/theme";
+import { AppSnackbarProvider } from "./components/ui/AppSnackbar";
 
 // Import components
 import Header from "./components/common/Header";
@@ -216,12 +222,16 @@ function Layout() {
 function App() {
   return (
     <React.StrictMode>
-      <Router>
-
-        <AuthProvider>
-          <Layout />
-        </AuthProvider>
-      </Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <AuthProvider>
+            <AppSnackbarProvider>
+              <Layout />
+            </AppSnackbarProvider>
+          </AuthProvider>
+        </Router>
+      </ThemeProvider>
     </React.StrictMode>
   );
 }

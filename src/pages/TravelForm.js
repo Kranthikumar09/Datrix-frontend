@@ -9,8 +9,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import RightArrow from '../assets/images/right-arrow.svg';
 import travelBannerImage from '../assets/images/sdgf.jpg';
+import config from '../config/config';
 
-const BASE_URL = 'https://express.studytraveler.com/backend/api';
 
 // Custom styles for react-select component
 const customSelectStyles = {
@@ -64,7 +64,7 @@ const TravelForm = () => {
   const fetchData = useCallback(async () => {
     try {
       setLoading((prev) => ({ ...prev, countries: true }));
-      const response = await axios.get(`${BASE_URL}/countries/get`);
+      const response = await axios.get(`${config.baseURL}/countries/get`);
       if (response.data.success) setCountries(response.data.data);
     } catch (error) {
       toast.error(`Error fetching countries: ${error.message}`, { position: 'top-right' });
@@ -219,7 +219,7 @@ const TravelForm = () => {
     };
 
     try {
-      const response = await axios.post(`${BASE_URL}/travel-requests/submit`, payload);
+      const response = await axios.post(`${config.baseURL}/travel-requests/submit`, payload);
       if (response.data.success) {
         toast.success('Travel request submitted successfully! 🎉', { position: 'top-right' });
         resetForm();
