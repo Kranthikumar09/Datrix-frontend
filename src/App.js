@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import Box from "@mui/material/Box";
 
 // Import Auth components
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -56,9 +57,7 @@ import AppliedJobs from "./userpanelpages/AppliedJobs";
 import JobApplyForm from "./userpanelpages/JobApplyForm";
 import UploadDocuments from "./userpanelpages/UploadDocuments";
 import { ToastContainer } from "react-toastify";
-
-// Import assets
-import UpArrow from "./assets/images/accordion-icon.svg";
+import ScrollToTopFab from "./components/ui/ScrollToTopFab";
 
 // Import styles
 import "./assets/css/style.css";
@@ -102,49 +101,6 @@ const ScrollToTop = () => {
   return null;
 };
 
-// ScrollToTopButton Component
-const ScrollToTopButton = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Show button when scrolling down 300px
-  useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.pageYOffset > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
-    };
-
-    window.addEventListener("scroll", toggleVisibility);
-    return () => window.removeEventListener("scroll", toggleVisibility);
-  }, []);
-
-  // Scroll to top on click
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
-  return (
-    <>
-      {isVisible && (
-        <button
-          className="scroll-to-top-btn"
-          onClick={scrollToTop}
-          aria-label="Scroll to top of page"
-          title="Scroll to top"
-          role="button"
-        >
-          <img src={UpArrow} alt="Up Arrow" />
-        </button>
-      )}
-    </>
-  );
-};
-
 function Layout() {
   const location = useLocation();
   const hideHeaderFooter = ["/login", "/signup", "/verify", "/forgot-password", "/reset-password"].includes(
@@ -156,7 +112,7 @@ function Layout() {
       <SEO />
       <ScrollToTop />
       {!hideHeaderFooter && <Header />}
-      <div className="main-content">
+      <Box component="div" className="main-content">
         <ToastContainer theme="colored" position="top-right" autoClose={3000} />
         <Routes>
           {/* Public Routes */}
@@ -212,9 +168,9 @@ function Layout() {
           {/* Catch-All Route */}
           <Route path="*" element={<Home />} />
         </Routes>
-      </div>
+      </Box>
       {!hideHeaderFooter && <Footer />}
-      {!hideHeaderFooter && <ScrollToTopButton />}
+      {!hideHeaderFooter && <ScrollToTopFab />}
     </>
   );
 }

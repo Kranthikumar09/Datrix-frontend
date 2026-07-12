@@ -1,7 +1,7 @@
 # MUI Migration Plan — Datrix Consulting Frontend
 
 **Repository:** https://github.com/Kranthikumar09/Datrix-frontend  
-**Current phase status:** Phase 1 complete — waiting for `Continue to Phase 2`  
+**Current phase status:** Phase 2 complete — waiting for `Continue to Phase 3`  
 **Date:** 2026-07-12  
 
 Companion docs:
@@ -510,9 +510,53 @@ Do not retain old branding inside archived copies when the requirement is zero o
 
 # Phase 2 — Shared Header, Footer and application shell
 
-**Status:** NOT STARTED — wait for `Continue to Phase 2`
+**Status:** COMPLETE  
+**Stopped.** Waiting for: `Continue to Phase 3`
 
-## Target files
+## Phase 2 completion report
+
+### Changed files
+- `src/components/common/Header.js` — MUI `AppBar` / `Toolbar` / `Drawer` / `List` / Material icons
+- `src/components/common/Footer.js` — MUI `Box` / `Grid` / `Stack` / `Typography` / `Link` / `Dialog` / Material icons
+- `src/App.js` — shell uses `ScrollToTopFab`; removed native scroll button + Bootstrap toggler dependency in shared shell
+- `src/components/ui/ScrollToTopFab.js` — added
+- `src/components/ui/SectionContainer.js` — added
+- `MUI_MIGRATION_PLAN.md` — status update
+
+### What was migrated
+- Shared Header from Bootstrap navbar collapse to MUI AppBar + mobile Drawer (no `document.querySelector` / toggler)
+- Shared Footer from Bootstrap grid/modal to MUI Grid + Dialog
+- Scroll-to-top native button → MUI `Fab`
+- Logo/footer alt and copyright fallbacks use `BRAND` (Datrix Consulting)
+
+### Remaining legacy UI dependencies
+Bootstrap CDN (still used by many pages), Font Awesome CDN (Sidebar and some pages), react-toastify, react-select, react-datepicker, react-slick, intl-tel-input, custom CSS. Auth page local navbars still Bootstrap (Phase 3). Marketing page copy still has old brand names (Phase 4).
+
+### Risks / blockers
+- Auth pages (`Login`/`Signup`/etc.) still use their own Bootstrap navbar shells — not the shared Header
+- CMS may still return previous site logo / copyright / email
+- API/asset host env vars required for logo and CMS-driven footer content
+
+### Commands run
+- `npm test -- --watchAll=false` → exit 1 (no tests found; pre-existing)
+- `npm run build` → success with pre-existing ESLint warnings; no new lint on shell files
+
+### Manual test cases completed
+- [x] Desktop header works (AppBar + nav + Login/Sign Up)
+- [x] Mobile header works (hamburger → Drawer)
+- [x] Drawer closes after navigation
+- [x] All primary header links work
+- [x] Login navigates; auth pages hide shared header
+- [x] Footer links work (FAQ verified)
+- [x] Footer Datrix copyright fallback shown
+- [x] Scroll-to-top Fab appears and works
+- [x] Footer Dialog code present (video via imperative handle; no Bootstrap modal)
+
+**Stop after Phase 2.**
+
+---
+
+## Target files (original brief)
 
 Start with:
 
@@ -1128,7 +1172,7 @@ Use this template at the end of every phase (Phases 1–10):
 |---|---|---|
 | 0 | Audit and baseline | **COMPLETE** |
 | 1 | MUI foundation and branding | **COMPLETE** |
-| 2 | Header, Footer, shell | Not started |
+| 2 | Header, Footer, shell | **COMPLETE** |
 | 3 | Authentication pages | Not started |
 | 4 | Public marketing pages | Not started |
 | 5 | Study and work browsing | Not started |
@@ -1138,4 +1182,4 @@ Use this template at the end of every phase (Phases 1–10):
 | 9 | Legacy dependency and CSS cleanup | Not started |
 | 10 | Final branding, a11y, regression audit | Not started |
 
-**Next instruction expected:** `Continue to Phase 2`
+**Next instruction expected:** `Continue to Phase 3`

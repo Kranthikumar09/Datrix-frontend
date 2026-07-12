@@ -1,199 +1,344 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { NavLink, useNavigate, useLocation, Link as RouterLink } from "react-router-dom";
 import axios from "axios";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 import config from "../../config/config";
+import { BRAND } from "../../config/brand";
 import { useAuth } from "../../context/AuthContext";
-import logo from "../../assets/images/logo.png";
+import fallbackLogoAsset from "../../assets/images/logo.png";
 
-const FALLBACK_LOGO = logo;
+const FALLBACK_LOGO = fallbackLogoAsset;
+
+const NAV_ITEMS = [
+  { label: "Home", to: "/", end: true },
+  { label: "Study", to: "/study", match: "study" },
+  { label: "Work", to: "/work", match: "work" },
+  { label: "Travel", to: "/travel" },
+  { label: "Blogs", to: "/blog", match: "blog" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
+
+const pillButtonSx = {
+  borderRadius: "50px",
+  px: 3.5,
+  py: 1.25,
+  fontWeight: 600,
+  textTransform: "none",
+  borderWidth: 2,
+  borderStyle: "solid",
+  minHeight: 48,
+  "&:hover": {
+    borderWidth: 2,
+  },
+};
 
 const Header = () => {
-  const [logo, setLogo] = useState(null);
+  const [siteLogo, setSiteLogo] = useState(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch site logo
   useEffect(() => {
+    if (!config.baseURL) return undefined;
+
     axios
       .get(`${config.baseURL}/site-content/general-content/get`)
       .then((response) => {
-        setLogo(response.data?.data?.site_logo || null);
+        setSiteLogo(response.data?.data?.site_logo || null);
       })
       .catch((err) => console.error("API Error:", err));
+
+    return undefined;
   }, []);
 
-  // Close mobile menu by simulating toggler click
-  const closeMobileMenu = () => {
-    const toggler = document.querySelector(".navbar-toggler");
-    if (toggler) {
-      toggler.click();
-    }
-  };
+  const closeMobileMenu = () => setMobileOpen(false);
 
-  // Handle logout
   const handleLogout = () => {
-    closeMobileMenu(); // Close menu before logout
+    closeMobileMenu();
     logout();
     navigate("/");
   };
 
-  // Determine active routes manually based on location
-  const isStudyActive = useMemo(() => {
+  const isItemActive = useMemo(() => {
     const path = location.pathname;
-    return path.startsWith("/study-filter") || path.startsWith("/study-details");
+    return (item) => {
+      if (item.end) return path === "/";
+      if (item.match === "study") {
+        return (
+          path === "/study" ||
+          path.startsWith("/study-filter") ||
+          path.startsWith("/study-details") ||
+          path.startsWith("/why-choose-study")
+        );
+      }
+      if (item.match === "work") {
+        return (
+          path === "/work" ||
+          path.startsWith("/work-filter") ||
+          path.startsWith("/job-details") ||
+          path.startsWith("/why-choose-work")
+        );
+      }
+      if (item.match === "blog") {
+        return path.startsWith("/blog");
+      }
+      return path === item.to || path.startsWith(`${item.to}/`);
+    };
   }, [location.pathname]);
 
-  const isWorkActive = useMemo(() => {
-    const path = location.pathname;
-    return path.startsWith("/work-filter") || path.startsWith("/job-details");
-  }, [location.pathname]);
+  const logoSrc = siteLogo
+    ? config.assetUrl(`uploads/general-content/${siteLogo}`)
+    : FALLBACK_LOGO;
 
-  const isBlogActive = useMemo(() => {
-    const path = location.pathname;
-    return path.startsWith("/blog") || path.startsWith("/blog-details");
-  }, [location.pathname]);
+  const authActions = (
+    <Stack direction={{ xs: "column", md: "row" }} spacing={2} alignItems="stretch">
+      {isAuthenticated ? (
+        <>
+          <Button
+            component={RouterLink}
+            to="/my-account"
+            variant="outlined"
+            color="secondary"
+            onClick={closeMobileMenu}
+            sx={{
+              ...pillButtonSx,
+              borderColor: "secondary.main",
+              color: "secondary.main",
+              bgcolor: "background.paper",
+              "&:hover": {
+                borderWidth: 2,
+                bgcolor: "secondary.main",
+                color: "secondary.contrastText",
+              },
+            }}
+          >
+            My Account
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleLogout}
+            sx={{
+              ...pillButtonSx,
+              borderColor: "primary.main",
+            }}
+          >
+            Logout
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button
+            component={RouterLink}
+            to="/login"
+            variant="outlined"
+            color="secondary"
+            onClick={closeMobileMenu}
+            sx={{
+              ...pillButtonSx,
+              borderColor: "secondary.main",
+              color: "secondary.main",
+              bgcolor: "background.paper",
+              "&:hover": {
+                borderWidth: 2,
+                bgcolor: "secondary.main",
+                color: "secondary.contrastText",
+              },
+            }}
+          >
+            Login
+          </Button>
+          <Button
+            component={RouterLink}
+            to="/signup"
+            variant="contained"
+            color="primary"
+            onClick={closeMobileMenu}
+            sx={{
+              ...pillButtonSx,
+              borderColor: "primary.main",
+            }}
+          >
+            Sign Up
+          </Button>
+        </>
+      )}
+    </Stack>
+  );
+
+  const drawer = (
+    <Box
+      sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column" }}
+      role="presentation"
+    >
+      <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2 }}>
+        <Box
+          component={RouterLink}
+          to="/"
+          onClick={closeMobileMenu}
+          sx={{ display: "inline-flex", alignItems: "center" }}
+        >
+          <Box
+            component="img"
+            src={logoSrc}
+            alt={BRAND.name}
+            onError={(e) => {
+              e.currentTarget.src = FALLBACK_LOGO;
+            }}
+            sx={{ maxHeight: 40, width: "auto" }}
+          />
+        </Box>
+        <IconButton aria-label="Close navigation menu" onClick={closeMobileMenu}>
+          <CloseIcon />
+        </IconButton>
+      </Stack>
+      <Divider />
+      <List sx={{ flexGrow: 1, py: 1 }}>
+        {NAV_ITEMS.map((item) => {
+          const active = isItemActive(item);
+          return (
+            <ListItemButton
+              key={item.to}
+              component={NavLink}
+              to={item.to}
+              end={Boolean(item.end)}
+              onClick={closeMobileMenu}
+              selected={active}
+              sx={{
+                mx: 1,
+                borderRadius: 2,
+                "&.Mui-selected": {
+                  color: "primary.main",
+                  bgcolor: "rgba(226, 64, 60, 0.08)",
+                },
+              }}
+            >
+              <ListItemText
+                primary={item.label}
+                primaryTypographyProps={{ fontWeight: active ? 600 : 500 }}
+              />
+            </ListItemButton>
+          );
+        })}
+      </List>
+      <Divider />
+      <Box sx={{ p: 2 }}>{authActions}</Box>
+    </Box>
+  );
 
   return (
-    <header className="header-main">
-      <nav className="navbar navbar-expand-lg">
-        <div className="container">
-          <div className="header-inner">
-            {/* Logo */}
-            <NavLink className="navbar-brand" to="/">
-              <img
-                src={logo ? config.assetUrl(`uploads/general-content/${logo}`) : FALLBACK_LOGO}
-                alt="Site Logo"
-                onError={(e) => (e.target.src = FALLBACK_LOGO)}
-              />
-            </NavLink>
+    <AppBar
+      position="sticky"
+      color="transparent"
+      elevation={0}
+      component="header"
+      sx={{
+        bgcolor: "background.paper",
+        py: 1.5,
+      }}
+    >
+      <Container maxWidth="lg">
+        <Toolbar
+          disableGutters
+          sx={{
+            minHeight: { xs: 72, md: 100 },
+            px: { xs: 2, md: 3.75 },
+            borderRadius: "100px",
+            boxShadow: "0px 20px 15px rgba(0, 0, 0, 0.05)",
+            bgcolor: "background.paper",
+            gap: 2,
+          }}
+        >
+          <Box
+            component={RouterLink}
+            to="/"
+            sx={{ display: "inline-flex", alignItems: "center", mr: { md: 2 } }}
+          >
+            <Box
+              component="img"
+              src={logoSrc}
+              alt={BRAND.name}
+              onError={(e) => {
+                e.currentTarget.src = FALLBACK_LOGO;
+              }}
+              sx={{ maxHeight: { xs: 40, md: 52 }, width: "auto" }}
+            />
+          </Box>
 
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarTogglerDemo02"
-              aria-controls="navbarTogglerDemo02"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon"></span>
-            </button>
+          <Stack
+            direction="row"
+            spacing={0.5}
+            alignItems="center"
+            sx={{
+              display: { xs: "none", lg: "flex" },
+              flexGrow: 1,
+              ml: 2,
+            }}
+            component="nav"
+            aria-label="Primary"
+          >
+            {NAV_ITEMS.map((item) => {
+              const active = isItemActive(item);
+              return (
+                <Button
+                  key={item.to}
+                  component={NavLink}
+                  to={item.to}
+                  end={Boolean(item.end)}
+                  color="inherit"
+                  sx={{
+                    color: active ? "primary.main" : "secondary.main",
+                    fontWeight: active ? 600 : 500,
+                    fontSize: 18,
+                    px: 1.5,
+                    minWidth: "auto",
+                    textTransform: "none",
+                  }}
+                >
+                  {item.label}
+                </Button>
+              );
+            })}
+          </Stack>
 
-            <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-              {/* Navigation Links */}
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
-                  <NavLink 
-                    className="nav-link" 
-                    to="/" 
-                    end
-                    onClick={closeMobileMenu}
-                  >
-                    Home
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink
-                    className={({ isActive }) =>
-                      `nav-link ${isActive || isStudyActive ? "active" : ""}`
-                    }
-                    to="/study"
-                    onClick={closeMobileMenu}
-                  >
-                    Study
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink
-                    className={({ isActive }) =>
-                      `nav-link ${isActive || isWorkActive ? "active" : ""}`
-                    }
-                    to="/work"
-                    onClick={closeMobileMenu}
-                  >
-                    Work
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink 
-                    className="nav-link" 
-                    to="/travel"
-                    onClick={closeMobileMenu}
-                  >
-                    Travel
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink
-                    className={({ isActive }) =>
-                      `nav-link ${isActive || isBlogActive ? "active" : ""}`
-                    }
-                    to="/blog"
-                    onClick={closeMobileMenu}
-                  >
-                    Blogs
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink 
-                    className="nav-link" 
-                    to="/about"
-                    onClick={closeMobileMenu}
-                  >
-                    About
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink 
-                    className="nav-link" 
-                    to="/contact"
-                    onClick={closeMobileMenu}
-                  >
-                    Contact
-                  </NavLink>
-                </li>
-              </ul>
+          <Box sx={{ display: { xs: "none", lg: "flex" }, ml: "auto" }}>{authActions}</Box>
 
-              {/* Conditional Buttons */}
-              <div className="header-btn-main">
-                {isAuthenticated ? (
-                  <>
-                    <NavLink 
-                      to="/my-account" 
-                      className="border-btn btn sw"
-                      onClick={closeMobileMenu}
-                    >
-                      My Account
-                    </NavLink>
-                    <button onClick={handleLogout} className="color-btn btn">
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <NavLink 
-                      to="/login" 
-                      className="border-btn btn"
-                      onClick={closeMobileMenu}
-                    >
-                      Login
-                    </NavLink>
-                    <NavLink 
-                      to="/signup" 
-                      className="color-btn btn"
-                      onClick={closeMobileMenu}
-                    >
-                      Sign Up
-                    </NavLink>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </header>
+          <IconButton
+            color="inherit"
+            aria-label="Open navigation menu"
+            edge="end"
+            onClick={() => setMobileOpen(true)}
+            sx={{ display: { lg: "none" }, ml: "auto", color: "secondary.main" }}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
+      </Container>
+
+      <Drawer
+        anchor="right"
+        open={mobileOpen}
+        onClose={closeMobileMenu}
+        ModalProps={{ keepMounted: true }}
+      >
+        {drawer}
+      </Drawer>
+    </AppBar>
   );
 };
 
