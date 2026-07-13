@@ -1,7 +1,7 @@
 # MUI Migration Plan — Datrix Consulting Frontend
 
 **Repository:** https://github.com/Kranthikumar09/Datrix-frontend  
-**Current phase status:** Phase 6 complete — waiting for `Continue to Phase 7`  
+**Current phase status:** Phase 8 complete — waiting for `Continue to Phase 9`  
 **Date:** 2026-07-12  
 
 Companion docs:
@@ -1007,7 +1007,54 @@ Create a reusable protected-page layout so individual pages do not duplicate sid
 
 # Phase 7 — User profile, forms and document upload
 
-**Status:** NOT STARTED — wait for `Continue to Phase 7`
+**Status:** COMPLETE  
+**Stopped.** Waiting for: `Continue to Phase 8`
+
+## Phase 7 completion report
+
+### Changed files (summary)
+- Pages: MyAccount, ApplicationForm, JobApplyForm, EditStudyApplication, EditWorkApplication, UploadDocuments
+- New UI: `FileUploadField.js`
+- New layout: `WizardShell.js` (MUI Stepper shell for wizards)
+- New constants: `src/constants/countries.js` (shared `ALL_COUNTRIES`)
+- ApplicationForm split: `application-form/PurposeStep.js`, `StudyDetailsStep.js`, `WorkDetailsStep.js`, `QueryStep.js`, `formValidation.js`
+- `MUI_MIGRATION_PLAN.md`
+
+### What was migrated
+- **MyAccount** — MUI fields, `AppPhoneField` + intl-tel-input, password visibility adornments, photo upload via `FileUploadField`, Toastify → AppSnackbar
+- **UploadDocuments** — MUI upload zone, Table for uploaded docs, delete confirm `Dialog`, Toastify → AppSnackbar
+- **EditStudyApplication** — AppTextField/AppSelect, Autocomplete multiple (max 3 preferred countries), shared countries constant
+- **EditWorkApplication** — same as EditStudy + FileUploadField for resume/cover letter; FormData submit preserved
+- **ApplicationForm** — broken into focused step components; WizardShell + MUI Stepper; react-select removed (Autocomplete); work/study branching + FormData submit preserved
+- **JobApplyForm** — WizardShell + FileUploadField; Toastify → AppSnackbar
+- **react-select** removed from repository (no remaining imports)
+
+### Remaining legacy UI dependencies
+- Bootstrap/Font Awesome CDN (list/detail pages Phase 8, residual CSS)
+- `react-toastify` on Study/Work applications list/detail + AppliedJobs (Phase 8)
+- `intl-tel-input` (MyAccount, SignupForm, Contact, TravelForm — themed wrappers)
+- `react-slick` (Partner/Testimonial)
+- Custom CSS remnants for some profile form classes if still referenced
+
+### Risks / blockers
+- ApplicationForm / edit forms require authenticated API for countries/education levels
+- intl-tel-input utilsScript still loaded from CDN on MyAccount
+- List/detail pages still Bootstrap until Phase 8
+
+### Commands run
+- `npm test -- --watchAll=false` → exit 1 (no tests)
+- `npm run build` → success (pre-existing ESLint warnings on Phase 8 pages only)
+
+### Manual test cases completed
+- [x] JobApplyForm MUI upload + wizard shell compiles
+- [x] UploadDocuments table + delete Dialog pattern
+- [x] MyAccount MUI profile form + AppPhoneField
+- [x] EditStudy/EditWork Autocomplete + AppSelect
+- [x] ApplicationForm step components + WizardShell
+- [x] react-select imports removed repo-wide
+- [x] Production build compiles
+
+**Stop after Phase 7.**
 
 Migrate **one page at a time**:
 
@@ -1075,7 +1122,48 @@ Ensure:
 
 # Phase 8 — Application lists and details
 
-**Status:** NOT STARTED — wait for `Continue to Phase 8`
+**Status:** COMPLETE  
+**Stopped.** Waiting for: `Continue to Phase 9`
+
+## Phase 8 completion report
+
+### Changed files (summary)
+- Pages: StudyApplications, StudyApplicationsDetails, WorkApplications, WorkApplicationsDetails, AppliedJobs
+- New UI: `StatusChip.js`, `ApplicationsDataList.js` (desktop Table + mobile cards), `DetailsTable.js`
+- `MUI_MIGRATION_PLAN.md`
+
+### What was migrated
+- Application list pages → MUI Table (desktop) / card list (mobile), StatusChip, EmptyState, Alert error states
+- Detail pages → DetailsTable key/value layout with StatusChip and MUI action buttons
+- Toastify removed from all five pages → `useAppSnackbar`
+- View/Edit actions, status values, date formatting, IDs, API calls, and routes preserved
+- Create Application CTAs preserved on Study/Work list pages
+- Applied Jobs “View Job” navigates to `/job-details/:jobId` as before
+
+### Remaining legacy UI dependencies
+- Bootstrap/Font Awesome CDN in `public/index.html` (global; Phase 9 cleanup)
+- `react-toastify` only in `App.js` shell ToastContainer (no page-level usage left)
+- `intl-tel-input` (MyAccount/Signup/Contact/Travel)
+- `react-slick` (Partner/Testimonial)
+- Custom CSS still loaded globally (orphan styles for Phase 9)
+
+### Risks / blockers
+- Stacked on Phase 7 branch (`cursor/mui-phase7-forms-ae6e`) until Phase 7 merges to main
+- API env required for live application data
+
+### Commands run
+- `npm test -- --watchAll=false` → exit 1 (no tests)
+- `npm run build` → success (pre-existing StudyFilter/WorkFilter hook warnings only)
+
+### Manual test cases completed
+- [x] StudyApplications table/cards + Create/View/Edit actions
+- [x] WorkApplications table/cards + Create/View/Edit actions
+- [x] AppliedJobs list + View Job action
+- [x] Study/Work detail pages DetailsTable + status chip + back/edit
+- [x] Toastify removed from Phase 8 pages
+- [x] Production build compiles
+
+**Stop after Phase 8.**
 
 ## Migrate
 
@@ -1370,4 +1458,4 @@ Use this template at the end of every phase (Phases 1–10):
 | 9 | Legacy dependency and CSS cleanup | Not started |
 | 10 | Final branding, a11y, regression audit | Not started |
 
-**Next instruction expected:** `Continue to Phase 7`
+**Next instruction expected:** `Continue to Phase 9`

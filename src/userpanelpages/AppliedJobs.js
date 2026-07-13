@@ -1,31 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useAuth } from '../context/AuthContext';
-import ProtectedPageLayout from '../components/layout/ProtectedPageLayout';
-import LoadingState from '../components/ui/LoadingState';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Alert from "@mui/material/Alert";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import { useAuth } from "../context/AuthContext";
+import ProtectedPageLayout from "../components/layout/ProtectedPageLayout";
+import LoadingState from "../components/ui/LoadingState";
+import ApplicationsDataList from "../components/ui/ApplicationsDataList";
+import StatusChip from "../components/ui/StatusChip";
+import { useAppSnackbar } from "../components/ui/AppSnackbar";
 import config from "../config/config";
 
 const AppliedJobs = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth();
+  const snackbar = useAppSnackbar();
 
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [fullName, setFullName] = useState('');
-  const userId = JSON.parse(localStorage.getItem('user'))?.id || 'N/A';
+  const [fullName, setFullName] = useState("");
+  const userId = JSON.parse(localStorage.getItem("user"))?.id || "N/A";
 
-  const getToken = () => localStorage.getItem('accessToken');
+  const getToken = () => localStorage.getItem("accessToken");
 
   const fetchUserData = async () => {
     const token = getToken();
     if (!token || !isAuthenticated || !userId) {
-      toast.error('Please log in to continue.');
+      snackbar.error("Please log in to continue.");
       logout();
-      navigate('/login');
+      navigate("/login");
       return;
     }
 
@@ -36,16 +42,16 @@ const AppliedJobs = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (response.data.success) {
-        setFullName(response.data.data.name || '');
+        setFullName(response.data.data.name || "");
       }
     } catch (err) {
-      console.error('Error fetching user data:', err);
+      console.error("Error fetching user data:", err);
       if (err.response?.status === 401) {
-        toast.error('Session expired. Please log in again.');
+        snackbar.error("Session expired. Please log in again.");
         logout();
-        navigate('/login');
+        navigate("/login");
       } else {
-        toast.error('Failed to load user data');
+        snackbar.error("Failed to load user data");
       }
     }
   };
@@ -53,47 +59,43 @@ const AppliedJobs = () => {
   const fetchAppliedJobs = async () => {
     const token = getToken();
     if (!token || !isAuthenticated || !userId) {
-      toast.error('Please log in to view your applied jobs.');
+      snackbar.error("Please log in to view your applied jobs.");
       logout();
-      navigate('/login');
+      navigate("/login");
       setLoading(false);
       return;
     }
 
     setLoading(true);
+    setError(null);
     try {
-      const response = await axios.get(
-        `${config.baseURL}/applications/get`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          params: {
-            purpose: 'Job',
-            user_id: userId,
-          },
-        }
-      );
+      const response = await axios.get(`${config.baseURL}/applications/get`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          purpose: "Job",
+          user_id: userId,
+        },
+      });
 
       if (response.data.success) {
         setApplications(response.data.data || []);
+      } else if (response.data.message === "Data not available.") {
+        setApplications([]);
       } else {
-        if (response.data.message === "Data not available.") {
-          setApplications([]);
-        } else {
-          throw new Error(response.data.message || 'Failed to fetch applied jobs');
-        }
+        throw new Error(response.data.message || "Failed to fetch applied jobs");
       }
     } catch (err) {
-      console.error('Error fetching applied jobs:', err);
-      setError(err.message || 'Failed to load applied jobs');
+      console.error("Error fetching applied jobs:", err);
+      setError(err.message || "Failed to load applied jobs");
       if (err.response?.status === 401) {
-        toast.error('Session expired. Please log in again.');
+        snackbar.error("Session expired. Please log in again.");
         logout();
-        navigate('/login');
+        navigate("/login");
       } else {
-        toast.error(err.message || 'Failed to load applied jobs');
+        snackbar.error(err.message || "Failed to load applied jobs");
       }
     } finally {
       setLoading(false);
@@ -105,97 +107,83 @@ const AppliedJobs = () => {
       fetchUserData();
       fetchAppliedJobs();
     } else {
-      toast.error('Please log in to access this page.');
-      navigate('/login');
+      snackbar.error("Please log in to access this page.");
+      navigate("/login");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, navigate, logout]);
 
-  const formatDate = (dateString) => {
-    return dateString ? new Date(dateString).toLocaleDateString('en-GB') : 'N/A';
-  };
+  const formatDate = (dateString) =>
+    dateString ? new Date(dateString).toLocaleDateString("en-GB") : "N/A";
 
   const handleViewJob = (jobId) => {
     navigate(`/job-details/${jobId}`);
   };
 
+  const columns = [
+    { id: "job_id", label: "Job Id", render: (app) => app.job_id || "N/A" },
+    {
+      id: "title",
+      label: "Job Title",
+      render: (app) => `${app.job?.title || "N/A"} at ${app.job?.company_name || "N/A"}`,
+    },
+    { id: "location", label: "Location", render: (app) => app.job?.location || "N/A" },
+    { id: "status", label: "Status", render: (app) => <StatusChip status={app.status} /> },
+    { id: "createdAt", label: "Applied Date", render: (app) => formatDate(app.createdAt) },
+  ];
+
+  const actions = (app) => (
+    <Button
+      size="small"
+      variant="contained"
+      color="primary"
+      onClick={() => handleViewJob(app.job_id)}
+      sx={{ textTransform: "none", borderRadius: "50px", fontWeight: 600 }}
+    >
+      View Job
+    </Button>
+  );
+
   if (loading) {
     return (
-      <ProtectedPageLayout fullName={fullName} userId={userId}>
+      <ProtectedPageLayout fullName={fullName} userId={userId} title="Applied Jobs">
         <LoadingState label="Loading applied jobs..." height={240} />
-        <ToastContainer theme="colored" position="top-right" autoClose={3000} />
       </ProtectedPageLayout>
     );
   }
 
   if (error) {
     return (
-      <ProtectedPageLayout fullName={fullName} userId={userId}>
-        <div className="alert alert-danger" role="alert">
-          <h4>Error loading applied jobs</h4>
-          <p>{error}</p>
-          <button className="btn btn-primary" onClick={fetchAppliedJobs}>Try Again</button>
-        </div>
-        <ToastContainer theme="colored" position="top-right" autoClose={3000} />
+      <ProtectedPageLayout fullName={fullName} userId={userId} title="Applied Jobs">
+        <Alert
+          severity="error"
+          action={
+            <Button color="inherit" size="small" onClick={fetchAppliedJobs}>
+              Try Again
+            </Button>
+          }
+        >
+          <Typography fontWeight={700}>Error loading applied jobs</Typography>
+          {error}
+        </Alert>
       </ProtectedPageLayout>
     );
   }
 
   return (
-    <ProtectedPageLayout fullName={fullName} userId={userId}>
-                      <div className="single-area">
-                        <h5 className="mb-0">Applied Jobs</h5>
-                      </div>
-                      <div className="setting-personal-details">
-                        <h5>Your Applied Jobs</h5>
-                        <div className="table-responsive">
-                          <table className="table table-striped table-bordered">
-                            <thead>
-                              <tr>
-                                <th>Job Id</th>
-                                <th>Job Title</th>
-                                <th>Location</th>
-                                <th>Status</th>
-                                <th>Applied Date</th>
-                                <th>Action</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {applications.length > 0 ? (
-                                applications.map((app) => (
-                                  <tr key={app.id}>
-                                    <td>{app.job_id}</td>
-                                    <td>{app.job?.title} at {app.job?.company_name}</td>
-                                    <td>{app.job?.location || 'N/A'}</td>
-                                    <td>
-                                      <span className={`status-badge ${app.status?.toLowerCase() || 'pending'}`}>
-                                        {app.status || 'Pending'}
-                                      </span>
-                                    </td>
-                                    <td>{formatDate(app.createdAt)}</td>
-                                    <td>
-                                      <div className="btn-gp">
-                                        <button
-                                          className="color-btn btn"
-                                          onClick={() => handleViewJob(app.job_id)}
-                                        >
-                                          View Job
-                                        </button>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                ))
-                              ) : (
-                                <tr>
-                                  <td colSpan="6" className="text-center">
-                                    No applied jobs found
-                                  </td>
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-      <ToastContainer theme="colored" position="top-right" autoClose={3000} />
+    <ProtectedPageLayout fullName={fullName} userId={userId} title="Applied Jobs">
+      <Stack spacing={2.5}>
+        <Typography variant="h6" fontWeight={700}>
+          Your Applied Jobs
+        </Typography>
+        <ApplicationsDataList
+          columns={columns}
+          rows={applications}
+          emptyTitle="No applied jobs found"
+          emptyMessage="Jobs you apply to will appear here."
+          actions={actions}
+        />
+      </Stack>
     </ProtectedPageLayout>
   );
 };
