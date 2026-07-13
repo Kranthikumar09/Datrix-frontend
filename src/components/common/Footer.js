@@ -97,9 +97,8 @@ const Footer = forwardRef((props, ref) => {
   const contactEmail =
     siteData.contact_email || BRAND.contactEmailFallback || "Email not available";
   const contactPhone = siteData.contact_phone_number || "+61 45 743 84 88";
-  const logoSrc = siteData.site_logo
-    ? config.assetUrl(`uploads/general-content/${siteData.site_logo}`)
-    : FALLBACK_LOGO;
+  // Always use the local Datrix logo so CMS cannot reintroduce legacy brand art.
+  const logoSrc = FALLBACK_LOGO;
 
   return (
     <>
