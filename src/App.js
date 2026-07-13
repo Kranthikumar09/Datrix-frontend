@@ -57,6 +57,7 @@ import AppliedJobs from "./userpanelpages/AppliedJobs";
 import JobApplyForm from "./userpanelpages/JobApplyForm";
 import UploadDocuments from "./userpanelpages/UploadDocuments";
 import ScrollToTopFab from "./components/ui/ScrollToTopFab";
+import { prefersReducedMotion } from "./utils/prefersReducedMotion";
 
 // Import styles
 import "./assets/css/style.css";
@@ -93,7 +94,7 @@ const ScrollToTop = () => {
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
     });
   }, [location]);
 
@@ -110,8 +111,32 @@ function Layout() {
     <>
       <SEO />
       <ScrollToTop />
+      <Box
+        component="a"
+        href="#main-content"
+        sx={{
+          position: "absolute",
+          left: -9999,
+          top: 0,
+          zIndex: 2000,
+          bgcolor: "common.white",
+          color: "text.primary",
+          px: 2,
+          py: 1,
+          borderRadius: 1,
+          boxShadow: 2,
+          textDecoration: "none",
+          fontWeight: 600,
+          "&:focus": {
+            left: 16,
+            top: 16,
+          },
+        }}
+      >
+        Skip to main content
+      </Box>
       {!hideHeaderFooter && <Header />}
-      <Box component="div" className="main-content">
+      <Box component="div" id="main-content" className="main-content" tabIndex={-1} sx={{ outline: "none" }}>
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />

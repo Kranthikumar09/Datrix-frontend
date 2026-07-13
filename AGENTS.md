@@ -3,7 +3,7 @@
 ## Cursor Cloud specific instructions
 
 ### Overview
-This repo (`flyabroad` / "Datrix Consulting") is a single **Create React App** (react-scripts 5, React 19) SPA — a study/work-abroad consultancy site. There is no backend in this repo; the client calls a remote Express API (`baseURL` in `src/config/config.js`, default `https://express.studytraveler.com/backend/api`, overridable via `REACT_APP_API_BASE_URL`).
+This repo (`datrix-consulting-frontend` / **Datrix Consulting**) is a single **Create React App** (react-scripts 5, React 19) SPA — a study/work-abroad consultancy site. There is no backend in this repo; the client calls a remote Express API configured via environment variables in `src/config/config.js` (`REACT_APP_API_BASE_URL`, `REACT_APP_ASSET_BASE_URL`, `REACT_APP_PUBLIC_SITE_URL`). There is **no hardcoded production API domain** in application code.
 
 ### Run / lint / test / build
 Standard CRA scripts in `package.json`:
@@ -13,6 +13,6 @@ Standard CRA scripts in `package.json`:
 - Build: `npm run build` (production bundle; not needed for development).
 
 ### Non-obvious caveats
-- The remote backend (`express.studytraveler.com`) may be unreachable/unresolvable (NXDOMAIN) from the VM even though general internet egress is open. When it is down, backend-dependent flows (login/signup, study/work listings, dropdowns populated from `/countries/get`, form submissions) will fail or render empty. This is an external dependency, not a repo/setup problem. Client-side pages and client-side form validation still work and are the reliable way to smoke-test the app.
+- The configured API host (set via `REACT_APP_API_BASE_URL`) may be unreachable from some environments. When it is down, backend-dependent flows (login/signup, study/work listings, dropdowns populated from `/countries/get`, form submissions) will fail or render empty. This is an external dependency, not a repo/setup problem. Client-side pages and client-side form validation still work and are the reliable way to smoke-test the app.
 - OAuth client IDs (Google/Facebook) are hardcoded in `src/auth/Login.js` and `src/auth/SignupForm.js`; social login only works on approved origins.
-- No committed `.env`; only `REACT_APP_API_BASE_URL` is read (from `src/components/SEO.js`). To point at a different backend, create `.env.local` with `REACT_APP_API_BASE_URL=...`.
+- Copy `.env.example` to `.env.local` and set `REACT_APP_API_BASE_URL`, `REACT_APP_ASSET_BASE_URL`, and `REACT_APP_PUBLIC_SITE_URL` for local development.

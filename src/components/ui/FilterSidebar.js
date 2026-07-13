@@ -112,9 +112,10 @@ const FilterSidebar = ({ groups, filters, onFilterChange, onApply, onReset }) =>
           open={mobileOpen}
           onClose={() => setMobileOpen(false)}
           PaperProps={{ sx: { width: 320, p: 2 } }}
+          aria-labelledby="filter-drawer-title"
         >
           <Stack direction="row" sx={{ alignItems: "center", justifyContent: "space-between", mb: 2 }}>
-            <Typography variant="h6" fontWeight={700}>
+            <Typography id="filter-drawer-title" variant="h6" fontWeight={700}>
               Filters
             </Typography>
             <IconButton aria-label="Close filters" onClick={() => setMobileOpen(false)}>

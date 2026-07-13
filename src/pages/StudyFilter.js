@@ -192,7 +192,7 @@ const StudyFilter = () => {
   ];
 
   return (
-    <Box sx={{ py: { xs: 3, md: 5 } }}>
+    <Box component="main" sx={{ py: { xs: 3, md: 5 } }}>
       <Container maxWidth="lg">
         <BrowseBreadcrumbs
           items={[

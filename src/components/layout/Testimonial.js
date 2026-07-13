@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
 import LinearProgress from "@mui/material/LinearProgress";
 import CloseIcon from "@mui/icons-material/Close";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -142,6 +143,7 @@ const Testimonial = () => {
                             onClick={() =>
                               setExpandedIndex(expandedIndex === index ? null : index)
                             }
+                            aria-expanded={expandedIndex === index}
                             sx={{ textTransform: "none", ml: 0.5 }}
                           >
                             {expandedIndex === index ? "Read Less" : "Read More"}
@@ -177,7 +179,16 @@ const Testimonial = () => {
         </Grid>
       </Container>
 
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} fullWidth maxWidth="md">
+      <Dialog
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        fullWidth
+        maxWidth="md"
+        aria-labelledby="testimonial-video-title"
+      >
+        <DialogTitle id="testimonial-video-title" sx={{ pr: 6 }}>
+          Testimonial video
+        </DialogTitle>
         <IconButton
           aria-label="Close video"
           onClick={() => setIsModalOpen(false)}
@@ -190,6 +201,7 @@ const Testimonial = () => {
             <Box
               component="video"
               controls
+              aria-label="Testimonial video"
               sx={{ width: "100%", display: "block" }}
               src={config.assetUrl(`uploads/testimonials/${videoUrl}`)}
             >

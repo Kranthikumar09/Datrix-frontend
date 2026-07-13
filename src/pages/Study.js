@@ -85,7 +85,7 @@ const Study = () => {
   };
 
   return (
-    <Box>
+    <Box component="main">
       <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
         <Container maxWidth="lg">
           <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, borderRadius: 3, borderColor: "primary.light", bgcolor: "background.soft" }}>

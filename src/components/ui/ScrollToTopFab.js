@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Fab from "@mui/material/Fab";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { prefersReducedMotion } from "../../utils/prefersReducedMotion";
 
 /**
  * Floating scroll-to-top control for the application shell.
@@ -26,7 +27,7 @@ const ScrollToTopFab = () => {
       size="medium"
       aria-label="Scroll to top of page"
       onClick={() => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
       }}
       sx={{
         position: "fixed",

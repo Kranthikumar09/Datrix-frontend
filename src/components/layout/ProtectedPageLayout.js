@@ -52,11 +52,25 @@ const ProtectedPageLayout = ({ fullName, userId, title, children }) => {
           open={mobileOpen}
           onClose={handleDrawerClose}
           ModalProps={{ keepMounted: true }}
+          aria-labelledby="account-nav-title"
           sx={{
             display: { xs: "block", lg: "none" },
             "& .MuiDrawer-paper": drawerPaperSx,
           }}
         >
+          <Typography
+            id="account-nav-title"
+            component="span"
+            sx={{
+              position: "absolute",
+              width: 1,
+              height: 1,
+              overflow: "hidden",
+              clip: "rect(0 0 0 0)",
+            }}
+          >
+            Account navigation
+          </Typography>
           {drawer}
         </Drawer>
         <Drawer

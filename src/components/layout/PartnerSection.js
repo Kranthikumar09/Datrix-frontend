@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Slider from "react-slick";
 import Box from "@mui/material/Box";
@@ -9,6 +9,7 @@ import config from "../../config/config";
 import LoadingState from "../ui/LoadingState";
 import EmptyState from "../ui/EmptyState";
 import ErrorState from "../ui/ErrorState";
+import { prefersReducedMotion } from "../../utils/prefersReducedMotion";
 
 const PartnerSection = () => {
   const [partners, setPartners] = useState([]);
@@ -47,20 +48,23 @@ const PartnerSection = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const partnerslider = {
-    infinite: partners.length > 1,
-    slidesToShow: Math.min(5, partners.length || 1),
-    slidesToScroll: 1,
-    arrows: false,
-    dots: false,
-    autoplay: true,
-    autoplaySpeed: 2000,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: Math.min(3, partners.length || 1) } },
-      { breakpoint: 700, settings: { slidesToShow: Math.min(2, partners.length || 1) } },
-      { breakpoint: 480, settings: { slidesToShow: Math.min(2, partners.length || 1) } },
-    ],
-  };
+  const partnerslider = useMemo(() => {
+    const reduceMotion = prefersReducedMotion();
+    return {
+      infinite: partners.length > 1,
+      slidesToShow: Math.min(5, partners.length || 1),
+      slidesToScroll: 1,
+      arrows: false,
+      dots: false,
+      autoplay: !reduceMotion && partners.length > 1,
+      autoplaySpeed: 2000,
+      responsive: [
+        { breakpoint: 1024, settings: { slidesToShow: Math.min(3, partners.length || 1) } },
+        { breakpoint: 700, settings: { slidesToShow: Math.min(2, partners.length || 1) } },
+        { breakpoint: 480, settings: { slidesToShow: Math.min(2, partners.length || 1) } },
+      ],
+    };
+  }, [partners.length]);
 
   return (
     <Box component="section" className="partner-section" sx={{ py: { xs: 4, md: 6 } }}>
@@ -82,7 +86,7 @@ const PartnerSection = () => {
         ) : error ? (
           <ErrorState title="Unable to load partners" message={error} onRetry={fetchPartners} />
         ) : partners.length > 0 ? (
-          <Box className="partner-logos">
+          <Box className="partner-logos" role="region" aria-label="Partner logos">
             {partners.length > 1 ? (
               <Slider {...partnerslider}>
                 {partners.map((partner, index) => (

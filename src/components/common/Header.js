@@ -13,6 +13,7 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import config from "../../config/config";
@@ -184,9 +185,11 @@ const Header = () => {
   const drawer = (
     <Box
       sx={{ width: 300, height: "100%", display: "flex", flexDirection: "column" }}
-      role="presentation"
     >
       <Stack direction="row" sx={{ p: 2, alignItems: "center", justifyContent: "space-between" }}>
+        <Typography id="mobile-nav-title" variant="subtitle1" fontWeight={700} sx={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>
+          Navigation menu
+        </Typography>
         <Box
           component={RouterLink}
           to="/"
@@ -335,6 +338,7 @@ const Header = () => {
         open={mobileOpen}
         onClose={closeMobileMenu}
         ModalProps={{ keepMounted: true }}
+        aria-labelledby="mobile-nav-title"
       >
         {drawer}
       </Drawer>

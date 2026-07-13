@@ -78,7 +78,7 @@ const FaqSection = ({ relatedTo = "All" }) => {
                 {faq.question}
               </Typography>
             </AccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails id={`${panelId}-content`}>
               <Typography color="text.secondary">{faq.answer}</Typography>
             </AccordionDetails>
           </Accordion>

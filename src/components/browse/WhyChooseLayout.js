@@ -25,7 +25,7 @@ const WhyChooseLayout = ({
   statsTitle,
   stats,
 }) => (
-  <Box>
+  <Box component="main">
     <PageBanner title={bannerTitle} subtitle={bannerSubtitle} />
 
     <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
