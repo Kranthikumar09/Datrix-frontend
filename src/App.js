@@ -56,7 +56,6 @@ import EditWorkApplication from "./userpanelpages/EditWorkApplication";
 import AppliedJobs from "./userpanelpages/AppliedJobs";
 import JobApplyForm from "./userpanelpages/JobApplyForm";
 import UploadDocuments from "./userpanelpages/UploadDocuments";
-import { ToastContainer } from "react-toastify";
 import ScrollToTopFab from "./components/ui/ScrollToTopFab";
 
 // Import styles
@@ -113,7 +112,6 @@ function Layout() {
       <ScrollToTop />
       {!hideHeaderFooter && <Header />}
       <Box component="div" className="main-content">
-        <ToastContainer theme="colored" position="top-right" autoClose={3000} />
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />

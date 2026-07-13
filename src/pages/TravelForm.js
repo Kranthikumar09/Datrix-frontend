@@ -74,7 +74,7 @@ const TravelForm = () => {
         separateDialCode: true,
         autoPlaceholder: "off",
         utilsScript:
-          "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+          "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.15/js/utils.js",
       });
       itiRef.current = iti;
       input.addEventListener("countrychange", () => {

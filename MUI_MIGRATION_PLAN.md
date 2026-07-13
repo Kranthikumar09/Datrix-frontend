@@ -1,7 +1,7 @@
 # MUI Migration Plan — Datrix Consulting Frontend
 
 **Repository:** https://github.com/Kranthikumar09/Datrix-frontend  
-**Current phase status:** Phase 8 complete — waiting for `Continue to Phase 9`  
+**Current phase status:** Phase 9 complete — waiting for `Continue to Phase 10`  
 **Date:** 2026-07-12  
 
 Companion docs:
@@ -1202,7 +1202,62 @@ Use:
 
 # Phase 9 — Legacy dependency and CSS cleanup
 
-**Status:** NOT STARTED — wait for `Continue to Phase 9`
+**Status:** COMPLETE  
+**Stopped.** Waiting for: `Continue to Phase 10`
+
+## Phase 9 completion report
+
+### Changed files (summary)
+- `public/index.html` — removed Bootstrap CSS/JS CDN and Font Awesome CDN
+- `package.json` / `package-lock.json` — removed `react-select`, `react-datepicker`, `react-toastify`, `date-fns-tz`
+- `src/App.js` — removed `ToastContainer`
+- `src/auth/SignupForm.js` — removed leftover `form-control` class on phone input
+- `src/pages/TravelForm.js` — aligned intl-tel-input utils CDN to 17.0.15
+- `src/assets/css/style.css` — trimmed orphaned Bootstrap/Toastify/datepicker/sidebar/filter/status/accordion selectors (~4.5k → ~3.9k lines)
+- `src/assets/css/responsive.css` — trimmed orphaned navbar/filter/how-works/setting-tab rules
+- Deleted unused `src/assets/css/slick.css` (never imported; npm slick CSS remains)
+- `MUI_MIGRATION_PLAN.md`
+
+### Removed (zero remaining usage)
+| Dependency | Action |
+|---|---|
+| Bootstrap CDN (CSS + JS) | Removed from `index.html` |
+| Font Awesome CDN | Removed from `index.html` |
+| `react-select` | Uninstalled |
+| `react-datepicker` | Uninstalled |
+| `react-toastify` | Uninstalled + ToastContainer removed |
+| `date-fns-tz` | Uninstalled (unused) |
+| `src/assets/css/slick.css` | Deleted (duplicate; unused) |
+
+### Kept (still required)
+| Dependency | Reason |
+|---|---|
+| `intl-tel-input` | Phone fields on Signup/Contact/Travel/MyAccount |
+| `react-slick` + `slick-carousel` | PartnerSection + Testimonial |
+| Custom CSS (trimmed) | Marketing chrome, work-process, wizard, phone-group, auth, slick overrides, CMS content |
+
+### Remaining legacy surface (intentional)
+- `intl-tel-input` + `phone-group` CSS
+- `react-slick` / slick CSS for Partner/Testimonial
+- Custom CSS classNames still used by Home/About/Work process/auth/wizard/CMS HtmlContent
+- CMS HTML via `HtmlContent` may still contain Bootstrap-like markup from backend (cannot remove without backend change)
+
+### Risks / blockers
+- CMS-rendered blog/legal HTML may have relied on Bootstrap utility classes — verify live CMS pages after deploy
+- Further CSS pruning possible in Phase 10 if visual audit finds more orphans
+
+### Commands run
+- `npm uninstall react-select react-datepicker react-toastify date-fns-tz`
+- `npm run build` → success (bundle: JS 365.8 kB / CSS 28.2 kB gzip; only pre-existing StudyFilter/WorkFilter warnings)
+
+### Manual test cases completed
+- [x] No Bootstrap/FA CDN in `index.html`
+- [x] No react-toastify / react-select / react-datepicker in package.json or src imports
+- [x] App builds without ToastContainer
+- [x] CSS files brace-balanced after orphan cleanup
+- [x] Production build compiles
+
+**Stop after Phase 9.**
 
 Only begin this after all pages have been migrated.
 
@@ -1458,4 +1513,4 @@ Use this template at the end of every phase (Phases 1–10):
 | 9 | Legacy dependency and CSS cleanup | Not started |
 | 10 | Final branding, a11y, regression audit | Not started |
 
-**Next instruction expected:** `Continue to Phase 9`
+**Next instruction expected:** `Continue to Phase 10`

@@ -398,7 +398,7 @@ const SignupForm = ({ redirect }) => {
               required: true,
               "aria-invalid": touched.phone_number && errors.phone_number ? "true" : "false",
               autoComplete: "tel-national",
-              className: "form-control",
+              className: "",
             }}
           />
         </Grid>
