@@ -1,7 +1,7 @@
 # MUI Migration Plan — Datrix Consulting Frontend
 
 **Repository:** https://github.com/Kranthikumar09/Datrix-frontend  
-**Current phase status:** Phase 7 complete — waiting for `Continue to Phase 8`  
+**Current phase status:** Phase 8 complete — waiting for `Continue to Phase 9`  
 **Date:** 2026-07-12  
 
 Companion docs:
@@ -1122,7 +1122,48 @@ Ensure:
 
 # Phase 8 — Application lists and details
 
-**Status:** NOT STARTED — wait for `Continue to Phase 8`
+**Status:** COMPLETE  
+**Stopped.** Waiting for: `Continue to Phase 9`
+
+## Phase 8 completion report
+
+### Changed files (summary)
+- Pages: StudyApplications, StudyApplicationsDetails, WorkApplications, WorkApplicationsDetails, AppliedJobs
+- New UI: `StatusChip.js`, `ApplicationsDataList.js` (desktop Table + mobile cards), `DetailsTable.js`
+- `MUI_MIGRATION_PLAN.md`
+
+### What was migrated
+- Application list pages → MUI Table (desktop) / card list (mobile), StatusChip, EmptyState, Alert error states
+- Detail pages → DetailsTable key/value layout with StatusChip and MUI action buttons
+- Toastify removed from all five pages → `useAppSnackbar`
+- View/Edit actions, status values, date formatting, IDs, API calls, and routes preserved
+- Create Application CTAs preserved on Study/Work list pages
+- Applied Jobs “View Job” navigates to `/job-details/:jobId` as before
+
+### Remaining legacy UI dependencies
+- Bootstrap/Font Awesome CDN in `public/index.html` (global; Phase 9 cleanup)
+- `react-toastify` only in `App.js` shell ToastContainer (no page-level usage left)
+- `intl-tel-input` (MyAccount/Signup/Contact/Travel)
+- `react-slick` (Partner/Testimonial)
+- Custom CSS still loaded globally (orphan styles for Phase 9)
+
+### Risks / blockers
+- Stacked on Phase 7 branch (`cursor/mui-phase7-forms-ae6e`) until Phase 7 merges to main
+- API env required for live application data
+
+### Commands run
+- `npm test -- --watchAll=false` → exit 1 (no tests)
+- `npm run build` → success (pre-existing StudyFilter/WorkFilter hook warnings only)
+
+### Manual test cases completed
+- [x] StudyApplications table/cards + Create/View/Edit actions
+- [x] WorkApplications table/cards + Create/View/Edit actions
+- [x] AppliedJobs list + View Job action
+- [x] Study/Work detail pages DetailsTable + status chip + back/edit
+- [x] Toastify removed from Phase 8 pages
+- [x] Production build compiles
+
+**Stop after Phase 8.**
 
 ## Migrate
 
@@ -1417,4 +1458,4 @@ Use this template at the end of every phase (Phases 1–10):
 | 9 | Legacy dependency and CSS cleanup | Not started |
 | 10 | Final branding, a11y, regression audit | Not started |
 
-**Next instruction expected:** `Continue to Phase 8`
+**Next instruction expected:** `Continue to Phase 9`
