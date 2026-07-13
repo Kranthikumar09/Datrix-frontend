@@ -5,7 +5,8 @@ import { useAuth } from '../context/AuthContext'; // Import useAuth
 import config from "../config/config";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Sidebar from './Sidebar'; // Adjust path as needed
+import ProtectedPageLayout from '../components/layout/ProtectedPageLayout';
+import LoadingState from '../components/ui/LoadingState';
 
 const StudyApplications = () => {
   const navigate = useNavigate(); // Initialize useNavigate
@@ -112,37 +113,28 @@ const StudyApplications = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
-        <div className="spinner-border text-danger" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <ProtectedPageLayout fullName={fullName} userId={userId}>
+        <LoadingState label="Loading applications..." height={240} />
         <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-      </div>
+      </ProtectedPageLayout>
     );
   }
 
   if (error) {
     return (
-      <div className="alert alert-danger m-4" role="alert">
-        <h4>Error loading applications</h4>
-        <p>{error}</p>
-        <button className="btn btn-primary" onClick={fetchApplications}>Try Again</button>
+      <ProtectedPageLayout fullName={fullName} userId={userId}>
+        <div className="alert alert-danger" role="alert">
+          <h4>Error loading applications</h4>
+          <p>{error}</p>
+          <button className="btn btn-primary" onClick={fetchApplications}>Try Again</button>
+        </div>
         <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-      </div>
+      </ProtectedPageLayout>
     );
   }
 
   return (
-    <div className="main-section">
-      <section className="profile-section">
-        <div className="container">
-          <div className="row justify-content-center">
-            <Sidebar fullName={fullName} userId={userId} />
-            <div className="col-xl-9 col-lg-8">
-              <div className="tab-content">
-                <div className="setting-tab">
-                  <div className="row">
-                    <div className="col-lg-12">
+    <ProtectedPageLayout fullName={fullName} userId={userId}>
                       <div className="single-area">
                         <h5 className="mb-0">Study Applications</h5>
                         <a className="color-btn btn" href="/application-form">Create Application</a>
@@ -198,16 +190,8 @@ const StudyApplications = () => {
                           </table>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
       <ToastContainer theme="colored" position="top-right" autoClose={3000} />
-    </div>
+    </ProtectedPageLayout>
   );
 };
 
