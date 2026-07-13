@@ -260,6 +260,18 @@ section {
   animation: bounce2 1s ease infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .banner-award:hover {
+    animation: none;
+  }
+
+  .faq-img-inner:hover img,
+  .aboutus-left-img:hover img,
+  .home-study-right figure:hover img {
+    transform: none !important;
+  }
+}
+
 @keyframes bounce2 {
 
   0%,

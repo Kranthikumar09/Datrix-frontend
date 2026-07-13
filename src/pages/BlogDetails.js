@@ -12,6 +12,7 @@ import EmptyState from "../components/ui/EmptyState";
 import HtmlContent from "../components/ui/HtmlContent";
 import { useAppSnackbar } from "../components/ui/AppSnackbar";
 import config from "../config/config";
+import { BRAND } from "../config/brand";
 
 const BlogDetails = () => {
   const snackbar = useAppSnackbar();
@@ -50,17 +51,20 @@ const BlogDetails = () => {
 
   useEffect(() => {
     if (blogDetails) {
-      document.title = blogDetails.meta_title;
+      const metaTitle = blogDetails.meta_title || blogDetails.title || BRAND.defaultTitle;
+      document.title = metaTitle.includes(BRAND.name)
+        ? metaTitle
+        : `${metaTitle} | ${BRAND.name}`;
       const metaDescription =
         document.querySelector('meta[name="description"]') || document.createElement("meta");
       metaDescription.name = "description";
-      metaDescription.content = blogDetails.meta_description;
+      metaDescription.content = blogDetails.meta_description || BRAND.defaultDescription;
       if (!metaDescription.parentNode) document.head.appendChild(metaDescription);
 
       const metaKeywords =
         document.querySelector('meta[name="keywords"]') || document.createElement("meta");
       metaKeywords.name = "keywords";
-      metaKeywords.content = blogDetails.meta_keywords;
+      metaKeywords.content = blogDetails.meta_keywords || BRAND.keywords;
       if (!metaKeywords.parentNode) document.head.appendChild(metaKeywords);
     }
   }, [blogDetails]);

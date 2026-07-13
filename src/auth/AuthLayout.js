@@ -30,6 +30,7 @@ const AuthLayout = ({
   formColumns = { xs: 12, lg: 5 },
 }) => (
   <Box
+    component="main"
     className="main-section login-page"
     sx={{
       minHeight: "100vh",

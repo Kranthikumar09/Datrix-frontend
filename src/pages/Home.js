@@ -113,7 +113,7 @@ const Home = () => (
               {FLAG_AWARDS.map((flag) => (
                 <Box key={flag.label} className={`banner-award ${flag.className}`}>
                   <Box component="img" src={flag.src} alt={`${flag.label} flag`} />
-                  <Typography component="h6" variant="subtitle2">
+                  <Typography component="span" variant="subtitle2">
                     {flag.label}
                   </Typography>
                 </Box>
