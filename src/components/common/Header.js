@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { NavLink, useNavigate, useLocation, Link as RouterLink } from "react-router-dom";
-import axios from "axios";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Container from "@mui/material/Container";
@@ -16,7 +15,6 @@ import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import config from "../../config/config";
 import { BRAND } from "../../config/brand";
 import { useAuth } from "../../context/AuthContext";
 import fallbackLogoAsset from "../../assets/images/logo.png";
@@ -48,24 +46,10 @@ const pillButtonSx = {
 };
 
 const Header = () => {
-  const [siteLogo, setSiteLogo] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  useEffect(() => {
-    if (!config.baseURL) return undefined;
-
-    axios
-      .get(`${config.baseURL}/site-content/general-content/get`)
-      .then((response) => {
-        setSiteLogo(response.data?.data?.site_logo || null);
-      })
-      .catch((err) => console.error("API Error:", err));
-
-    return undefined;
-  }, []);
 
   const closeMobileMenu = () => setMobileOpen(false);
 
@@ -102,9 +86,8 @@ const Header = () => {
     };
   }, [location.pathname]);
 
-  const logoSrc = siteLogo
-    ? config.assetUrl(`uploads/general-content/${siteLogo}`)
-    : FALLBACK_LOGO;
+  // Always use the local Datrix logo so CMS cannot reintroduce legacy brand art.
+  const logoSrc = FALLBACK_LOGO;
 
   const authActions = (
     <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ alignItems: "stretch" }}>
