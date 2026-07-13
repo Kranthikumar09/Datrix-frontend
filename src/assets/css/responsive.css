@@ -523,14 +523,6 @@
     padding-bottom: 70px;
 }
 
-.accordion-item {
-    box-shadow: none !important;
-}
-
-.accordion-item:has(.accordion-button[aria-expanded="true"]) {
-    background: #FAFBFC;
-}
-
 .blog-section .blog-row {
     row-gap: 38px;
 }
@@ -1027,40 +1019,9 @@
 }
 
 @media (max-width: 991px) {
-    .navbar-collapse {
-        position: absolute;
-        top: 110px;
-        z-index: 5;
-        background: #fff;
-        width: 100%;
-        left: 0;
-        border-radius: 20px;
-        padding: 16px 30px;
-        box-shadow: 0px 20px 15px #0000000D;
-    }
-.header-main .navbar-nav .nav-link {
-    font-family: Montserrat;
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 27px;
-    color: #000418;
-    padding: 14px 0px;
-}
-.header-btn-main a {
+    .header-btn-main a {
     font-size: 20px;
 }
-    .header-main .navbar-expand-lg .navbar-nav {
-        margin-left: 0;
-    }
-
-    .header-main .header-inner {
-        justify-content: space-between;
-    }
-
-    .navbar-toggler {
-        box-shadow: none !important;
-    }
-
     .header-btn-main {
         flex-direction: column;
         gap: 20px;
@@ -1167,37 +1128,6 @@
     section.career-path-section .row {
         gap: 30px;
     }
-    .how-works-section .steps{
-        width: 100%;
-    }
-    .how-works-section .steps:not(:first-child) {
-        margin-left: initial;
-    }
-    .how-works-section .steps.step2 {
-        top: 0;
-    }
-    .how-works-section .steps.step2 {
-        top: 0;
-        flex-direction: column-reverse;
-    }
-    .how-works-section .steps.step4 {
-        top: 0;
-    }
-    .how-works-section .steps h3 {
-        position: absolute;
-        top: 4%;
-        left: auto;
-    }
-    .how-works-section .step2 h3 {
-        bottom: 13px;
-        left: auto !important;
-        top: 15% !important;
-    }
-    .how-works-section .step4 h3 {
-        bottom: 13px;
-        left: auto !important;
-        top: auto !important;
-    }
     .steps.step4 {
         flex-direction: column-reverse;
     }
@@ -1249,10 +1179,6 @@
     .work-steps.work-step6 {
         flex-direction: column-reverse;
     }
-    .pagebanner-text p {
-      
-        width: 90%;
-    }
     .pagebanner-text h1 {
         font-family: "Montserrat", sans-serif;
         font-size: 30px;
@@ -1301,15 +1227,10 @@
     .study-inner-mid .study-innner-point button span{
         text-align: left;
     }
-     .left-side-divider {
+    .left-side-divider {
         padding: 30px 30px;
         width: 100% !important;
     }
-    .choose-contry-section {
-   
-    z-index: 999;
-    position: relative;
-}
     main.wizard-layout {
         display: flex;
         flex-wrap: wrap;
@@ -1336,9 +1257,6 @@
     .tab-content .file-upload .img-area {
         margin-right: initial;
         margin-bottom: 10px;
-    }
-    .sdsd .row.setting-tab {
-        gap: 30px;
     }
     a.border-btn.btn.sw {
         width: 100%;
