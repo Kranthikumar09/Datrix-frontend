@@ -10,6 +10,8 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import HeadingIcon from "../../assets/images/heading-icon.svg";
+import LoadingState from "../ui/LoadingState";
+import ErrorState from "../ui/ErrorState";
 
 /**
  * Reusable two-column browse section (country / specialization / location lists).
@@ -22,6 +24,9 @@ const BrowseCategorySection = ({
   imagePosition = "right",
   items = [],
   loading = false,
+  error = null,
+  errorTitle,
+  onRetry,
   emptyLabel = "No items available.",
   bgcolor,
 }) => {
@@ -40,7 +45,13 @@ const BrowseCategorySection = ({
         </Typography>
       </Box>
       {loading ? (
-        <Typography color="text.secondary">Loading...</Typography>
+        <LoadingState label="Loading options..." height={120} />
+      ) : error ? (
+        <ErrorState
+          title={errorTitle || `Unable to load ${String(title || "options").replace(/^By\s+/i, "").toLowerCase()}`}
+          message={error}
+          onRetry={onRetry}
+        />
       ) : items.length > 0 ? (
         <List disablePadding>
           {items.map((item) => (
