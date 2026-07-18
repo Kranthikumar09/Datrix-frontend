@@ -13,6 +13,7 @@ import SignupForm from "../auth/SignupForm";
 import FaqSection from "../components/layout/FaqSection";
 import BrowseCategorySection from "../components/browse/BrowseCategorySection";
 import AppTextField from "../components/ui/AppTextField";
+import { networkErrorMessage } from "../utils/networkErrorMessage";
 import workMainImg from "../assets/images/Work-main-img.jpg";
 import uploadIcon from "../assets/images/upload-icon.svg";
 import RightArrow from "../assets/images/right-arrow.svg";
@@ -44,6 +45,9 @@ const Work = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [skills, setSkills] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [browseLoading, setBrowseLoading] = useState(true);
+  const [skillsError, setSkillsError] = useState(null);
+  const [locationsError, setLocationsError] = useState(null);
   const [searchInputs, setSearchInputs] = useState({ company: "", country: "" });
 
   useEffect(() => {
@@ -54,20 +58,57 @@ const Work = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
+  const fetchBrowseData = async () => {
+    if (!config.baseURL) {
+      setBrowseLoading(false);
+      setSkills([]);
+      setLocations([]);
+      setSkillsError("API is not configured.");
+      setLocationsError("API is not configured.");
+      return;
+    }
+
+    setBrowseLoading(true);
+    setSkillsError(null);
+    setLocationsError(null);
+
+    const [skillsResult, locResult] = await Promise.allSettled([
+      axios.get(`${config.baseURL}/jobs/skills/get`),
+      axios.get(`${config.baseURL}/jobs/locations/get`),
+    ]);
+
+    if (skillsResult.status === "fulfilled" && skillsResult.value.data?.success) {
+      setSkills(skillsResult.value.data.data || []);
+      setSkillsError(null);
+    } else if (skillsResult.status === "fulfilled") {
+      setSkills([]);
+      setSkillsError(null);
+    } else {
+      setSkills([]);
+      setSkillsError(
+        networkErrorMessage(skillsResult.reason, "An error occurred while fetching skillsets.")
+      );
+    }
+
+    if (locResult.status === "fulfilled" && locResult.value.data?.success) {
+      setLocations(locResult.value.data.data || []);
+      setLocationsError(null);
+    } else if (locResult.status === "fulfilled") {
+      setLocations([]);
+      setLocationsError(null);
+    } else {
+      setLocations([]);
+      setLocationsError(
+        networkErrorMessage(locResult.reason, "An error occurred while fetching locations.")
+      );
+    }
+
+    setBrowseLoading(false);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [skillsRes, locRes] = await Promise.all([
-          axios.get(`${config.baseURL}/jobs/skills/get`),
-          axios.get(`${config.baseURL}/jobs/locations/get`),
-        ]);
-        if (skillsRes.data.success) setSkills(skillsRes.data.data);
-        if (locRes.data.success) setLocations(locRes.data.data);
-      } catch (error) {
-        console.error("Error fetching work browse data:", error);
-      }
-    };
-    fetchData();
+    fetchBrowseData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleInputChange = (e) => {
@@ -154,10 +195,10 @@ const Work = () => {
             >
               Post your Resume
             </Button>
-            <Typography color="text.secondary" textAlign="center">
+            <Typography color="text.secondary" sx={{ textAlign: "center" }}>
               Your overseas job search starts here.
             </Typography>
-            <Typography variant="h4" fontWeight={700} textAlign="center">
+            <Typography variant="h4" fontWeight={700} sx={{ textAlign: "center" }}>
               Work Opportunity
             </Typography>
             <Box component="form" onSubmit={handleSearchSubmit} sx={{ width: "100%", maxWidth: 720 }}>
@@ -215,7 +256,11 @@ const Work = () => {
           label: item.skill,
           onClick: () => navigate(`/work-filter?skill=${encodeURIComponent(item.skill)}`),
         }))}
-        loading={!skills.length}
+        loading={browseLoading}
+        error={skillsError}
+        errorTitle="Unable to load skillsets"
+        onRetry={fetchBrowseData}
+        emptyLabel="No skillsets available right now."
       />
 
       <BrowseCategorySection
@@ -229,7 +274,11 @@ const Work = () => {
           label: item.location,
           to: `/work-filter?location=${encodeURIComponent(item.location)}`,
         }))}
-        loading={!locations.length}
+        loading={browseLoading}
+        error={locationsError}
+        errorTitle="Unable to load locations"
+        onRetry={fetchBrowseData}
+        emptyLabel="No locations available right now."
       />
 
       <Box component="section" className="work-process-section" sx={{ py: { xs: 4, md: 6 } }}>
