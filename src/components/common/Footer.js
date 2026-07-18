@@ -32,7 +32,7 @@ const COMPANY_LINKS = [
 
 const RESOURCE_LINKS = [
   { label: "FAQs", to: "/faq" },
-  { label: "Blogs", to: "/blog" },
+  { label: "Blogs", to: "/blogs" },
   { label: "Privacy Policy", to: "/privacy-policy" },
   { label: "Terms & Conditions", to: "/terms-conditions" },
 ];

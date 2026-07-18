@@ -26,7 +26,7 @@ const NAV_ITEMS = [
   { label: "Study", to: "/study", match: "study" },
   { label: "Work", to: "/work", match: "work" },
   { label: "Travel", to: "/travel" },
-  { label: "Blogs", to: "/blog", match: "blog" },
+  { label: "Blogs", to: "/blogs", match: "blog" },
   { label: "About", to: "/about" },
   { label: "Contact", to: "/contact" },
 ];

@@ -15,11 +15,10 @@ import PageBanner from "../components/ui/PageBanner";
 import LoadingState from "../components/ui/LoadingState";
 import ErrorState from "../components/ui/ErrorState";
 import EmptyState from "../components/ui/EmptyState";
-import { useAppSnackbar } from "../components/ui/AppSnackbar";
 import config from "../config/config";
+import { networkErrorMessage } from "../utils/networkErrorMessage";
 
 const Blog = () => {
-  const snackbar = useAppSnackbar();
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,6 +26,12 @@ const Blog = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   const fetchBlogs = async () => {
+    if (!config.baseURL) {
+      setLoading(false);
+      setBlogs([]);
+      setError("API is not configured.");
+      return;
+    }
     try {
       setLoading(true);
       setError(null);
@@ -38,19 +43,21 @@ const Blog = () => {
       if (response.data.success) {
         setBlogs(response.data.data || []);
         setTotalPages(response.data.pagination?.total_pages || 1);
+        setError(null);
       } else {
-        setError("No blogs found.");
         setBlogs([]);
+        setTotalPages(1);
+        setError(null);
       }
     } catch (err) {
-      console.error("Error fetching blogs:", err);
-      setError("Failed to load blogs. Please try again later.");
-      snackbar.error("Failed to load blogs.");
+      setBlogs([]);
+      setError(
+        networkErrorMessage(err, "Failed to load blogs. Please try again later.")
+      );
     } finally {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchBlogs();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- refetch when page changes

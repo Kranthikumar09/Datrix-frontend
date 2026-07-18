@@ -173,7 +173,8 @@ function Layout() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<Faq />} />
-          <Route path="/blog" element={<Blog />} />
+          <Route path="/blogs" element={<Blog />} />
+          <Route path="/blog" element={<Navigate to="/blogs" replace />} />
           <Route path="/blog-details/:slug" element={<BlogDetails />} />
           <Route path="/study" element={<Study />} />
           <Route path="/study-details/:courseId" element={<StudyDetails />} />
