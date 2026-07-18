@@ -72,7 +72,7 @@ const Testimonial = () => {
     testimonials.length > 0 ? ((currentSlide + 1) / testimonials.length) * 100 : 0;
 
   return (
-    <Box component="section" className="testimonial-section" sx={{ py: { xs: 4, md: 6 } }}>
+    <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
         <Box sx={{ textAlign: "center", mb: 4, maxWidth: 720, mx: "auto" }}>
           <Typography variant="h4" component="h2" fontWeight={700} gutterBottom>

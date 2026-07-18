@@ -10,7 +10,6 @@ import Stack from "@mui/material/Stack";
 const PageBanner = ({ title, subtitle, children }) => (
   <Box
     component="section"
-    className="page-banner"
     sx={{
       py: { xs: 4, md: 6 },
       bgcolor: "background.subtle",

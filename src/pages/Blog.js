@@ -69,7 +69,7 @@ const Blog = () => {
         subtitle="Explore expert insights, tips, and guides on studying, working, and immigrating abroad to achieve your international dreams in 2025 and beyond."
       />
 
-      <Box component="section" className="blog-section" sx={{ py: { xs: 4, md: 6 } }}>
+      <Box component="section" sx={{ py: { xs: 4, md: 6 }, bgcolor: "background.soft" }}>
         <Container maxWidth="lg">
           {loading ? (
             <LoadingState label="Loading blogs..." height={200} />

@@ -61,7 +61,7 @@ const PartnerSection = () => {
   );
 
   return (
-    <Box component="section" className="partner-section" sx={{ py: { xs: 4, md: 6 } }}>
+    <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
         <Stack spacing={1.5} sx={{ mb: 4, maxWidth: 800, mx: "auto", textAlign: "center", alignItems: "center" }}>
           <Typography variant="h4" component="h2" fontWeight={700}>
