@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -10,6 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
+import Alert from "@mui/material/Alert";
 import RightArrow from "../assets/images/right-arrow.svg";
 import smstrackingIcon from "../assets/images/smstracking.svg";
 import mobileIcon from "../assets/images/mobile.svg";
@@ -18,17 +19,29 @@ import fbIcon from "../assets/images/fb.svg";
 import instaIcon from "../assets/images/insta.svg";
 import youtubeIcon from "../assets/images/youtube.svg";
 import config from "../config/config";
+import { BRAND } from "../config/brand";
 import { useAppSnackbar } from "../components/ui/AppSnackbar";
 import PageBanner from "../components/ui/PageBanner";
 import AppTextField from "../components/ui/AppTextField";
 import AppSelect from "../components/ui/AppSelect";
 import AppPhoneField from "../components/ui/AppPhoneField";
+import { networkErrorMessage } from "../utils/networkErrorMessage";
 
 const SUBJECT_OPTIONS = [
   "General Inquiry",
   "Study Application",
   "Work Visa",
 ];
+
+const emptySiteContent = {
+  contact_address: "",
+  contact_email: "",
+  contact_phone_number: "",
+  contact_social_linkedin: "",
+  contact_social_instagram: "",
+  contact_social_facebook: "",
+  contact_social_youtube: "",
+};
 
 const Contact = () => {
   const snackbar = useAppSnackbar();
@@ -40,35 +53,46 @@ const Contact = () => {
     message: "",
     honeypot: "",
   });
-  const [siteContent, setSiteContent] = useState({
-    contact_address: "",
-    contact_email: "",
-    contact_phone_number: "",
-    contact_social_linkedin: "",
-    contact_social_instagram: "",
-    contact_social_facebook: "",
-    contact_social_youtube: "",
-  });
+  const [siteContent, setSiteContent] = useState(emptySiteContent);
+  const [contentLoading, setContentLoading] = useState(true);
+  const [contentError, setContentError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("in");
   const phoneInputRef = useRef(null);
 
-  useEffect(() => {
-    const fetchSiteContent = async () => {
-      try {
-        const response = await axios.get(
-          `${config.baseURL}/site-content/general-content/get`
-        );
-        if (response.data.success) {
-          setSiteContent(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching site content:", error);
+  const fetchSiteContent = useCallback(async () => {
+    if (!config.baseURL) {
+      setContentLoading(false);
+      setSiteContent(emptySiteContent);
+      setContentError("API is not configured.");
+      return;
+    }
+    try {
+      setContentLoading(true);
+      setContentError(null);
+      const response = await axios.get(
+        `${config.baseURL}/site-content/general-content/get`
+      );
+      if (response.data.success) {
+        setSiteContent({ ...emptySiteContent, ...(response.data.data || {}) });
+        setContentError(null);
+      } else {
+        setSiteContent(emptySiteContent);
+        setContentError(response.data.message || "Unable to load contact information.");
       }
-    };
-
-    fetchSiteContent();
+    } catch (error) {
+      setSiteContent(emptySiteContent);
+      setContentError(
+        networkErrorMessage(error, "Unable to load contact information.")
+      );
+    } finally {
+      setContentLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchSiteContent();
+  }, [fetchSiteContent]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -92,7 +116,6 @@ const Contact = () => {
 
     if (formData.honeypot) {
       snackbar.error("Bot submission detected.");
-      console.log("Honeypot triggered:", formData.honeypot);
       return;
     }
 
@@ -136,17 +159,29 @@ const Contact = () => {
       );
 
       if (response.data.success) {
-        snackbar.success("Your message has been sent successfully! 🎉");
+        snackbar.success("Your message has been sent successfully!");
         resetForm();
       } else {
-        snackbar.error("Failed to submit. Please check your details.");
+        snackbar.error(
+          response.data.message || "Failed to submit. Please check your details."
+        );
       }
     } catch (error) {
-      snackbar.error("Failed to submit. Please try again later.");
+      snackbar.error(
+        networkErrorMessage(
+          error,
+          error.response?.data?.message || "Failed to submit. Please try again later."
+        )
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const displayEmail =
+    siteContent.contact_email || BRAND.contactEmailFallback || "Email not available";
+  const displayPhone = siteContent.contact_phone_number || "Phone not available";
+  const displayAddress = siteContent.contact_address?.trim() || "";
 
   const socialLinks = [
     { link: siteContent.contact_social_linkedin, icon: linkedinIcon, alt: "LinkedIn" },
@@ -203,39 +238,86 @@ const Contact = () => {
                       We're here to assist you! Feel free to get in touch through any of
                       the following channels.
                     </Typography>
-                    <Stack spacing={2} component="ul" sx={{ listStyle: "none", m: 0, p: 0 }}>
-                      <Box
-                        component="li"
-                        sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
-                      >
-                        <Box
-                          component="img"
-                          src={smstrackingIcon}
-                          alt="Email"
-                          sx={{ width: 24, height: 24 }}
-                        />
-                        <Typography sx={{ color: "common.white" }}>
-                          {siteContent.contact_email}
+
+                    {contentLoading ? (
+                      <Stack spacing={1.5} sx={{ alignItems: "flex-start", py: 2 }}>
+                        <CircularProgress size={28} sx={{ color: "common.white" }} />
+                        <Typography variant="body2" sx={{ color: "common.white", opacity: 0.9 }}>
+                          Loading contact details...
                         </Typography>
-                      </Box>
-                      <Box
-                        component="li"
-                        sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                      </Stack>
+                    ) : contentError ? (
+                      <Alert
+                        severity="warning"
+                        action={
+                          <Button color="inherit" size="small" onClick={fetchSiteContent}>
+                            Try again
+                          </Button>
+                        }
+                        sx={{
+                          bgcolor: "rgba(255,255,255,0.95)",
+                          color: "text.primary",
+                          alignItems: "center",
+                        }}
                       >
+                        {contentError}
+                      </Alert>
+                    ) : (
+                      <Stack spacing={2} component="ul" sx={{ listStyle: "none", m: 0, p: 0 }}>
+                        {displayAddress ? (
+                          <Box component="li">
+                            <Typography sx={{ color: "common.white" }}>
+                              {displayAddress}
+                            </Typography>
+                          </Box>
+                        ) : null}
                         <Box
-                          component="img"
-                          src={mobileIcon}
-                          alt="Phone"
-                          sx={{ width: 24, height: 24 }}
-                        />
-                        <Typography sx={{ color: "common.white" }}>
-                          {siteContent.contact_phone_number}
-                        </Typography>
-                      </Box>
-                    </Stack>
+                          component="li"
+                          sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                        >
+                          <Box
+                            component="img"
+                            src={smstrackingIcon}
+                            alt=""
+                            sx={{ width: 24, height: 24 }}
+                          />
+                          {siteContent.contact_email || BRAND.contactEmailFallback ? (
+                            <Link
+                              href={`mailto:${displayEmail}`}
+                              sx={{ color: "common.white", textDecoration: "underline" }}
+                            >
+                              {displayEmail}
+                            </Link>
+                          ) : (
+                            <Typography sx={{ color: "common.white" }}>{displayEmail}</Typography>
+                          )}
+                        </Box>
+                        <Box
+                          component="li"
+                          sx={{ display: "flex", alignItems: "center", gap: 1.5 }}
+                        >
+                          <Box
+                            component="img"
+                            src={mobileIcon}
+                            alt=""
+                            sx={{ width: 24, height: 24 }}
+                          />
+                          {siteContent.contact_phone_number ? (
+                            <Link
+                              href={`tel:${siteContent.contact_phone_number.replace(/\s+/g, "")}`}
+                              sx={{ color: "common.white", textDecoration: "underline" }}
+                            >
+                              {displayPhone}
+                            </Link>
+                          ) : (
+                            <Typography sx={{ color: "common.white" }}>{displayPhone}</Typography>
+                          )}
+                        </Box>
+                      </Stack>
+                    )}
                   </Box>
 
-                  {socialLinks.length > 0 ? (
+                  {!contentLoading && !contentError && socialLinks.length > 0 ? (
                     <Stack direction="row" spacing={1.5} sx={{ mt: 4 }}>
                       {socialLinks.map((social) => (
                         <IconButton
@@ -280,7 +362,7 @@ const Contact = () => {
                         onChange={handleChange}
                         required
                         fullWidth
-                        inputProps={{ maxLength: 60 }}
+                        slotProps={{ htmlInput: { maxLength: 60 } }}
                       />
                     </Grid>
 
@@ -349,7 +431,6 @@ const Contact = () => {
                       />
                     </Grid>
 
-                    {/* Honeypot Field */}
                     <Box sx={{ display: "none" }} aria-hidden="true">
                       <label htmlFor="honeypot">Website</label>
                       <input
