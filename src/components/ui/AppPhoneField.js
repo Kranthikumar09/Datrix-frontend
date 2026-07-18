@@ -229,29 +229,31 @@ const AppPhoneField = React.forwardRef(function AppPhoneField(
           type="tel"
           variant="standard"
           fullWidth
-          inputProps={{
-            inputMode,
-            autoComplete,
-            pattern,
-            maxLength,
-            minLength,
-            "aria-describedby": resolvedHelperId,
-            "aria-invalid": ariaInvalid,
-            ...otherInputProps,
-            ...rest,
-          }}
-          InputProps={{
-            disableUnderline: true,
-            sx: {
-              height: 56,
-              px: 1.5,
-              "& input": {
-                py: 0,
+          slotProps={{
+            htmlInput: {
+              inputMode,
+              autoComplete,
+              pattern,
+              maxLength,
+              minLength,
+              "aria-describedby": resolvedHelperId,
+              "aria-invalid": ariaInvalid,
+              ...otherInputProps,
+            },
+            input: {
+              disableUnderline: true,
+              sx: {
                 height: 56,
-                boxSizing: "border-box",
+                px: 1.5,
+                "& input": {
+                  py: 0,
+                  height: 56,
+                  boxSizing: "border-box",
+                },
               },
             },
           }}
+          {...rest}
         />
       </Box>
       <FormHelperText id={resolvedHelperId}>{helperText || " "}</FormHelperText>

@@ -18,6 +18,8 @@ import { useAppSnackbar } from "../components/ui/AppSnackbar";
 import PageBanner from "../components/ui/PageBanner";
 import AppTextField from "../components/ui/AppTextField";
 import AppPhoneField from "../components/ui/AppPhoneField";
+import ErrorState from "../components/ui/ErrorState";
+import { networkErrorMessage } from "../utils/networkErrorMessage";
 
 const TravelForm = () => {
   const snackbar = useAppSnackbar();
@@ -44,22 +46,39 @@ const TravelForm = () => {
   });
 
   const [countries, setCountries] = useState([]);
+  const [countriesError, setCountriesError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState({ countries: false });
   const [selectedCountryCode, setSelectedCountryCode] = useState("in");
   const phoneInputRef = useRef(null);
 
   const fetchData = useCallback(async () => {
+    if (!config.baseURL) {
+      setCountries([]);
+      setCountriesError("API is not configured.");
+      setLoading((prev) => ({ ...prev, countries: false }));
+      return;
+    }
     try {
       setLoading((prev) => ({ ...prev, countries: true }));
+      setCountriesError(null);
       const response = await axios.get(`${config.baseURL}/countries/get`);
-      if (response.data.success) setCountries(response.data.data);
+      if (response.data.success) {
+        setCountries(response.data.data || []);
+        setCountriesError(null);
+      } else {
+        setCountries([]);
+        setCountriesError(response.data.message || "Unable to load countries.");
+      }
     } catch (error) {
-      snackbar.error(`Error fetching countries: ${error.message}`);
+      setCountries([]);
+      setCountriesError(
+        networkErrorMessage(error, "An error occurred while fetching countries.")
+      );
     } finally {
       setLoading((prev) => ({ ...prev, countries: false }));
     }
-  }, [snackbar]);
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -204,7 +223,7 @@ const TravelForm = () => {
         payload
       );
       if (response.data.success) {
-        snackbar.success("Travel request submitted successfully! 🎉");
+        snackbar.success("Travel request submitted successfully!");
         resetForm();
       } else {
         snackbar.error(
@@ -213,9 +232,11 @@ const TravelForm = () => {
       }
     } catch (error) {
       snackbar.error(
-        `Submission failed: ${error.response?.data?.message || "Try again later."}`
+        networkErrorMessage(
+          error,
+          error.response?.data?.message || "Submission failed. Try again later."
+        )
       );
-      console.log("Error details:", error.response?.data);
     } finally {
       setIsSubmitting(false);
     }
@@ -283,30 +304,41 @@ const TravelForm = () => {
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
-                        <Autocomplete
-                          id="interestedCountries"
-                          multiple
-                          options={countryOptions}
-                          value={selectedCountryOptions}
-                          onChange={handleCountryChange}
-                          getOptionLabel={(option) => option.label}
-                          isOptionEqualToValue={(option, value) =>
-                            option.value === value.value
-                          }
-                          loading={loading.countries}
-                          disableCloseOnSelect
-                          noOptionsText="No countries found"
-                          ListboxProps={{ style: { maxHeight: 200 } }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              label="Interested Countries *"
-                              placeholder="Select up to 3 countries..."
-                              error={Boolean(errors.interestedCountry)}
-                              helperText={errors.interestedCountry || " "}
-                            />
-                          )}
-                        />
+                        {countriesError && !loading.countries ? (
+                          <ErrorState
+                            title="Unable to load countries"
+                            message={countriesError}
+                            onRetry={fetchData}
+                          />
+                        ) : (
+                          <Autocomplete
+                            id="interestedCountries"
+                            multiple
+                            options={countryOptions}
+                            value={selectedCountryOptions}
+                            onChange={handleCountryChange}
+                            getOptionLabel={(option) => option.label}
+                            isOptionEqualToValue={(option, value) =>
+                              option.value === value.value
+                            }
+                            loading={loading.countries}
+                            disabled={loading.countries}
+                            disableCloseOnSelect
+                            noOptionsText="No countries found"
+                            slotProps={{
+                              listbox: { style: { maxHeight: 200 } },
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                label="Interested Countries *"
+                                placeholder="Select up to 3 countries..."
+                                error={Boolean(errors.interestedCountry)}
+                                helperText={errors.interestedCountry || " "}
+                              />
+                            )}
+                          />
+                        )}
                       </Grid>
 
                       <Grid size={{ xs: 12, md: 6 }}>
@@ -319,7 +351,7 @@ const TravelForm = () => {
                           onChange={handleChange}
                           placeholder="e.g., 2"
                           fullWidth
-                          inputProps={{ min: 1, max: 50 }}
+                          slotProps={{ htmlInput: { min: 1, max: 50 } }}
                           error={Boolean(errors.passengers)}
                           helperText={errors.passengers || " "}
                         />
@@ -347,7 +379,7 @@ const TravelForm = () => {
                                 textField: {
                                   fullWidth: true,
                                   error: Boolean(errors.dateRange),
-                                  helperText: errors.dateRange ? " " : " ",
+                                  helperText: " ",
                                 },
                                 field: { clearable: true },
                               }}
@@ -435,7 +467,7 @@ const TravelForm = () => {
                           fullWidth
                           multiline
                           rows={5}
-                          inputProps={{ maxLength: 500 }}
+                          slotProps={{ htmlInput: { maxLength: 500 } }}
                           error={Boolean(errors.description)}
                           helperText={
                             errors.description ||
