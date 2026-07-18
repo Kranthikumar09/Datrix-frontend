@@ -120,7 +120,7 @@ const About = () => (
             className="top-name"
             sx={{ display: "inline-flex", alignItems: "center", gap: 1, color: "primary.main", fontWeight: 600 }}
           >
-            Value <Box component="img" src={objectImg} alt="" />
+            VALUES <Box component="img" src={objectImg} alt="" />
           </Typography>
           <Typography variant="h4" component="h2" sx={{ fontWeight: 700 }}>
             Our Values
