@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Slider from "react-slick";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -17,6 +16,7 @@ import { BRAND } from "../../config/brand";
 import config from "../../config/config";
 import LoadingState from "../ui/LoadingState";
 import EmptyState from "../ui/EmptyState";
+import AutoCarousel from "../ui/AutoCarousel";
 import testimonialImg from "../../assets/images/testimonial-img.jpg";
 import quotesImg from "../../assets/images/quotes-img.png";
 
@@ -59,15 +59,6 @@ const Testimonial = () => {
       .catch(() => setError("No testimonials found"))
       .finally(() => setLoading(false));
   }, []);
-
-  const settings = {
-    dots: false,
-    infinite: testimonials.length > 1,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    beforeChange: (_current, next) => setCurrentSlide(next),
-  };
 
   const truncateTextByWords = (text, wordLimit = 60) => {
     const words = (text || "").split(" ");
@@ -129,9 +120,16 @@ const Testimonial = () => {
               <EmptyState title="No testimonials found" message={error || "No testimonials found"} />
             ) : (
               <Box>
-                <Slider {...settings}>
-                  {testimonials.map((testimonial, index) => (
-                    <Box key={`${testimonial.name}-${index}`} sx={{ px: 1 }}>
+                <AutoCarousel
+                  items={testimonials}
+                  getKey={(testimonial, index) => `${testimonial.name}-${index}`}
+                  slidesToShow={1}
+                  arrows={testimonials.length > 1}
+                  infinite={testimonials.length > 1}
+                  onIndexChange={setCurrentSlide}
+                  ariaLabel="Customer testimonials"
+                  renderItem={(testimonial, index) => (
+                    <Box sx={{ px: 0.5 }}>
                       <Box component="img" src={quotesImg} alt="" sx={{ width: 48, mb: 2 }} />
                       <Typography color="text.secondary" sx={{ mb: 2 }}>
                         {expandedIndex === index
@@ -165,8 +163,8 @@ const Testimonial = () => {
                         </Box>
                       </Box>
                     </Box>
-                  ))}
-                </Slider>
+                  )}
+                />
                 <LinearProgress
                   variant="determinate"
                   value={progress}

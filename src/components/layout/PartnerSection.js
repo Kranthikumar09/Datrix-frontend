@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Slider from "react-slick";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
@@ -9,6 +8,7 @@ import config from "../../config/config";
 import LoadingState from "../ui/LoadingState";
 import EmptyState from "../ui/EmptyState";
 import ErrorState from "../ui/ErrorState";
+import AutoCarousel from "../ui/AutoCarousel";
 import { prefersReducedMotion } from "../../utils/prefersReducedMotion";
 
 const PartnerSection = () => {
@@ -48,23 +48,17 @@ const PartnerSection = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const partnerslider = useMemo(() => {
-    const reduceMotion = prefersReducedMotion();
-    return {
-      infinite: partners.length > 1,
-      slidesToShow: Math.min(5, partners.length || 1),
-      slidesToScroll: 1,
-      arrows: false,
-      dots: false,
-      autoplay: !reduceMotion && partners.length > 1,
-      autoplaySpeed: 2000,
-      responsive: [
-        { breakpoint: 1024, settings: { slidesToShow: Math.min(3, partners.length || 1) } },
-        { breakpoint: 700, settings: { slidesToShow: Math.min(2, partners.length || 1) } },
-        { breakpoint: 480, settings: { slidesToShow: Math.min(2, partners.length || 1) } },
-      ],
-    };
-  }, [partners.length]);
+  const renderPartner = (partner) => (
+    <Box component="figure" sx={{ m: 0, px: 1, textAlign: "center" }}>
+      <Box
+        component="img"
+        src={config.assetUrl(`uploads/our-partners/${partner.image}`)}
+        alt={partner.title}
+        className="partner-img"
+        sx={{ maxHeight: 72, width: "auto", mx: "auto", display: "block" }}
+      />
+    </Box>
+  );
 
   return (
     <Box component="section" className="partner-section" sx={{ py: { xs: 4, md: 6 } }}>
@@ -86,31 +80,20 @@ const PartnerSection = () => {
         ) : error ? (
           <ErrorState title="Unable to load partners" message={error} onRetry={fetchPartners} />
         ) : partners.length > 0 ? (
-          <Box className="partner-logos" role="region" aria-label="Partner logos">
+          <Box className="partner-logos">
             {partners.length > 1 ? (
-              <Slider {...partnerslider}>
-                {partners.map((partner, index) => (
-                  <Box key={`${partner.title}-${index}`} component="figure" sx={{ m: 0, px: 2, textAlign: "center" }}>
-                    <Box
-                      component="img"
-                      src={config.assetUrl(`uploads/our-partners/${partner.image}`)}
-                      alt={partner.title}
-                      className="partner-img"
-                      sx={{ maxHeight: 72, width: "auto", mx: "auto" }}
-                    />
-                  </Box>
-                ))}
-              </Slider>
+              <AutoCarousel
+                items={partners}
+                getKey={(partner, index) => `${partner.title}-${index}`}
+                renderItem={renderPartner}
+                slidesToShow={5}
+                autoplay={!prefersReducedMotion()}
+                autoplaySpeed={2000}
+                infinite
+                ariaLabel="Partner logos"
+              />
             ) : (
-              <Box component="figure" sx={{ m: 0, textAlign: "center" }}>
-                <Box
-                  component="img"
-                  src={config.assetUrl(`uploads/our-partners/${partners[0].image}`)}
-                  alt={partners[0].title}
-                  className="partner-img"
-                  sx={{ maxHeight: 72, width: "auto" }}
-                />
-              </Box>
+              renderPartner(partners[0])
             )}
           </Box>
         ) : (

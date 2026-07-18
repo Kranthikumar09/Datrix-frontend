@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import intlTelInput from "intl-tel-input";
-import "intl-tel-input/build/css/intlTelInput.css";
 import Alert from "@mui/material/Alert";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -53,7 +51,6 @@ const MyAccount = () => {
   });
 
   const phoneInputRef = useRef(null);
-  const phoneInstance = useRef(null);
 
   const createAuthAxios = () => {
     const token = localStorage.getItem("accessToken");
@@ -190,28 +187,8 @@ const MyAccount = () => {
   }, [isAuthenticated, navigate, logout]);
 
   useEffect(() => {
-    if (phoneInputRef.current && !loading) {
-      if (phoneInstance.current) {
-        phoneInstance.current.destroy();
-      }
-
-      phoneInstance.current = intlTelInput(phoneInputRef.current, {
-        initialCountry: "us",
-        preferredCountries: ["us", "gb", "au", "in", "de"],
-        separateDialCode: true,
-        autoPlaceholder: "off",
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.15/js/utils.js",
-      });
-
-      if (profileData.phone) {
-        phoneInstance.current.setNumber(profileData.phone);
-      }
-
-      return () => {
-        if (phoneInstance.current) {
-          phoneInstance.current.destroy();
-        }
-      };
+    if (!loading && phoneInputRef.current && profileData.phone) {
+      phoneInputRef.current.setNumber(profileData.phone);
     }
   }, [loading, profileData.phone]);
 
@@ -233,7 +210,7 @@ const MyAccount = () => {
     if (!profileData.fullName.trim()) {
       errors.fullName = "Please enter your full name";
     }
-    if (!phoneInstance.current || !phoneInstance.current.isValidNumber()) {
+    if (!phoneInputRef.current || !phoneInputRef.current.isValidNumber()) {
       errors.phone = "Please enter a valid phone number";
     }
 
@@ -282,10 +259,9 @@ const MyAccount = () => {
     try {
       const { instance } = createAuthAxios();
 
-      const fullNumber = phoneInstance.current.getNumber();
-      const phoneCode = phoneInstance.current.getSelectedCountryData().dialCode
-        ? `+${phoneInstance.current.getSelectedCountryData().dialCode}`
-        : "";
+      const selected = phoneInputRef.current.getSelectedCountryData();
+      const phoneCode = selected?.dialCode ? `+${selected.dialCode}` : "";
+      const fullNumber = phoneInputRef.current.getNumber();
       const phoneNumber = fullNumber.replace(phoneCode, "");
 
       const updatePayload = {
@@ -455,6 +431,7 @@ const MyAccount = () => {
                 id="phone"
                 label="Phone Number *"
                 ref={phoneInputRef}
+                defaultCountry="us"
                 error={Boolean(validationErrors.phone)}
                 helperText={validationErrors.phone || " "}
                 disabled={submitting}

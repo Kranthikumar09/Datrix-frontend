@@ -110,4 +110,4 @@ Full authenticated flows (profile, applications, uploads) require a live API env
 1. CMS/backend brand content cutover (section 2)
 2. Supply approved Datrix logo/favicon artwork if current assets are still legacy visually
 3. Add Contact field-level validation + smoke/E2E tests
-4. Optional: replace `react-slick` when Partner/Testimonial migration is approved
+4. ~~Optional: replace `react-slick` / `intl-tel-input`~~ Done — MUI `AutoCarousel` + MUI `AppPhoneField` (dial-code select); packages removed

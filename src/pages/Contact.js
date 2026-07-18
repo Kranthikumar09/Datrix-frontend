@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import intlTelInput from "intl-tel-input";
-import "intl-tel-input/build/css/intlTelInput.css";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -54,7 +52,6 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState("in");
   const phoneInputRef = useRef(null);
-  const itiRef = useRef(null);
 
   useEffect(() => {
     const fetchSiteContent = async () => {
@@ -71,24 +68,6 @@ const Contact = () => {
     };
 
     fetchSiteContent();
-
-    const input = phoneInputRef.current;
-    if (input) {
-      const iti = intlTelInput(input, {
-        initialCountry: selectedCountry,
-        separateDialCode: true,
-        autoPlaceholder: "off",
-      });
-      itiRef.current = iti;
-      input.addEventListener("countrychange", () => {
-        setSelectedCountry(iti.getSelectedCountryData().iso2);
-      });
-      return () => {
-        iti.destroy();
-      };
-    }
-    // selectedCountry is only used for initialCountry on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (e) => {
@@ -105,9 +84,7 @@ const Contact = () => {
       honeypot: "",
     });
     setSelectedCountry("in");
-    if (phoneInputRef.current && itiRef.current) {
-      itiRef.current.setCountry("in");
-    }
+    phoneInputRef.current?.setCountry("in");
   };
 
   const handleSubmit = async (e) => {
@@ -143,8 +120,7 @@ const Contact = () => {
 
     setIsSubmitting(true);
 
-    const iti = itiRef.current;
-    const phoneCode = iti.getSelectedCountryData().dialCode;
+    const phoneCode = phoneInputRef.current?.getSelectedCountryData()?.dialCode || "91";
 
     const updatedFormData = {
       ...formData,
@@ -329,6 +305,9 @@ const Contact = () => {
                         id="phone_number"
                         label="Mobile number *"
                         ref={phoneInputRef}
+                        defaultCountry="in"
+                        countryIso={selectedCountry}
+                        onCountryChange={(country) => setSelectedCountry(country.iso2)}
                         inputProps={{
                           name: "phone_number",
                           value: formData.phone_number,

@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useImperativeHandle, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import TextField from "@mui/material/TextField";
+import { DIAL_CODES, findCountryForNumber, getCountryByIso } from "../../constants/dialCodes";
 
 /**
- * Outlined phone shell for intl-tel-input.
- * Matches AppTextField vertical rhythm so phone rows align with sibling fields.
- * Parent owns intl-tel-input init/destroy on the forwarded input ref.
+ * MUI phone field with country dial-code select.
+ * Imperative ref API (subset of intl-tel-input): getNumber, isValidNumber,
+ * getSelectedCountryData, setCountry, setNumber, destroy.
  */
 const AppPhoneField = React.forwardRef(function AppPhoneField(
   {
@@ -18,6 +22,12 @@ const AppPhoneField = React.forwardRef(function AppPhoneField(
     helperTextId,
     disabled = false,
     className = "",
+    defaultCountry = "in",
+    countryIso: countryIsoProp,
+    onCountryChange,
+    value: valueProp,
+    onChange,
+    name,
     inputProps = {},
     sx,
     ...rest
@@ -25,13 +35,115 @@ const AppPhoneField = React.forwardRef(function AppPhoneField(
   ref
 ) {
   const {
-    className: inputClassName = "",
-    style: inputStyle,
-    placeholder,
+    className: _ignoredClassName,
+    style: _ignoredStyle,
+    name: inputName,
+    value: inputValue,
+    onChange: inputOnChange,
+    onBlur,
+    required,
+    maxLength = 15,
+    minLength = 6,
+    autoComplete = "tel-national",
+    inputMode = "numeric",
+    pattern,
+    "aria-invalid": ariaInvalid,
     ...otherInputProps
   } = inputProps;
 
+  const isCountryControlled = countryIsoProp !== undefined;
+  const [internalCountry, setInternalCountry] = useState(
+    () => (getCountryByIso(defaultCountry) ? defaultCountry : "in")
+  );
+  const countryIso = isCountryControlled ? countryIsoProp : internalCountry;
+  const country = getCountryByIso(countryIso) || getCountryByIso("in");
+
+  const isValueControlled = valueProp !== undefined || inputValue !== undefined;
+  const [internalValue, setInternalValue] = useState("");
+  const nationalValue = isValueControlled
+    ? String(valueProp ?? inputValue ?? "")
+    : internalValue;
+
   const resolvedHelperId = helperTextId || (id ? `${id}-helper-text` : undefined);
+  const fieldName = name || inputName;
+
+  const countryOptions = useMemo(
+    () =>
+      DIAL_CODES.map((item) => ({
+        ...item,
+        label: `${item.name} (+${item.dialCode})`,
+      })),
+    []
+  );
+
+  const setCountryIso = (nextIso) => {
+    const next = getCountryByIso(nextIso);
+    if (!next) return;
+    if (!isCountryControlled) setInternalCountry(next.iso2);
+    onCountryChange?.(next);
+  };
+
+  const emitChange = (nextNational, eventTarget) => {
+    if (!isValueControlled) setInternalValue(nextNational);
+    if (typeof inputOnChange === "function") {
+      inputOnChange({
+        target: {
+          name: fieldName,
+          value: nextNational,
+          ...(eventTarget || {}),
+        },
+      });
+      return;
+    }
+    if (typeof onChange === "function") {
+      onChange({
+        target: {
+          name: fieldName,
+          value: nextNational,
+        },
+      });
+    }
+  };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      getNumber: () => {
+        const digits = String(nationalValue).replace(/\D/g, "");
+        return digits ? `+${country.dialCode}${digits}` : "";
+      },
+      isValidNumber: () => {
+        const digits = String(nationalValue).replace(/\D/g, "");
+        return /^\d{6,15}$/.test(digits);
+      },
+      getSelectedCountryData: () => ({
+        iso2: country.iso2,
+        dialCode: country.dialCode,
+        name: country.name,
+      }),
+      setCountry: (iso2) => setCountryIso(iso2),
+      setNumber: (raw = "") => {
+        const value = String(raw || "").trim();
+        if (!value) {
+          emitChange("");
+          return;
+        }
+        if (value.startsWith("+") || /^\d{8,}$/.test(value.replace(/\D/g, ""))) {
+          const match = findCountryForNumber(value);
+          if (match) {
+            setCountryIso(match.iso2);
+            const digits = value.replace(/\D/g, "");
+            emitChange(digits.slice(match.dialCode.length));
+            return;
+          }
+        }
+        emitChange(value.replace(/\D/g, ""));
+      },
+      destroy: () => {},
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [nationalValue, country.iso2, country.dialCode, country.name, fieldName]
+  );
 
   return (
     <FormControl
@@ -39,7 +151,7 @@ const AppPhoneField = React.forwardRef(function AppPhoneField(
       variant="outlined"
       error={Boolean(error)}
       disabled={disabled}
-      className={`phone-group phone-group--mui ${className}`.trim()}
+      className={className}
       sx={sx}
     >
       <InputLabel
@@ -54,12 +166,10 @@ const AppPhoneField = React.forwardRef(function AppPhoneField(
         {label}
       </InputLabel>
       <Box
-        className="app-phone-field__control"
         sx={{
           display: "flex",
           alignItems: "stretch",
           minHeight: 56,
-          height: 56,
           borderRadius: 1,
           border: "1px solid",
           borderColor: error ? "error.main" : "rgba(0, 0, 0, 0.23)",
@@ -73,78 +183,75 @@ const AppPhoneField = React.forwardRef(function AppPhoneField(
             borderColor: error ? "error.main" : "primary.main",
             borderWidth: 2,
           },
-          "& .iti": {
-            width: "100% !important",
-            display: "flex !important",
-            alignItems: "stretch",
-            gap: "0 !important",
-            height: "100%",
-          },
-          "& .iti__flag-container": {
-            position: "relative !important",
-            zIndex: 2,
-            height: "100%",
-            "&::after": {
-              content: '""',
-              position: "absolute",
-              right: 0,
-              top: "20%",
-              bottom: "20%",
-              width: "1px",
-              bgcolor: "divider",
-            },
-          },
-          "& .iti__selected-flag, & .iti__country-container button, & .iti__selected-country, & .iti__selected-country-primary": {
-            height: "100% !important",
-            minHeight: "100% !important",
-            border: "none !important",
-            borderRadius: "0 !important",
-            backgroundImage: "none !important",
-            backgroundColor: "transparent !important",
-            boxShadow: "none !important",
-            paddingLeft: "12px !important",
-            paddingRight: "10px !important",
-            display: "flex !important",
-            alignItems: "center",
-          },
-          "& .iti__selected-dial-code": {
-            marginLeft: "6px",
-            color: "text.primary",
-            fontSize: "1rem",
-          },
-          "& input, & input.form-control, & input[type='tel']": {
-            width: "100% !important",
-            flex: 1,
-            height: "100% !important",
-            minHeight: "100% !important",
-            border: "none !important",
-            outline: "none !important",
-            boxShadow: "none !important",
-            borderRadius: "0 !important",
-            padding: "0 14px 0 12px !important",
-            fontFamily: "inherit",
-            fontSize: "1rem",
-            lineHeight: 1.4375,
-            bgcolor: "transparent !important",
-            boxSizing: "border-box",
-          },
-          "& input::placeholder": {
-            color: "transparent !important",
-            opacity: "0 !important",
-          },
         }}
       >
-        <input
-          id={id}
-          ref={ref}
-          type="tel"
+        <Select
+          value={country.iso2}
+          onChange={(event) => setCountryIso(event.target.value)}
           disabled={disabled}
-          className={inputClassName}
-          placeholder={placeholder ?? ""}
-          aria-describedby={resolvedHelperId}
-          style={inputStyle}
-          {...otherInputProps}
-          {...rest}
+          variant="standard"
+          disableUnderline
+          aria-label="Country calling code"
+          MenuProps={{ PaperProps: { sx: { maxHeight: 320 } } }}
+          sx={{
+            minWidth: 108,
+            height: 56,
+            px: 1.5,
+            borderRight: "1px solid",
+            borderColor: "divider",
+            "& .MuiSelect-select": {
+              display: "flex",
+              alignItems: "center",
+              py: 0,
+              pr: "28px !important",
+              fontWeight: 600,
+            },
+          }}
+          renderValue={() => `+${country.dialCode}`}
+        >
+          {countryOptions.map((item) => (
+            <MenuItem key={item.iso2} value={item.iso2}>
+              {item.label}
+            </MenuItem>
+          ))}
+        </Select>
+        <TextField
+          id={id}
+          name={fieldName}
+          value={nationalValue}
+          onChange={(event) => {
+            const next = event.target.value.replace(/\D/g, "").slice(0, Number(maxLength) || 15);
+            emitChange(next, event.target);
+          }}
+          onBlur={onBlur}
+          disabled={disabled}
+          required={required}
+          type="tel"
+          variant="standard"
+          fullWidth
+          inputProps={{
+            inputMode,
+            autoComplete,
+            pattern,
+            maxLength,
+            minLength,
+            "aria-describedby": resolvedHelperId,
+            "aria-invalid": ariaInvalid,
+            ...otherInputProps,
+            ...rest,
+          }}
+          InputProps={{
+            disableUnderline: true,
+            sx: {
+              height: 56,
+              px: 1.5,
+              "& input": {
+                py: 0,
+                height: 56,
+                boxSizing: "border-box",
+              },
+            },
+          }}
         />
       </Box>
       <FormHelperText id={resolvedHelperId}>{helperText || " "}</FormHelperText>

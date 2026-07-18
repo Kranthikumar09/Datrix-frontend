@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import axios from "axios";
-import intlTelInput from "intl-tel-input";
-import "intl-tel-input/build/css/intlTelInput.css";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -50,7 +48,6 @@ const TravelForm = () => {
   const [loading, setLoading] = useState({ countries: false });
   const [selectedCountryCode, setSelectedCountryCode] = useState("in");
   const phoneInputRef = useRef(null);
-  const itiRef = useRef(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -66,24 +63,6 @@ const TravelForm = () => {
 
   useEffect(() => {
     fetchData();
-
-    const input = phoneInputRef.current;
-    if (input) {
-      const iti = intlTelInput(input, {
-        initialCountry: selectedCountryCode,
-        separateDialCode: true,
-        autoPlaceholder: "off",
-        utilsScript:
-          "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.15/js/utils.js",
-      });
-      itiRef.current = iti;
-      input.addEventListener("countrychange", () => {
-        setSelectedCountryCode(iti.getSelectedCountryData().iso2);
-      });
-      return () => iti.destroy();
-    }
-    // selectedCountryCode is only used for initialCountry on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchData]);
 
   const countryOptions = useMemo(
@@ -165,9 +144,7 @@ const TravelForm = () => {
       honeypot: "",
     });
     setSelectedCountryCode("in");
-    if (phoneInputRef.current && itiRef.current) {
-      itiRef.current.setCountry("in");
-    }
+    phoneInputRef.current?.setCountry("in");
   };
 
   const handleSubmit = async (e) => {
@@ -197,7 +174,7 @@ const TravelForm = () => {
 
     setIsSubmitting(true);
 
-    const phoneData = itiRef.current?.getSelectedCountryData();
+    const phoneData = phoneInputRef.current?.getSelectedCountryData();
     const phoneCode = phoneData ? `+${phoneData.dialCode}` : "+91";
 
     const fromDate = formData.dateRange.from;
@@ -410,6 +387,9 @@ const TravelForm = () => {
                           id="phoneNumber"
                           label="Phone Number *"
                           ref={phoneInputRef}
+                          defaultCountry="in"
+                          countryIso={selectedCountryCode}
+                          onCountryChange={(country) => setSelectedCountryCode(country.iso2)}
                           error={Boolean(errors.phoneNumber)}
                           helperText={errors.phoneNumber || " "}
                           inputProps={{
