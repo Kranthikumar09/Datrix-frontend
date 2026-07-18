@@ -14,6 +14,7 @@ import SignupForm from "../auth/SignupForm";
 import FaqSection from "../components/layout/FaqSection";
 import BrowseCategorySection from "../components/browse/BrowseCategorySection";
 import AppTextField from "../components/ui/AppTextField";
+import { networkErrorMessage } from "../utils/networkErrorMessage";
 import studyPageTopImg from "../assets/images/stydy-page-top-img.jpg";
 import RightArrow from "../assets/images/right-arrow.svg";
 import searchIcon from "../assets/images/search-normal.svg";
@@ -30,7 +31,6 @@ import Step2Img from "../assets/images/step2-img.svg";
 import Step3Img from "../assets/images/step3-img.svg";
 import Step4Img from "../assets/images/step4-img.svg";
 import Step5Img from "../assets/images/step5-img.svg";
-import objectImg from "../assets/images/object.svg";
 import faqImg1 from "../assets/images/faq-img1.jpg";
 import faqImg2 from "../assets/images/faq-img2.jpg";
 import faqImg3 from "../assets/images/faq-img3.jpg";
@@ -49,6 +49,9 @@ const PROCESS_STEPS = [
 const Study = () => {
   const [specializations, setSpecializations] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [browseLoading, setBrowseLoading] = useState(true);
+  const [specializationsError, setSpecializationsError] = useState(null);
+  const [locationsError, setLocationsError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
@@ -61,27 +64,70 @@ const Study = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
+  const fetchBrowseData = async () => {
+    if (!config.baseURL) {
+      setBrowseLoading(false);
+      setSpecializations([]);
+      setLocations([]);
+      setSpecializationsError("API is not configured.");
+      setLocationsError("API is not configured.");
+      return;
+    }
+
+    setBrowseLoading(true);
+    setSpecializationsError(null);
+    setLocationsError(null);
+
+    const [specResult, locResult] = await Promise.allSettled([
+      axios.get(`${config.baseURL}/courses/specializations/get`),
+      axios.get(`${config.baseURL}/courses/locations/get`),
+    ]);
+
+    if (specResult.status === "fulfilled" && specResult.value.data?.success) {
+      setSpecializations(specResult.value.data.data || []);
+      setSpecializationsError(null);
+    } else if (specResult.status === "fulfilled") {
+      setSpecializations([]);
+      setSpecializationsError(null);
+    } else {
+      setSpecializations([]);
+      setSpecializationsError(
+        networkErrorMessage(
+          specResult.reason,
+          "An error occurred while fetching specializations."
+        )
+      );
+    }
+
+    if (locResult.status === "fulfilled" && locResult.value.data?.success) {
+      setLocations(locResult.value.data.data || []);
+      setLocationsError(null);
+    } else if (locResult.status === "fulfilled") {
+      setLocations([]);
+      setLocationsError(null);
+    } else {
+      setLocations([]);
+      setLocationsError(
+        networkErrorMessage(locResult.reason, "An error occurred while fetching locations.")
+      );
+    }
+
+    setBrowseLoading(false);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [specRes, locRes] = await Promise.all([
-          axios.get(`${config.baseURL}/courses/specializations/get`),
-          axios.get(`${config.baseURL}/courses/locations/get`),
-        ]);
-        if (specRes.data.success) setSpecializations(specRes.data.data);
-        if (locRes.data.success) setLocations(locRes.data.data);
-      } catch (error) {
-        console.error("Error fetching study browse data:", error);
-      }
-    };
-    fetchData();
+    fetchBrowseData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/study-filter?course_name=${encodeURIComponent(searchQuery)}`);
+    const query = searchQuery.trim();
+    if (query) {
+      navigate(`/study-filter?course_name=${encodeURIComponent(query)}`);
+      return;
     }
+    navigate("/study-filter");
   };
 
   return (
@@ -178,7 +224,11 @@ const Study = () => {
           label: item.specialization,
           to: `/study-filter?specialization=${encodeURIComponent(item.specialization)}`,
         }))}
-        loading={!specializations.length}
+        loading={browseLoading}
+        error={specializationsError}
+        errorTitle="Unable to load specializations"
+        onRetry={fetchBrowseData}
+        emptyLabel="No specializations available right now."
       />
 
       <BrowseCategorySection
@@ -192,7 +242,11 @@ const Study = () => {
           label: item.location,
           onClick: () => navigate(`/study-filter?location=${encodeURIComponent(item.location)}`),
         }))}
-        loading={!locations.length}
+        loading={browseLoading}
+        error={locationsError}
+        errorTitle="Unable to load locations"
+        onRetry={fetchBrowseData}
+        emptyLabel="No locations available right now."
       />
 
       <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
@@ -229,7 +283,7 @@ const Study = () => {
         <Container maxWidth="lg">
           <Stack spacing={1} sx={{ mb: 4, textAlign: "center", alignItems: "center" }}>
             <Typography component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 1, color: "primary.main", fontWeight: 600 }}>
-              HOW IT WORK <Box component="img" src={ObjectImg} alt="" />
+              HOW IT WORKS <Box component="img" src={ObjectImg} alt="" />
             </Typography>
             <Typography variant="h4" fontWeight={700}>Begin Your Global Journey in 5 Simple Steps</Typography>
           </Stack>
@@ -254,7 +308,7 @@ const Study = () => {
             <Grid size={{ xs: 12, md: 7 }}>
               <Stack spacing={2}>
                 <Typography component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 1, color: "primary.main", fontWeight: 600 }}>
-                  FAQS <Box component="img" src={objectImg} alt="" />
+                  FAQS <Box component="img" src={ObjectImg} alt="" />
                 </Typography>
                 <Typography variant="h4" fontWeight={700}>Frequently Asked Questions</Typography>
                 <FaqSection relatedTo="Study" />

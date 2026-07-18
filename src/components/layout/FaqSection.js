@@ -9,6 +9,7 @@ import LoadingState from "../ui/LoadingState";
 import ErrorState from "../ui/ErrorState";
 import EmptyState from "../ui/EmptyState";
 import config from "../../config/config";
+import { networkErrorMessage } from "../../utils/networkErrorMessage";
 
 const FaqSection = ({ relatedTo = "All" }) => {
   const [faqs, setFaqs] = useState([]);
@@ -27,6 +28,11 @@ const FaqSection = ({ relatedTo = "All" }) => {
       const response = await fetch(
         `${config.baseURL}/site-content/faqs/get?related_to=${encodeURIComponent(relatedTo)}`
       );
+      if (!response.ok) {
+        setError(`Request failed (${response.status}). Unable to load FAQs.`);
+        setFaqs([]);
+        return;
+      }
       const data = await response.json();
       if (data.success) {
         const items = data.data || [];
@@ -34,10 +40,11 @@ const FaqSection = ({ relatedTo = "All" }) => {
         setExpanded(items.length ? `panel-0` : false);
       } else {
         setError(data.message || "Failed to fetch FAQs");
+        setFaqs([]);
       }
     } catch (err) {
-      console.error("Error fetching FAQs:", err);
-      setError("An error occurred while fetching FAQs");
+      setFaqs([]);
+      setError(networkErrorMessage(err, "An error occurred while fetching FAQs."));
     } finally {
       setLoading(false);
     }

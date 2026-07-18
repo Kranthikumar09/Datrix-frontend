@@ -16,7 +16,9 @@ import { BRAND } from "../../config/brand";
 import config from "../../config/config";
 import LoadingState from "../ui/LoadingState";
 import EmptyState from "../ui/EmptyState";
+import ErrorState from "../ui/ErrorState";
 import AutoCarousel from "../ui/AutoCarousel";
+import { networkErrorMessage } from "../../utils/networkErrorMessage";
 import testimonialImg from "../../assets/images/testimonial-img.jpg";
 import quotesImg from "../../assets/images/quotes-img.png";
 
@@ -29,7 +31,7 @@ const Testimonial = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState(null);
 
-  useEffect(() => {
+  const fetchVideo = () => {
     if (!config.baseURL) return;
     axios
       .get(`${config.baseURL}/site-content/testimonial-video/get`)
@@ -38,26 +40,44 @@ const Testimonial = () => {
           setVideoUrl(response.data.data.testimonial_video);
         }
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => {
+        // Video is optional; keep the static poster when unavailable.
+      });
+  };
 
-  useEffect(() => {
+  const fetchTestimonials = () => {
     if (!config.baseURL) {
       setLoading(false);
       setError("API is not configured.");
+      setTestimonials([]);
       return;
     }
+    setLoading(true);
+    setError(null);
     axios
       .get(`${config.baseURL}/site-content/testimonials/get`)
       .then((response) => {
         if (response.data.success) {
           setTestimonials(response.data.data || []);
+          setError(null);
         } else {
-          setError("No testimonials found");
+          setTestimonials([]);
+          setError(null);
         }
       })
-      .catch(() => setError("No testimonials found"))
+      .catch((err) => {
+        setTestimonials([]);
+        setError(
+          networkErrorMessage(err, "An error occurred while fetching testimonials.")
+        );
+      })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchVideo();
+    fetchTestimonials();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const truncateTextByWords = (text, wordLimit = 60) => {
@@ -116,8 +136,20 @@ const Testimonial = () => {
           <Grid size={{ xs: 12, md: 7 }}>
             {loading ? (
               <LoadingState label="Loading testimonials..." />
-            ) : error || testimonials.length === 0 ? (
-              <EmptyState title="No testimonials found" message={error || "No testimonials found"} />
+            ) : error ? (
+              <ErrorState
+                title="Unable to load testimonials"
+                message={error}
+                onRetry={() => {
+                  fetchVideo();
+                  fetchTestimonials();
+                }}
+              />
+            ) : testimonials.length === 0 ? (
+              <EmptyState
+                title="No testimonials yet"
+                message="Client stories will appear here when available."
+              />
             ) : (
               <Box>
                 <AutoCarousel
