@@ -10,6 +10,7 @@ import EmptyState from "../ui/EmptyState";
 import ErrorState from "../ui/ErrorState";
 import AutoCarousel from "../ui/AutoCarousel";
 import { prefersReducedMotion } from "../../utils/prefersReducedMotion";
+import { networkErrorMessage } from "../../utils/networkErrorMessage";
 
 const PartnerSection = () => {
   const [partners, setPartners] = useState([]);
@@ -29,15 +30,22 @@ const PartnerSection = () => {
         if (response.data.success && Array.isArray(response.data.data)) {
           setPartners(response.data.data);
           setError(null);
+        } else if (response.data.success) {
+          setPartners([]);
+          setError(null);
         } else {
-          setError("No partners found.");
+          setPartners([]);
+          setError(response.data.message || "Unable to load partners.");
         }
       })
       .catch((err) => {
+        setPartners([]);
         if (err.response && err.response.status === 404) {
-          setError("No partners found.");
+          setError(null);
         } else {
-          setError("An error occurred while fetching partners.");
+          setError(
+            networkErrorMessage(err, "An error occurred while fetching partners.")
+          );
         }
       })
       .finally(() => setLoading(false));

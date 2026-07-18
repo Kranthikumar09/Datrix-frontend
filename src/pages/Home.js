@@ -264,7 +264,7 @@ const Home = () => (
                 Frequently Asked Questions
               </Typography>
             </Box>
-            <FaqSection relatedTo="" />
+            <FaqSection relatedTo="All" />
           </Grid>
           <Grid size={{ xs: 12, md: 5 }}>
             <Grid container spacing={2}>
