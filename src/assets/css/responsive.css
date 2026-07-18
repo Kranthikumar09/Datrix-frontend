@@ -35,9 +35,6 @@
     width: 65%;
 }
 
-.about-page .aboutus-section {
-    padding-top: 100px;
-}
 
 .about-mission-box img {
     border-radius: 20px;
@@ -829,120 +826,6 @@
     margin-bottom: 0;
 }
 
-.data-table {
-    border-radius: 10px;
-    overflow-x: hidden;
-    overflow-y: auto;
-    margin-top: 40px;
-    border: solid 1px #00000014;
-}
-
-/* .data-table .table> :not(caption)>*>* {
-    border: none !important;
-} */
-
-.table-borderless tbody {
-    border: 0 !important;
-}
-
-.mba-right-inner .work-detail-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.job-tag {
-    background-color: #415D65;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 500;
-    padding: 5px 15px;
-    border-radius: 30px;
-}
-
-.job-detail-row .id-inner {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-}
-
-/* .job-detail-row .id-inner .id-data,
-.requirement-summary-row .id-inner .id-data {
-    min-width: max-content;
-} */
-
-.job-apply-btn {
-    margin-top: 24px;
-    display: flex;
-    align-items: end;
-    justify-content: end;
-}
-
-.job-apply-btn .btn {
-    min-width: 180px;
-}
-
-.requirement-summary-row .id-inner {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-}
-
-.required-visa-status .id-inner {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    margin-top: 0;
-}
-
-.required-visa-status .id-inner h3 {
-    margin-bottom: 24px;
-}
-
-.required-visa-status .description-inner {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    row-gap: 20px;
-}
-
-/* .required-visa-status .description-inner li {
-    min-width: 33%;
-} */
-
-.work-details .job-desc .editor-box {
-    margin-top: 24px;
-}
-
-.work-details .job-desc .editor-box p {
-    color: #415D65;
-    font-size: 18px;
-    font-weight: 500;
-    margin-bottom: 16px;
-}
-
-.work-details .job-desc .editor-box p:last-child {
-    margin-bottom: 0 !important;
-}
-
-.work-details .bottom-row .skills .description-inner {
-    /* display: grid; */
-    /* grid-template-columns: repeat(2, 1fr); */
-    row-gap: 20px;
-}
-
-.work-details .bottom-row .education .description-inner {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    row-gap: 20px;
-}
-
-.work-details .bottom-row .responsibilities .description-inner {
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    row-gap: 20px;
-}
-
-.work-details .bottom-row .skills .description-inner li {
-    min-width: 100%;
-}
-
 .slick-prev:hover,
 .slick-prev:focus,
 .slick-next:hover,
@@ -1000,23 +883,6 @@
     margin-bottom: 60px;
 }
 
-.career-section {
-    padding-bottom: 70px;
-}
-
-.carrer-bg-white {
-    padding: 70px 0;
-    background-color: #fff;
-}
-
-.main-section.careers .study-hub-data-main {
-    column-gap: 0;
-}
-
-.main-section.careers .study-hub-data {
-    width: 25%;
-    min-width: 25%;
-}
 
 @media (max-width: 991px) {
     .header-btn-main a {
@@ -1122,28 +988,6 @@
         margin: auto;
         justify-content: center;
     }
-    button.submit.action-button.color-btn.btn {
-        margin-top: 10px !important;
-    }
-    section.career-path-section .row {
-        gap: 30px;
-    }
-    .steps.step4 {
-        flex-direction: column-reverse;
-    }
-    .resume-import {
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-    .search-filter form {
-        flex-wrap: wrap;
-    }
-    .search-filter form .search-box {
-        width: 100%;
-    }
-    button.color-btn.btn {
-        width: 100%;
-    }
     .work-process-section .work-process-inner {
         display: flex;
         flex-wrap: wrap;
@@ -1242,41 +1086,6 @@
     .bottom-btn.bottom-privious {
         flex-wrap: wrap;
     }
-    .right-side-divider .fs-title {
-        font-family: Montserrat;
-        font-size: 30px;
-    }
-    .tab-content .file-upload {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: initial;
-        /* text-align: center; */
-        margin: auto;
-    }
-    .tab-content .file-upload .img-area {
-        margin-right: initial;
-        margin-bottom: 10px;
-    }
-    a.border-btn.btn.sw {
-        width: 100%;
-    }
-    .mba-right-sub-data, .mba-right-address, .mba-right-bottom {
-        display: flex;
-        align-items: center;
-        column-gap: 5px;
-        flex-wrap: wrap;
-    }
-    ul.pack-list {
-        flex-wrap: wrap;
-    }
-    .head-badge.d-flex.justify-content-between {
-        flex-wrap: wrap;
-    }
-    .fdswe {
-        width: 100% !important;
-        text-align: center !important;
-    }
  .study-hub-data-main {
     display: flex;
     align-items: center;
@@ -1286,7 +1095,6 @@
     text-align: center;
 }
 }
-
 
 
 @media screen and (min-width: 480px) and (max-width: 700px) {}
