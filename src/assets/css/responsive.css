@@ -2,10 +2,6 @@
     --plus-font: "Plus Jakarta Sans", sans-serif;
 }
 
-.page-banner {
-    padding: 70px 0 40px 0;
-}
-
 .pagebanner-text h1 {
     font-family: "Montserrat", sans-serif;
     font-size: 48px;
@@ -64,14 +60,6 @@
 
 .cmn-heading.text-center .top-name {
     justify-content: center;
-}
-
-.about-values .cmn-heading h2 {
-    margin-bottom: 40px;
-}
-
-.about-values {
-    padding: 70px 0;
 }
 
 .values-box {
@@ -364,124 +352,6 @@
     border-width: 2px;
 }
 
-.faq-section {
-    padding-bottom: 70px;
-}
-
-.blog-section .blog-row {
-    row-gap: 38px;
-}
-
-.blog-details-section {
-    padding-bottom: 70px;
-}
-
-.blog-details-section .single-details img {
-    border-radius: 20px;
-    height: 500px;
-    width: 100%;
-    margin-bottom: 40px;
-}
-
-.blog-details-section .single-details p {
-    color: #415D65;
-    font-family: "Montserrat", sans-serif;
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 28.8px;
-    margin-bottom: 40px;
-}
-
-.blog-details-section .work-country-box img {
-    height: 350px;
-    border-radius: 20px;
-    width: 100%;
-    margin-bottom: 32px;
-}
-
-.blog-details-section .work-country-box h3 {
-    color: #000418;
-    font-family: "Montserrat", sans-serif;
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 34.13px;
-    margin-bottom: 24px;
-}
-
-.blog-details-section .work-country-box p {
-    color: #415D65;
-    font-family: "Montserrat", sans-serif;
-    /* font-size: 18px; */
-    font-weight: 500;
-    /* line-height: 28.8px; */
-    margin-bottom: 0;
-}
-
-.blog-details-section .inner-row {
-    row-gap: 40px;
-}
-
-.blog-details-section .bottom-details h3 {
-    color: #000418;
-    font-family: "Montserrat", sans-serif;
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 34.13px;
-    margin-bottom: 24px;
-}
-
-.blog-details-section .bottom-details p {
-    color: #415D65;
-    font-family: "Montserrat", sans-serif;
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 28.8px;
-    margin-bottom: 20px;
-}
-
-.blog-details-section .bottom-details p:last-child {
-    margin-bottom: 0;
-}
-
-.login-page .header-main .header-inner {
-    box-shadow: none !important;
-    padding: 0 !important;
-}
-
-.login-page .back-home-btn span {
-    font-family: "Montserrat", sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 27px;
-    text-align: left;
-    text-decoration-line: underline;
-    color: #E2403C;
-    display: inline-block;
-    margin-left: 10px;
-}
-
-.login-page {
-    background-color: #fff;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    min-height: 100vh;
-}
-
-.login-page .login-section-imgs {
-    display: flex;
-    column-gap: 40px;
-    position: relative;
-}
-
-.login-page .login-section-imgs>div {
-    width: 50%;
-}
-
-.login-page .login-section-imgs img {
-    border-radius: 10px;
-}
-
 .login-section-imgs .left-two {
     flex-direction: column;
     display: flex;
@@ -491,37 +361,6 @@
 .login-section-imgs .left-two img {
     width: 100%;
     height: 310px;
-}
-
-.login-page .login-section-imgs>img {
-    position: absolute;
-    top: 50%;
-    right: 50%;
-    transform: translate(30%, -50%);
-}
-
-.login-page .login-section {
-    padding: 50px 0;
-}
-
-.login-page .contact-form .form-group .form-control,
-.login-page .contact-form .form-group .form-select {
-    border-color: #BDBDBD;
-}
-
-.login-page .contact-form .form-group .form-control:focus,
-.login-page .contact-form .form-group .form-select :focus {
-    border-color: #E2403C;
-}
-
-.login-page .form-group.password {
-    position: relative;
-}
-
-.login-page .form-group.password .eye-btn {
-    position: absolute;
-    top: 52px;
-    right: 20px;
 }
 
 .login-form .form-headings h2 {
@@ -828,9 +667,7 @@
         font-family: "Montserrat", sans-serif;
         font-size: 30px;
     }
-    section.mission-section .row {
-        gap: 30px;
-    }
+
     .info-details {
         margin-bottom: 30px;
     }

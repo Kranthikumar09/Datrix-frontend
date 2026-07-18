@@ -31,7 +31,6 @@ const AuthLayout = ({
 }) => (
   <Box
     component="main"
-    className="main-section login-page"
     sx={{
       minHeight: "100vh",
       backgroundImage: `url(${LoginBg})`,
@@ -96,13 +95,34 @@ const AuthLayout = ({
         <Grid container spacing={4} alignItems="center" justifyContent="center">
           {showSideImages ? (
             <Grid size={{ xs: 12, lg: 12 - (formColumns.lg || 5) }} sx={{ display: { xs: "none", lg: "block" } }}>
-              <Box className="login-section-imgs">
+              <Box
+                sx={{
+                  display: "flex",
+                  columnGap: "40px",
+                  position: "relative",
+                  "& > div": { width: "50%" },
+                  "& img": { borderRadius: "10px" },
+                  "& > img": {
+                    position: "absolute",
+                    top: "50%",
+                    right: "50%",
+                    transform: "translate(30%, -50%)",
+                  },
+                }}
+              >
                 <Box component="img" src={LoginFav} alt="" sx={{ maxWidth: "100%" }} />
-                <Box className="left-two">
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    rowGap: "60px",
+                    "& img": { width: "100%", height: 310 },
+                  }}
+                >
                   <Box component="img" src={LoginImg1} alt="" />
                   <Box component="img" src={LoginImg2} alt="" />
                 </Box>
-                <Box className="right-single">
+                <Box>
                   <Box component="img" src={LoginImg3} alt="" sx={{ height: "100%" }} />
                 </Box>
               </Box>

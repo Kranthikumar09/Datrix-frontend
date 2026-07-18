@@ -18,7 +18,7 @@ const AboutSection = () => {
   const location = useLocation();
 
   return (
-    <Box component="section" className="aboutus-section" sx={{ py: { xs: 6, md: 9 } }}>
+    <Box component="section" sx={{ py: { xs: 6, md: 9 } }}>
       <Container maxWidth="lg">
         <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 6 }}>

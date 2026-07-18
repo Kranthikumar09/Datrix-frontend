@@ -103,10 +103,10 @@ const BlogDetails = () => {
     <Box component="main">
       <PageBanner title={blogDetails.title} />
 
-      <Box component="section" className="blog-details-section" sx={{ py: { xs: 4, md: 6 } }}>
+      <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
         <Container maxWidth="lg">
           <Stack spacing={3}>
-            <Box className="single-details">
+            <Box>
               <Box
                 component="img"
                 src={`${config.assetUrl("uploads/blogs")}/${blogDetails.image}`}

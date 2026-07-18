@@ -58,7 +58,7 @@ const FLAG_AWARDS = [
 
 const Home = () => (
   <Box component="main">
-    <Box component="section" className="hero-section" sx={{ py: { xs: 4, md: 6 } }}>
+    <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
         <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 7 }}>
@@ -126,7 +126,7 @@ const Home = () => (
 
     <AboutSection />
 
-    <Box component="section" className="home-study-section" sx={{ py: { xs: 4, md: 6 } }}>
+    <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
         <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 7 }}>
@@ -186,7 +186,7 @@ const Home = () => (
       </Container>
     </Box>
 
-    <Box component="section" className="home-Work-section" sx={{ py: { xs: 4, md: 6 } }}>
+    <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
         <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 5 }} sx={{ order: { xs: 2, md: 1 } }}>
@@ -249,7 +249,7 @@ const Home = () => (
     <Testimonial />
     <PartnerSection />
 
-    <Box component="section" className="faq-section" sx={{ py: { xs: 4, md: 6 } }}>
+    <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
         <Grid container spacing={4} sx={{ alignItems: "center" }}>
           <Grid size={{ xs: 12, md: 7 }}>

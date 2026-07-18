@@ -34,7 +34,7 @@ const About = () => (
 
     <AboutSection />
 
-    <Box component="section" className="mission-section" sx={{ py: { xs: 4, md: 6 } }}>
+    <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
       <Container maxWidth="lg">
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -112,7 +112,7 @@ const About = () => (
       </Container>
     </Box>
 
-    <Box component="section" className="about-values" sx={{ py: { xs: 4, md: 6 }, bgcolor: "background.subtle" }}>
+    <Box component="section" sx={{ py: { xs: 4, md: 6 }, bgcolor: "background.subtle" }}>
       <Container maxWidth="lg">
         <Stack spacing={1} sx={{ mb: 4, textAlign: "center", alignItems: "center" }}>
           <Typography

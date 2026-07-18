@@ -157,41 +157,6 @@ section {
   color: #415D65;
 }
 
-.hero-section .header-btn-main {
-  margin-top: 60px;
-}
-
-.hero-section .header-btn-main .border-btn {
-  background-color: #000418;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  column-gap: 14px;
-  font-weight: 600;
-}
-
-.hero-section .header-btn-main .border-btn:hover img {
-  filter: brightness(0) saturate(100%) invert(9%) sepia(8%) saturate(4049%) hue-rotate(182deg) brightness(77%) contrast(113%);
-}
-
-.hero-section .header-btn-main .color-btn:hover img {
-  filter: brightness(0) saturate(100%) invert(40%) sepia(13%) saturate(6841%) hue-rotate(335deg) brightness(93%) contrast(90%);
-}
-
-.hero-section .header-btn-main .color-btn {
-  display: flex;
-  align-items: center;
-  column-gap: 14px;
-  font-weight: 600;
-}
-
-.hero-section .header-btn-main .border-btn:hover {
-  background-color: #ffffff;
-  color: #000418;
-  border: 2px solid #000418;
-
-}
-
 
 .banner-right {
   position: relative;
@@ -566,44 +531,6 @@ section {
   border: 1px solid #ECEFF3;
 }
 
-.home-Work-section .home-study-inner {
-  border: 1px solid #EF9A98;
-  background-color: #FDEFEC;
-}
-
-
-.home-Work-section .study-innner-point a {
-  background-color: #FAE7E7;
-  border-color: #FBC8C7;
-}
-
-.home-study-section .header-btn-main a:hover img,
-.home-Work-section .header-btn-main a:hover img {
-  filter: brightness(0) saturate(100%) invert(35%) sepia(46%) saturate(5101%) hue-rotate(342deg) brightness(95%) contrast(87%);
-}
-
-
-/*------------testimonial section--------------*/
-
-.testimonial-section .testimonial-video a {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 52px;
-  height: 52px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translate(-50%, -50%);
-  /* position: relative; */
-}
-
-.testimonial-section .testimonial-video .testimonial-img {
-  border-radius: 30px;
-  width: 100%;
-  height: 100%;
-}
-
 .testimonial-video figure {
   width: 100%;
   height: 100%;
@@ -612,10 +539,6 @@ section {
 .testimonial-video {
   position: relative;
   height: 100%;
-}
-
-.testimonial-section .cmn-heading h2 {
-  margin-bottom: 6px;
 }
 
 .testimonial-bottom {
@@ -721,13 +644,6 @@ section {
   padding: 20px;
 }
 
-/*------------blog section--------------*/
-
-
-.blog-section {
-  background-color: #FEF5F5;
-}
-
 .blod-image img {
   border-radius: 20px;
   width: 100%;
@@ -775,10 +691,6 @@ section {
   line-height: 17.07px;
   color: #E2403C;
   ;
-}
-
-.blog-section .cmn-heading .top-name {
-  justify-content: center;
 }
 
 /*------------faq section--------------*/
@@ -1360,11 +1272,6 @@ section {
 }
 .career-path-section .faq-images-main {
   justify-content: flex-start;
-}
-
-.how-works-section {
-  margin: 50px 0px;
-  background-color: #FEF5F5;
 }
 
 .actual-graph span::after {

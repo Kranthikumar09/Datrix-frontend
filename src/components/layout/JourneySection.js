@@ -8,7 +8,7 @@ import Button from "@mui/material/Button";
 import { BRAND } from "../../config/brand";
 
 const JourneySection = () => (
-  <Box component="section" className="journy-section" sx={{ py: { xs: 4, md: 6 } }}>
+  <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
     <Container maxWidth="lg">
       <Box className="journy-inner" sx={{ textAlign: "center", p: { xs: 3, md: 5 }, borderRadius: 4 }}>
         <Stack spacing={2} className="cmn-heading" sx={{ alignItems: "center" }}>

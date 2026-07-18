@@ -225,7 +225,7 @@ const Study = () => {
         </Container>
       </Box>
 
-      <Box component="section" className="how-works-section" sx={{ py: { xs: 4, md: 6 }, bgcolor: "background.subtle" }}>
+      <Box component="section" sx={{ py: { xs: 4, md: 6 }, bgcolor: "background.subtle" }}>
         <Container maxWidth="lg">
           <Stack spacing={1} sx={{ mb: 4, textAlign: "center", alignItems: "center" }}>
             <Typography component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 1, color: "primary.main", fontWeight: 600 }}>

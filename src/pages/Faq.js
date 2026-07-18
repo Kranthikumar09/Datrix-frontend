@@ -23,7 +23,7 @@ const Faq = () => {
         subtitle="Welcome to our FAQ page! Below, you'll find answers to some of the most common questions we get. If you still need help, don't hesitate to get in touch with us directly."
       />
 
-      <Box component="section" className="faq-section" sx={{ py: { xs: 4, md: 6 } }}>
+      <Box component="section" sx={{ py: { xs: 4, md: 6 } }}>
         <Container maxWidth="lg">
           <Tabs
             value={activeTab}
