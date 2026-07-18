@@ -674,22 +674,6 @@ section {
   color: #ffffff;
 }
 
-.slick-next {
-  right: 58px;
-}
-
-.slick-prev {
-  left: auto;
-  right: 142px;
-  z-index: 111;
-}
-
-.slick-prev::before,
-.slick-next::before {
-  font-family: none;
-  content: "";
-
-}
 
 .testimonial-inner .progress-bar {
   overflow: visible !important;
@@ -703,34 +687,6 @@ section {
   align-items: center;
 }
 
-.slick-prev:hover,
-.slick-prev:focus,
-.slick-next:hover,
-.slick-next:focus {
-  background-color: #d6d6d6;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-image: url(../images/arrow-left.svg);
-}
-
-.slick-prev,
-.slick-next {
-  top: auto;
-  width: 60px;
-  height: 60px;
-  bottom: 61px !important;
-  background: #fff;
-  border-radius: 50%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-image: url(../images/arrow-left.svg);
-}
-
-.slick-next:hover,
-.slick-next:focus,
-.slick-next {
-  background-image: url(../images/arrow-right.svg);
-}
 
 /* .progress {
   position: absolute;
@@ -759,9 +715,6 @@ section {
   margin-top: 30px;
 }
 
-/* .slick-prev::before, .slick-next::before {
-	font-size: 60px;
-} */
 /*------------partners section--------------*/
 
 .partner-logos {
@@ -1539,10 +1492,6 @@ main.wizard-layout {
   min-height: 100vh;
   /* overflow-x: auto; */
   /* overflow-y: hidden; */
-}
-
-.iti.iti--allow-dropdown.iti--separate-dial-code {
-  width: 100%;
 }
 
 

@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import intlTelInput from "intl-tel-input";
-import "intl-tel-input/build/css/intlTelInput.css";
 import PropTypes from "prop-types";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -130,29 +128,6 @@ const SignupForm = ({ redirect }) => {
 
   useEffect(() => {
     nameInputRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    const input = phoneInputRef.current;
-    if (!input) return undefined;
-
-    const iti = intlTelInput(input, {
-      initialCountry: "in",
-      separateDialCode: true,
-      autoPlaceholder: "off",
-    });
-
-    const onCountryChange = () => {
-      const selectedCode = iti.getSelectedCountryData().dialCode;
-      setFormData((prev) => ({ ...prev, phone_code: `+${selectedCode}` }));
-    };
-
-    input.addEventListener("countrychange", onCountryChange);
-
-    return () => {
-      input.removeEventListener("countrychange", onCountryChange);
-      iti.destroy();
-    };
   }, []);
 
   useEffect(() => {
@@ -385,11 +360,14 @@ const SignupForm = ({ redirect }) => {
             id="signup_phone_number"
             label="Phone Number *"
             ref={phoneInputRef}
+            defaultCountry="in"
+            onCountryChange={(country) =>
+              setFormData((prev) => ({ ...prev, phone_code: `+${country.dialCode}` }))
+            }
             error={Boolean(touched.phone_number && errors.phone_number)}
             helperText={touched.phone_number && errors.phone_number ? errors.phone_number : " "}
             helperTextId="phone-error"
             disabled={isLoading}
-            className="signup"
             inputProps={{
               name: "phone_number",
               value: formData.phone_number,
@@ -398,7 +376,8 @@ const SignupForm = ({ redirect }) => {
               required: true,
               "aria-invalid": touched.phone_number && errors.phone_number ? "true" : "false",
               autoComplete: "tel-national",
-              className: "",
+              minLength: PHONE_MIN_LENGTH,
+              maxLength: PHONE_MAX_LENGTH,
             }}
           />
         </Grid>

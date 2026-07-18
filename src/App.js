@@ -62,8 +62,6 @@ import { prefersReducedMotion } from "./utils/prefersReducedMotion";
 // Import styles
 import "./assets/css/style.css";
 import "./assets/css/responsive.css";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {

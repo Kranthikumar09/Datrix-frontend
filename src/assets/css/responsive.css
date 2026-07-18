@@ -239,8 +239,7 @@
 
 .contact-form .form-group .form-control:focus,
 .contact-form .form-group .form-select:focus,
-#phone:focus,
-.phone-group .iti__country-container button:focus {
+#phone:focus {
     border-color: #E2403C;
 }
 
@@ -263,157 +262,6 @@
     filter: brightness(0) saturate(100%) invert(35%) sepia(46%) saturate(5101%) hue-rotate(342deg) brightness(95%) contrast(87%);
 }
 
-.iti__selected-country-primary {
-    display: none;
-}
-
-/* #phone, */
-.phone-group input[type="tel"] {
-    padding: 14px 20px !important;
-}
-
-.phone-group .selected-dial-code {
-    padding: 0 !important;
-}
-
-.phone-group .iti,
-.phone-group .intl-tel-input {
-    width: 100% !important;
-    display: flex;
-    gap: 12px;
-}
-
-.intl-tel-input .selected-flag .iti-flag {
-    position: absolute;
-    opacity: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 100%;
-    bottom: 0;
-}
-
-.intl-tel-input .flag-container .arrow {
-    display: none !important;
-}
-
-.phone-group .iti__country-container,
-.intl-tel-input .flag-container {
-    position: static !important;
-    max-width: fit-content;
-}
-
-
-.phone-group .iti__country-container button,
-.phone-group .intl-tel-input .flag-container .selected-flag {
-    padding: 16px 20px;
-    min-width: 100px;
-    background-image: var(--bs-form-select-bg-img), var(--bs-form-select-bg-icon, none);
-    background-repeat: no-repeat;
-    background-position: right 20px center;
-    background-size: 16px 12px;
-    background-color: #fff !important;
-    --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    height: 50px;
-    border-radius: 10px;
-    color: #666666;
-    font-family: "Montserrat", sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    border: solid 1px #fff;
-    position: relative;
-    display: flex !important;
-    justify-content: start;
-}
-
-.phone-group .iti__country-container button[aria-expanded="true"] {
-    border-color: #E2403C;
-}
-
-.phone-group .iti__dropdown-content {
-    width: 100% !important;
-    left: 0;
-    top: 60px;
-    z-index: 3;
-
-}
-
-.intl-tel-input .country-list .country-name {
-    order: 3;
-}
-
-.intl-tel-input .country-list .flag-box {
-    order: 2;
-}
-
-.intl-tel-input .country-list .country .dial-code {
-    order: 1;
-    min-width: 50px;
-}
-
-.intl-tel-input .country-list .country {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.phone-group .intl-tel-input .country-list {
-    left: 0;
-    right: 0;
-}
-
-.phone-group.phone-group--mui .iti,
-.phone-group.phone-group--mui .intl-tel-input {
-    width: 100% !important;
-    display: flex !important;
-    align-items: stretch !important;
-    gap: 0 !important;
-    height: 100%;
-}
-
-.phone-group.phone-group--mui input[type="tel"],
-.phone-group.phone-group--mui input.form-control {
-    padding: 0 14px 0 12px !important;
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    height: 100% !important;
-    min-height: 100% !important;
-}
-
-.phone-group.phone-group--mui .iti__country-container,
-.phone-group.phone-group--mui .intl-tel-input .flag-container,
-.phone-group.phone-group--mui .iti__flag-container {
-    position: relative !important;
-    max-width: none;
-    height: 100%;
-}
-
-.phone-group.phone-group--mui .iti__country-container button,
-.phone-group.phone-group--mui .intl-tel-input .flag-container .selected-flag,
-.phone-group.phone-group--mui .iti__selected-flag {
-    height: 100% !important;
-    min-height: 100% !important;
-    min-width: auto;
-    border: none !important;
-    border-radius: 0 !important;
-    background-image: none !important;
-    background-color: transparent !important;
-    padding: 0 10px 0 12px !important;
-}
-
-.phone-group.phone-group--mui .iti__selected-country-primary {
-    display: flex !important;
-    align-items: center;
-    background: transparent !important;
-}
-
-.phone-group.phone-group--mui .iti__dropdown-content {
-    top: 58px;
-}
 
 .terms-content {
     padding-bottom: 70px;
@@ -793,9 +641,6 @@
     text-align: center;
 }
 
-.login-page .phone-group .iti__country-container button {
-    border: solid 1px #BDBDBD;
-}
 
 .study-page-right-data fieldset {
     background-color: transparent !important;
@@ -826,50 +671,6 @@
     margin-bottom: 0;
 }
 
-.slick-prev:hover,
-.slick-prev:focus,
-.slick-next:hover,
-.slick-next:focus {
-    background-color: #d6d6d6 !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    background-image: url(../images/arrow-left.svg) !important;
-}
-
-.slick-prev,
-.slick-next {
-    top: 120% !important;
-    width: 60px !important;
-    height: 60px !important;
-    /* bottom: 61px !important; */
-    background: #fff !important;
-    border-radius: 50% !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    background-image: url(../images/arrow-left.svg) !important;
-}
-
-.slick-next:hover,
-.slick-next:focus,
-.slick-next {
-    background-image: url(../images/arrow-right.svg) !important;
-}
-
-.slick-next {
-    right: 0px !important;
-}
-
-.slick-prev {
-    left: auto !important;
-    right: 80px !important;
-    z-index: 111 !important;
-}
-
-.slick-prev::before,
-.slick-next::before {
-    font-family: none !important;
-    content: "" !important;
-}
 
 .mba-left-inner img {
     min-width: 120px;
